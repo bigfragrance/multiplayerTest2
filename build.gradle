@@ -1,0 +1,29 @@
+plugins {
+    id 'application'
+    id 'java'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.json:json:20240303'
+    implementation 'com.formdev:flatlaf:3.4.1'
+}
+
+application {
+    mainClass = 'modules.client.ClientMain'
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'modules.client.ClientMain'
+    }
+    from {
+        configurations.runtimeClasspath.collect  {
+            it.isDirectory()  ? it : zipTree(it)
+        }
+    }
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
