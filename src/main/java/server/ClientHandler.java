@@ -1,6 +1,7 @@
 package server;
 
 import engine.math.Vec2d;
+import engine.math.util.EntityUtils;
 import modules.entity.PlayerEntity;
 import modules.network.ClientNetworkHandler;
 import modules.network.ServerNetworkHandler;
@@ -26,8 +27,9 @@ public class ClientHandler implements Runnable {
     public ClientHandler(Socket socket, CanvasManager manager) {
         this.clientSocket  = socket;
         this.canvas  = manager;
-        this.player=new PlayerEntity(new Vec2d(0,0));
+        this.player=new PlayerEntity(EntityUtils.getRandomSpawnPosition());
         this.player.isAlive=true;
+        this.player.team=cs.getTeam();
         cs.addEntity(player);
         this.serverNetworkHandler=new ServerNetworkHandler(this);
         this.serverNetworkHandler.sendPlayerSpawn(player);

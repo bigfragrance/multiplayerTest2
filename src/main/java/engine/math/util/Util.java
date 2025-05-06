@@ -42,6 +42,30 @@ public class Util {
     public static void renderCube(Graphics g, Box b,double i){
         renderCube(g,b.minX+i,b.minY+i,b.xSize()-2*i,b.ySize()-2*i);
     }
+    public static void renderCubeLine(Graphics g,Box b){
+        g.drawLine((int) b.minX, (int) b.minY, (int) b.maxX, (int) b.minY);
+        g.drawLine((int) b.minX, (int) b.minY, (int) b.minX, (int) b.maxY);
+        g.drawLine((int) b.maxX, (int) b.maxY, (int) b.minX, (int) b.maxY);
+        g.drawLine((int) b.maxX, (int) b.maxY, (int) b.maxX, (int) b.minY);
+    }
+    public static void renderString(Graphics g,String s,Vec2d centerPos,int size){
+        double offX=s.length()*size/4d;
+        g.setFont(new Font("Arial",Font.BOLD,size));
+        g.drawString(s,round(centerPos.x-offX),round(centerPos.y+ (double) size /2));
+    }
+    public static void renderPolygon(Graphics g,Vec2d center,int nSides,double radius,double rotation,boolean side,boolean fill){
+        int[] xPoints = new int[nSides];
+        int[] yPoints = new int[nSides];
+        double angleIncrement = 360d / nSides;
+        for (int i = 0; i < nSides; i++) {
+            double angle = i * angleIncrement + rotation;
+            Vec2d point=center.add(new Vec2d(cos(angle) * radius, sin(angle) * radius)).switchToJFrame();
+            xPoints[i]=round(point.x);
+            yPoints[i]=round(point.y);
+        }
+        if(fill)g.fillPolygon(xPoints, yPoints, nSides);
+        if(side) g.drawPolygon(xPoints, yPoints, nSides);
+    }
     public static double switchXToJFrame(double x){
         return (x - Screen.INSTANCE.camX)* Screen.INSTANCE.zoom+ (double) Screen.INSTANCE.windowWidth /2;
     }
@@ -67,6 +91,12 @@ public class Util {
     }
     public static double random(double min,double max){
         return min+random.nextDouble()*(max-min);
+    }
+    public static Vec2d randomInBox(Box box){
+        return new Vec2d(random(box.minX,box.maxX),random(box.minY,box.maxY));
+    }
+    public static Vec2d randomVec(){
+        return new Vec2d(random(-1,1),random(-1,1));
     }
     public static double lerp(double start,double end,double t){
         return start*(1-t)+end*t;

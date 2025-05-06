@@ -35,8 +35,15 @@ public class InputManager {
         }
         return input.limit(1);
     }
-
-
+    public boolean isShooting(){
+        return Screen.isKeyPressed(' ')||Screen.isKeyPressed(Screen.MOUSECHAR);
+    }
+    public boolean isRespawning(){
+        return Screen.isKeyPressed('r');
+    }
+    public Vec2d getMouseVec(){
+        return Screen.mousePos.switchToGame1();
+    }
 
     /*private final ConcurrentHashMap<Integer, Boolean> keyStates = new ConcurrentHashMap<>();
     private final JPanel targetPanel;

@@ -86,6 +86,9 @@ public class Box {
     public String toString(){
         return "Box("+minX+","+maxX+","+minY+","+maxY+")";
     }
+    public Box copy(){
+        return new Box(minX,maxX,minY,maxY);
+    }
     public static Box fromString(String str) {
 
         str = str.replace("Box(", "").replace(")", "");

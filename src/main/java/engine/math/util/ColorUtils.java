@@ -27,4 +27,16 @@ public class ColorUtils {
 
         return new Color(red, green, blue, alpha);
     }
+    public static Color darker(Color c,double factor) {
+        return new Color(Math.min((int)(c.getRed()  *factor), 255),
+                Math.min((int)(c.getGreen()*factor), 255),
+                Math.min((int)(c.getBlue() *factor), 255),
+                c.getAlpha());
+    }
+    public static Color brighter(Color c,double factor) {
+        return opposite(darker(opposite(c),factor));
+    }
+    public static Color opposite(Color c){
+        return new Color(255-c.getRed(),255-c.getGreen(),255-c.getBlue(),c.getAlpha());
+    }
 }

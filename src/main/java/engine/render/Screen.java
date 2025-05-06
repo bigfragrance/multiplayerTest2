@@ -3,18 +3,23 @@ package engine.render;
 
 import engine.math.Box;
 import engine.math.Vec2d;
+import engine.math.util.Util;
 import engine.modules.EngineMain;
 import modules.ctrl.InputManager;
 import modules.entity.Entity;
+import modules.particle.Particle;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import static engine.math.util.Util.round;
+import static engine.modules.EngineMain.TPS;
 import static engine.modules.EngineMain.cs;
 
 
@@ -23,7 +28,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     public static JFrame frame;
     public volatile double camX=0;
     public volatile double camY=0;
-    public volatile double zoom=4;
+    public volatile double zoom=1.6;
     public int windowWidth=1000;
     public int windowHeight=1000;
     public static int mouseX = 50;
@@ -32,7 +37,9 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     public static volatile HashMap<Character,Boolean> keyPressed=new HashMap<>();
     public static volatile HashMap<Character,Boolean> lastKeyPressed=new HashMap<>();
     public static char MOUSECHAR=(char)60000;
+    public static double tickDeltaAdd=0;
     public static double tickDelta=0;
+    private static long lastRender=0;
     public InputManager inputManager=null;
     public static Box SCREEN_BOX=new Box(0, 800,0,800);
     public Screen(){
@@ -123,29 +130,59 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
             long start=System.currentTimeMillis();
             windowWidth=frame.getWidth();
             windowHeight=frame.getHeight();
-            tickDelta= EngineMain.getTickDelta();
+
             Vec2d camPos=cs.getCamPos();
             camX=camPos.x;
             camY=camPos.y;
+            //if(System.currentTimeMillis()-EngineMain.lastTick>1000/TPS||System.currentTimeMillis()-EngineMain.lastTick<4) continue;
+            tickDeltaAdd=(System.currentTimeMillis()-lastRender)/1000.0d*TPS;
+            tickDelta=EngineMain.getTickDelta();
             repaint();
-            try {
-                long s= -(System.currentTimeMillis() - start) +1000 / 60;
+            lastRender=System.currentTimeMillis();
+            /*try {
+                long s= -(System.currentTimeMillis() - start) +1000/16;
                 if(s>0)Thread.sleep(s); // 60 FPS
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }
+            }*/
         }
     }
     @Override
     protected void paintComponent(Graphics g){
         try {
-
             super.paintComponent(g);
-            for(Entity entity:cs.entities.values()){
+            Graphics2D g2d = (Graphics2D) g;
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                    RenderingHints.VALUE_ANTIALIAS_ON);
+
+            ArrayList<Entity> entities=new ArrayList<>(cs.entities.values());
+            for(Entity entity:entities){
                 entity.render(g);
+            }
+            for(Particle particle:(ArrayList<Particle>)cs.particles.clone()){
+                particle.render(g);
+            }
+            for(double i=0;i<40;i++){
+                Box b=cs.borderBox.expand(i*i,i*i);
+                g.setColor(Color.GRAY);
+                Util.renderCubeLine(g,b.switchToJFrame());
             }
         }
         catch (Exception e){
+            super.paintComponent(g);
+            ArrayList<Entity> entities= (ArrayList<Entity>) new ArrayList<>(cs.entities.values().stream().toList()).clone();
+            for(Entity entity:entities){
+                entity.render(g);
+            }
+            ArrayList<Particle> particles=new ArrayList<>((ArrayList<Particle>)cs.particles.clone());
+            for(Particle particle:particles){
+                particle.render(g);
+            }
+            for(double i=0;i<40;i++){
+                Box b=cs.borderBox.expand(i*i,i*i);
+                g.setColor(Color.GRAY);
+                Util.renderCubeLine(g,b.switchToJFrame());
+            }
             //e.printStackTrace();
         }
     }

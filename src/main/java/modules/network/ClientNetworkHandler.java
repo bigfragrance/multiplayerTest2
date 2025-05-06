@@ -1,9 +1,12 @@
 package modules.network;
 
 import engine.math.Vec2d;
+import engine.math.util.PacketUtil;
 import modules.client.ClientNetwork;
+import modules.entity.BulletEntity;
 import modules.entity.Entity;
 import modules.entity.PlayerEntity;
+import modules.entity.PolygonEntity;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -24,7 +27,7 @@ public class ClientNetworkHandler {
     public void sendPlayerMove(Vec2d pos){
         JSONObject o=new JSONObject();
         o.put("type","player_move");
-        o.put("position",pos.toJSON());
+        o.put(PacketUtil.getShortString("position"),pos.toJSON());
         send(o);
     }
     public void sendPlayerRespawn(){
@@ -35,13 +38,29 @@ public class ClientNetworkHandler {
     public void sendWantEntity(Long id){
         JSONObject o=new JSONObject();
         o.put("type","want_entity");
-        o.put("id",id);
+        o.put(PacketUtil.getShortString("id"),id);
         send(o);
     }
     public void sendKeepAlive(){
         if(System.currentTimeMillis()-lastSend<1000) return;
         JSONObject o=new JSONObject();
         o.put("type","ka");
+        send(o);
+    }
+    public void sendBulletShoot(Vec2d pos,Vec2d velocity,double size,double health,double damage){
+        JSONObject o=new JSONObject();
+        o.put("type","bullet_shoot");
+        o.put(PacketUtil.getShortString("position"),pos.toJSON());
+        o.put(PacketUtil.getShortString("velocity"),velocity.toJSON());
+        o.put("size",size);
+        o.put(PacketUtil.getShortString("health"),health);
+        o.put(PacketUtil.getShortString("damage"),damage);
+        send(o);
+    }
+    public void sendPlayerData(PlayerEntity player){
+        JSONObject o=new JSONObject();
+        o.put("type","player_data");
+        o.put("name",player.name);
         send(o);
     }
     public void apply(JSONObject o){
@@ -58,30 +77,54 @@ public class ClientNetworkHandler {
             case("player_respawn")->{
                 handlePlayerRespawn(o);
             }
+            case("player_status")->{
+                handlePlayerStatus(o);
+            }
+            case("player_death")->{
+                cs.player.isAlive=false;
+            }
+            case("player_data")->{
+                handlePlayerData(o);
+            }
         }
     }
     public void handleEntityUpdate(JSONObject o){
-        Entity e=cs.entities.get(o.getJSONObject("basic").getLong("id"));
+        Entity e=cs.entities.get(o.getJSONObject("basic").getLong(PacketUtil.getShortString("id")));
         if(e!=null){
-            if(cs.player!=null&& e.id==cs.player.id) return;
-            System.out.println("entity update");
+            if(cs.player!=null&& e.id==cs.player.id) {
+                cs.player.update2(o);
+                return;
+            }
+            //System.out.println("entity update");
             e.update(o);
         }else{
             System.out.println("entity want");
-            sendWantEntity(o.getJSONObject("basic").getLong("id"));
+            sendWantEntity(o.getJSONObject("basic").getLong(PacketUtil.getShortString("id")));
         }
     }
     public void handleEntitySpawn(JSONObject o){
         JSONObject o2=o.getJSONObject("entity");
         switch (o2.getString("type")){
             case("player")->{
-                System.out.println("Spawned");
                 cs.addEntity(PlayerEntity.fromJSON(o2.getJSONObject("data")));
+            }
+            case("bullet")->{
+                //System.out.println("Spawned bullet");
+                cs.addEntity(BulletEntity.fromJSON(o2.getJSONObject("data")));
+            }
+            case("polygon")->{
+                cs.addEntity(PolygonEntity.fromJSON(o2.getJSONObject("data")));
             }
         }
     }
     public void handleEntityRemove(JSONObject o){
-        cs.removeEntity(o.getLong("id"));
+        cs.removeEntity(o.getLong(PacketUtil.getShortString("id")));
+    }
+    public void handlePlayerStatus(JSONObject o){
+        if(cs.player!=null){
+            cs.player.updateStatus(o);
+            cs.generateGroundBlocks(true);
+        }
     }
     public void handlePlayerRespawn(JSONObject o){
         JSONObject o2=o.getJSONObject("entity");
@@ -90,7 +133,14 @@ public class ClientNetworkHandler {
                 PlayerEntity player=PlayerEntity.fromJSON(o2.getJSONObject("data"));
                 cs.player=player;
                 cs.addEntity(player);
+                cs.generateGroundBlocks(true);
             }
+        }
+    }
+    public void handlePlayerData(JSONObject o){
+        Entity e=cs.entities.get(o.getLong(PacketUtil.getShortString("id")));
+        if(e instanceof PlayerEntity player){
+            player.name=o.getString("name");
         }
     }
 }

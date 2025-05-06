@@ -81,6 +81,10 @@ public class Vec2d {
         double e = l / length();
         return this.multiply(e);
     }
+    public Vec2d limitOnlyOver(double l){
+        if (this.length() <= l) return this.copy();
+        return this.limit(l);
+    }
 
     public double distanceTo(Vec2d pos) {
         return this.subtract(pos).length();
@@ -98,7 +102,11 @@ public class Vec2d {
         }
         return false;
     }
-
+    public Vec2d rotate(double angle) {
+        double cos = Util.cos(angle);
+        double sin = Util.sin(angle);
+        return new Vec2d(x * cos - y * sin, x * sin + y * cos);
+    }
     public JSONObject toJSON() {
         JSONObject json = new JSONObject();
         json.put("x", x);
