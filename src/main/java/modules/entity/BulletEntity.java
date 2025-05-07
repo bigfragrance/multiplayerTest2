@@ -35,16 +35,9 @@ public class BulletEntity extends Entity{
         lifeTime++;
     }
     private void updateCollision(){
-        for(Entity e:cs.entities.values()){
-            if(e.id==this.id) continue;
-            if(e.team==this.team) continue;
-            if(!e.isAlive) continue;
-            boolean intersects=e.boundingBox.intersectsCircle(this.boundingBox)|| EntityUtils.intersectsCircle(this.prevBoundingBox,this.boundingBox,e.prevBoundingBox,e.boundingBox);
-
-            if(intersects){
-                this.health-=e.damage;
-            }
-        }
+        EntityUtils.updateCollision(this,e->(e.id==this.id||!e.isAlive||e.team==this.team),e->EntityUtils.intersectsCircle(this,e),e->{
+            this.health-=e.damage;
+        });
     }
     public void update(JSONObject o){
         super.update(o);

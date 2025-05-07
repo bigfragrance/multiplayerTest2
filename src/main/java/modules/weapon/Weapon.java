@@ -5,7 +5,7 @@ import modules.entity.Entity;
 public class Weapon{
     public static double damageBase=10;
     public static double speedBase=10;
-    public static double healthBase=10;
+    public static double healthBase=1;
     public static int reloadBase=10;
     public static double sizeBase=5;
     public Entity owner;
@@ -18,16 +18,16 @@ public class Weapon{
         this.owner=owner;
         this.damage=10;
         this.speed=10;
-        this.health=10;
+        this.health=1;
         this.reload=10;
         this.size=5;
     }
-    public void setMultiplier(double multiplier){
-        this.damage=damageBase*multiplier;
-        this.speed=speedBase*multiplier;
-        this.health=healthBase*multiplier;
-        this.reload= (reloadBase/multiplier);
-        this.size=sizeBase*multiplier;
+    public void setMultiplier(double[] multiplier){
+        this.damage=damageBase*multiplier[0];
+        this.speed=speedBase*multiplier[1];
+        this.health=healthBase*multiplier[2];
+        this.reload= (reloadBase/multiplier[3]);
+        this.size=sizeBase*multiplier[4];
     }
     public void update(){
 

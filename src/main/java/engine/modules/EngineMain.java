@@ -7,7 +7,9 @@ import engine.math.Vec2d;
 import engine.math.util.Setting;
 import engine.math.util.Util;
 import engine.render.Screen;
+import modules.ChunkMap;
 import modules.client.ClientNetwork;
+import modules.entity.ClientPlayerEntity;
 import modules.entity.Entity;
 import modules.entity.PlayerEntity;
 import modules.entity.PolygonEntity;
@@ -43,7 +45,8 @@ public class EngineMain implements Runnable{
     public ClientNetworkHandler networkHandler;
     public MultiClientHandler multiClientHandler=null;
     public static int maxTeams=2;
-    public PlayerEntity player;
+    public ClientPlayerEntity player;
+    public ChunkMap chunkMap=new ChunkMap();
     public static long lastTick=0;
     public Vec2d camPos=new Vec2d(0,0);
     public Vec2d prevCamPos=new Vec2d(0,0);
@@ -117,9 +120,7 @@ public class EngineMain implements Runnable{
                 entities.put(id,addingEntities.get(id));
             }
             addingEntities.clear();
-            /*for(Entity entity:entities.values()){
-                entity.tick();
-            }*/
+            updateEntityChunk();
             int coreCount = Runtime.getRuntime().availableProcessors();
             ExecutorService executor = Executors.newFixedThreadPool(Math.min(coreCount  * 2, 32));
 
@@ -148,6 +149,7 @@ public class EngineMain implements Runnable{
             }
             multiClientHandler.clients.forEach(c->c.serverNetworkHandler.checkDeath());
         }else{
+            updateEntityChunk();
             for(Entity entity:entities.values()){
                 entity.tick();
             }
@@ -218,6 +220,12 @@ public class EngineMain implements Runnable{
             }
         }
         return minTeam;
+    }
+    public void updateEntityChunk(){
+        chunkMap.clear();
+        for(Entity entity:entities.values()){
+            entity.updateChunk();
+        }
     }
     public void spawnPolygons(){
         int count=getPolygonCount();

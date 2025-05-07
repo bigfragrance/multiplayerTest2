@@ -1,5 +1,6 @@
 package modules.entity;
 
+import engine.math.BlockPos2d;
 import engine.math.Box;
 import engine.math.Vec2d;
 import engine.math.util.PacketUtil;
@@ -13,6 +14,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static engine.math.util.Util.round;
+import static engine.modules.EngineMain.chunkSize;
 import static engine.modules.EngineMain.cs;
 import static engine.render.Screen.SCREEN_BOX;
 
@@ -97,6 +100,13 @@ public abstract class Entity implements NetworkItem {
                 this.nextBoundingBox=null;
             }
         }
+    }
+    public void updateChunk(){
+        BlockPos2d pos=getChunkPos();
+        cs.chunkMap.addEntity(this,cs.chunkMap.blockPos(pos));
+    }
+    public BlockPos2d getChunkPos(){
+        return new BlockPos2d(round(this.position.x/chunkSize),round(this.position.y/chunkSize));
     }
     public void resetTickDelta(){
         this.tickDelta=0;

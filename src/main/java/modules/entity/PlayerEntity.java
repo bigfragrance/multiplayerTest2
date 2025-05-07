@@ -15,21 +15,24 @@ import java.awt.*;
 import static engine.math.util.Util.random;
 import static engine.modules.EngineMain.cs;
 import static engine.render.Screen.*;
+import static java.lang.Math.floor;
 
 public class PlayerEntity extends Entity{
     public static double healthMax=100;
     public static double healthRegen=1;
-    public InputManager inputManager=Screen.INSTANCE.inputManager;
+    public static String[] skillNames={"Damage","Speed","Health","Reload","Size"};
+
     public double speed=12;
     public double size=10;
-    private long lastShoot=0;
-    private long lastRespawn=0;
+    protected long lastShoot=0;
+    protected long lastRespawn=0;
     public String name="Player";
-    private boolean playerDataSent=false;
-    private int playerDataUpdateTimer=0;
-    private Weapon weapon=null;
+    protected boolean playerDataSent=false;
+
+    protected Weapon weapon=null;
     public int noEnemyTimer=0;
-    public static double scoreMultiplier=0.00001;
+    public static double scoreMultiplier=0.0001;
+
     public PlayerEntity(Vec2d position) {
         super();
         this.position=position;
@@ -37,43 +40,12 @@ public class PlayerEntity extends Entity{
         this.prevPosition=position.copy();
         this.boundingBox=new Box(position,size,size);
         this.prevBoundingBox=boundingBox.copy();
-        inputManager=Screen.INSTANCE.inputManager;
         this.health=PlayerEntity.healthMax;;
         this.damage=1;
     }
     public void tick() {
         if(!cs.isServer){
-            if(cs.player!=null&& this.id==cs.player.id) {
-                if(this.weapon==null){
-                    this.weapon=Weapon.get(this,cs.setting.getChosenTank());
-                }
-                this.weapon.setMultiplier(1+this.score*scoreMultiplier);
-                this.name=cs.setting.getName();
-                if(playerDataUpdateTimer<0) {
-                    cs.networkHandler.sendPlayerData(this);
-                    playerDataUpdateTimer=100;
-                }
-                playerDataUpdateTimer--;
-
-                if(isAlive) {
-                    Vec2d input = inputManager.getPlayerInput();
-                    this.velocity.multiply1(0.3);
-                    this.velocity.offset(input.multiply(speed));
-                    this.updateCollision(false);
-                    super.tick();
-                    cs.networkHandler.sendPlayerMove(this.position);
-                    updateBullet();
-                }else{
-                    this.velocity=new Vec2d(0,0);
-                    this.prevPosition.set(this.position);
-                    this.prevBoundingBox=this.boundingBox.copy();
-                    if(inputManager.isRespawning()){
-                        cs.networkHandler.sendPlayerRespawn();
-                    }
-                }
-            }else{
-                super.tick();
-            }
+            super.tick();
         }
         else{
             this.noEnemyTimer=Math.max(0,this.noEnemyTimer-1);
@@ -92,39 +64,29 @@ public class PlayerEntity extends Entity{
             cs.multiClientHandler.clients.forEach(c -> c.serverNetworkHandler.send(o));*/
         }
     }
-    private void updateCollision(boolean server){
+
+    protected void updateCollision(boolean server){
         double dmgMultiplier=1/(1+this.score*scoreMultiplier);
-        for(Entity e:cs.entities.values()){
-            if(e.id==this.id) continue;
-            if(!e.isAlive) continue;
-            //if(e.team==this.team) continue;
 
-            boolean intersects=e.boundingBox.intersectsCircle(this.boundingBox)|| EntityUtils.intersectsCircle(this.prevBoundingBox,this.boundingBox,e.prevBoundingBox,e.boundingBox);
-
-            if(intersects){
-                if(server) {
-                    if (e.team != this.team) {
-                        if(this.noEnemyTimer<=0){
-                            this.health -= e.damage*dmgMultiplier;
-                            storeDamage(e,e.damage);
-                        }
-                    }
-                }else {
-                    if(!(e instanceof BulletEntity)) {
-                        Vec2d coll = EntityUtils.getPushVector(this, e);
-                        this.velocity.offset(coll);
+        EntityUtils.updateCollision(this,e->(e.id==this.id||!e.isAlive),e->EntityUtils.intersectsCircle(this,e),e->{
+            System.out.println("collision");
+            if(server) {
+                if (e.team != this.team) {
+                    if(this.noEnemyTimer<=0){
+                        this.health -= e.damage*dmgMultiplier;
+                        storeDamage(e,e.damage);
                     }
                 }
+            }else {
+                if(!(e instanceof BulletEntity)) {
+                    Vec2d coll = EntityUtils.getPushVector(this, e);
+                    this.velocity.offset(coll);
+                }
+
             }
-        }
+        });
     }
-    public void updateBullet(){
-        if(weapon==null) return;
-        weapon.update();
-        if(inputManager.isShooting()){
-            weapon.shoot();
-        }
-    }
+
     public void update2(JSONObject o){
         if(o.has("basic")){
             //this.prevPosition = this.position.copy();

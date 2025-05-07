@@ -3,10 +3,7 @@ package modules.network;
 import engine.math.Vec2d;
 import engine.math.util.PacketUtil;
 import modules.client.ClientNetwork;
-import modules.entity.BulletEntity;
-import modules.entity.Entity;
-import modules.entity.PlayerEntity;
-import modules.entity.PolygonEntity;
+import modules.entity.*;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -130,7 +127,7 @@ public class ClientNetworkHandler {
         JSONObject o2=o.getJSONObject("entity");
         switch (o2.getString("type")){
             case("player")->{
-                PlayerEntity player=PlayerEntity.fromJSON(o2.getJSONObject("data"));
+                ClientPlayerEntity player= ClientPlayerEntity.fromJSON(o2.getJSONObject("data"));
                 cs.player=player;
                 cs.addEntity(player);
                 cs.generateGroundBlocks(true);

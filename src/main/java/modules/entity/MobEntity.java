@@ -23,21 +23,15 @@ public class MobEntity extends Entity{
 
     }
     private void updateCollision(){
-        for(Entity e:cs.entities.values()){
-            if(e.id==this.id) continue;
-            if(!e.isAlive) continue;
-            boolean intersects=e.boundingBox.intersectsCircle(this.boundingBox)|| EntityUtils.intersectsCircle(this.prevBoundingBox,this.boundingBox,e.prevBoundingBox,e.boundingBox);
-
-            if(intersects){
-                if(e.team!=this.team) {
-                    this.health-=e.damage;
-                    storeDamage(e,e.damage);
-                }
-                if(!(e instanceof BulletEntity)) {
-                    Vec2d coll = EntityUtils.getPushVector(this, e);
-                    this.velocity.offset(coll);
-                }
+        EntityUtils.updateCollision(this,e->(e.id==this.id||!e.isAlive),e->EntityUtils.intersectsCircle(this,e),e->{
+            if(e.team!=this.team) {
+                this.health-=e.damage;
+                storeDamage(e,e.damage);
             }
-        }
+            if(!(e instanceof BulletEntity)) {
+                Vec2d coll = EntityUtils.getPushVector(this, e);
+                this.velocity.offset(coll);
+            }
+        });
     }
 }

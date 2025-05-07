@@ -44,6 +44,30 @@ public class InputManager {
     public Vec2d getMouseVec(){
         return Screen.mousePos.switchToGame1();
     }
+    public boolean isUpgrading(int skill){
+        char c;
+        switch(skill){
+            case(0)->{
+                c='z';
+            }
+            case(1)->{
+                c='x';
+            }
+            case(2)->{
+                c='c';
+            }
+            case(3)->{
+                c='v';
+            }
+            case(4)->{
+                c='b';
+            }
+            default -> {
+                return false;
+            }
+        }
+        return Screen.isKeyPressed(c);
+    }
 
     /*private final ConcurrentHashMap<Integer, Boolean> keyStates = new ConcurrentHashMap<>();
     private final JPanel targetPanel;

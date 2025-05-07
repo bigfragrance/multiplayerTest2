@@ -20,7 +20,7 @@ public class Weapon1 extends Weapon{
         if(cooldown<=0){
             Vec2d input= Screen.INSTANCE.inputManager.getMouseVec();
             Vec2d pos=owner.position;
-            Vec2d velocity=input.limit(speed*6).add(Util.randomVec().limit(2));
+            Vec2d velocity=input.limit(speed*6).add(Util.randomVec().limit(0.5));
             double size=this.size;
             double health=this.health;
             double damage=this.damage;
