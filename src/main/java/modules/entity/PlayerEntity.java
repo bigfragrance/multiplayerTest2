@@ -31,7 +31,7 @@ public class PlayerEntity extends Entity{
 
     protected Weapon weapon=null;
     public int noEnemyTimer=0;
-    public static double scoreMultiplier=0.0001;
+    public static double scoreMultiplier=0.1;
 
     public PlayerEntity(Vec2d position) {
         super();
@@ -66,7 +66,7 @@ public class PlayerEntity extends Entity{
     }
 
     protected void updateCollision(boolean server){
-        double dmgMultiplier=1/(1+this.score*scoreMultiplier);
+        double dmgMultiplier=1;///(1+this.score*scoreMultiplier);
 
         EntityUtils.updateCollision(this,e->(e.id==this.id||!e.isAlive),e->EntityUtils.intersectsCircle(this,e),e->{
             System.out.println("collision");
@@ -88,6 +88,7 @@ public class PlayerEntity extends Entity{
     }
 
     public void update2(JSONObject o){
+        this.prevHealth=this.health;
         if(o.has("basic")){
             //this.prevPosition = this.position.copy();
             JSONObject basic = o.getJSONObject("basic");
@@ -110,6 +111,7 @@ public class PlayerEntity extends Entity{
                 }
             });
         }
+        this.isDamageTick=health<prevHealth;
     }
     public void updateStatus(JSONObject o){
         super.update(o);

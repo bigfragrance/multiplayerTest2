@@ -101,7 +101,12 @@ public class EngineMain implements Runnable{
         }
     }
     public static double getTickDelta(){
-        return  Math.min(TPS*((double)(System.currentTimeMillis() - lastTick)) / 1000d,1);
+        return  Math.max(0,Math.min(TPS*((double)(System.currentTimeMillis() - lastTick)) / 1000d,1));
+    }
+    public void clientUpdate(double time){
+        if(player!=null){
+            player.updateBullet(time);
+        }
     }
     public void update(){
         List<Long> toRemove=new ArrayList<>();

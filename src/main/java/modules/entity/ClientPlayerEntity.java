@@ -15,9 +15,11 @@ import static engine.modules.EngineMain.cs;
 import static java.lang.Math.floor;
 
 public class ClientPlayerEntity extends PlayerEntity{
+    public static double[] skillPointMultipliersMax={1,0.75,1,1,0.8};
     public InputManager inputManager=Screen.INSTANCE.inputManager;
     protected int playerDataUpdateTimer=0;
     public double[] skillPoints= {1,1,1,1,1};
+    public double[] skillPointLevels={0,0,0,0,0};
     protected int skillPointNow=0;
     protected int skillPointUsed=0;
     protected int upgradeTimer=0;
@@ -45,7 +47,7 @@ public class ClientPlayerEntity extends PlayerEntity{
             this.updateCollision(false);
             super.tick();
             cs.networkHandler.sendPlayerMove(this.position);
-            updateBullet();
+            //updateBullet();
         }else{
             this.velocity=new Vec2d(0,0);
             this.prevPosition.set(this.position);
@@ -62,23 +64,24 @@ public class ClientPlayerEntity extends PlayerEntity{
                 break;
             }
             if(inputManager.isUpgrading(i)){
-                skillPoints[i]+=0.1;
-                upgradeTimer=3;
+                skillPointLevels[i]+=0.1;
+                skillPoints[i]=1+getMultiplier(skillPointLevels[i],skillPointMultipliersMax[i]);
+                upgradeTimer=2;
                 skillPointUsed++;
                 break;
             }
         }
     }
-    public void updateBullet(){
+    public void updateBullet(double time){
         if(weapon==null) return;
-        weapon.update();
+        weapon.update(time);
         if(inputManager.isShooting()){
             weapon.shoot();
         }
     }
     public void render(Graphics g){
         super.render(g);
-        EntityUtils.renderSkillPoints(g,getSkillPointRenderPosition(),skillPoints,skillPointNow-skillPointUsed);
+        EntityUtils.renderSkillPoints(getSkillPointRenderPosition(),skillPoints,skillPointNow-skillPointUsed);
     }
     private Vec2d getSkillPointRenderPosition(){
         return Screen.SCREEN_BOX.getMaxPos().add(-100,-50);
@@ -90,5 +93,8 @@ public class ClientPlayerEntity extends PlayerEntity{
         e.boundingBox= Box.fromJSON(basic.getJSONObject(PacketUtil.getShortString("boundingBox")));
         e.update(o);
         return e;
+    }
+    public static double getMultiplier(double level,double max){
+        return -max/(level+1)+max;
     }
 }

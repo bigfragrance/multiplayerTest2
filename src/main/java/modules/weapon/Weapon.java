@@ -29,7 +29,7 @@ public class Weapon{
         this.reload= (reloadBase/multiplier[3]);
         this.size=sizeBase*multiplier[4];
     }
-    public void update(){
+    public void update(double time){
 
     }
     public void shoot(){

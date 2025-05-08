@@ -7,18 +7,16 @@ import modules.entity.Entity;
 
 import static engine.modules.EngineMain.cs;
 
-public class Weapon2 extends Weapon{
-    private double cooldown;
+public class Weapon2 extends NormalWeapon{
+
     public Weapon2(Entity owner) {
         super(owner);
     }
-    public void update(){
-        cooldown=Math.max(cooldown-1,0);
-    }
+
     public void shoot(){
         if(cooldown<=0){
             Vec2d input= Screen.INSTANCE.inputManager.getMouseVec();
-            Vec2d pos=owner.position;
+            Vec2d pos=owner.getBulletPosition();
             Vec2d velocity=input.limit(speed*3).add(Util.randomVec().limit(0.5));
             double size=this.size*0.5;
             double health=this.health*0.5;

@@ -23,6 +23,15 @@ public class Util {
     public static int round(double d){
         return (int)Math.round(d);
     }
+    public static double round(double d,int m){
+        return (double) Math.round(d * m) /m;
+    }
+    public static String getRoundedDouble(double d,int m){
+        int i=round(d*Math.pow(10,m));
+        String s=String.valueOf(i);
+        if(s.length()<m) return "0."+"0".repeat(m-s.length())+s;
+        else return s.substring(0,s.length()-m)+"."+s.substring(s.length()-m);
+    }
 
     public static void render( Graphics g,double mx, double my, double xs, double ys){
         g.fillOval(round(mx),round(my),round(xs),round(ys));

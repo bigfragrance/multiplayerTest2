@@ -14,6 +14,7 @@ import static engine.modules.EngineMain.cs;
 public class BulletEntity extends Entity{
     public int lifeTime=0;
     public long ownerId;
+    private boolean invisibleTick=false;
     public BulletEntity(Vec2d position, Vec2d velocity, Box boundingBox,double health,double damage,int team){
         super();
         this.position=position;
@@ -24,13 +25,18 @@ public class BulletEntity extends Entity{
         this.health=health;
         this.damage=damage;
         this.team=team;
+        invisibleTick=true;
     }
     public void tick(){
         if(lifeTime>20||health<=0){
             kill();
         }
         super.tick();
+        if(!this.boundingBox.equals(this.prevBoundingBox)){
+            invisibleTick=false;
+        }
         if(!cs.isServer) return;
+        invisibleTick=false;
         updateCollision();
         lifeTime++;
     }
@@ -43,6 +49,7 @@ public class BulletEntity extends Entity{
         super.update(o);
     }
     public void render(Graphics g){
+        if(invisibleTick) return;
         super.render(g);
         EntityUtils.render(g,this);
     }

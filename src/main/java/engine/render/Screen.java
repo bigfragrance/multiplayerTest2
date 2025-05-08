@@ -3,6 +3,7 @@ package engine.render;
 
 import engine.math.Box;
 import engine.math.Vec2d;
+import engine.math.util.AfterCheckTask;
 import engine.math.util.Util;
 import engine.modules.EngineMain;
 import modules.ctrl.InputManager;
@@ -42,6 +43,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     private static long lastRender=0;
     public InputManager inputManager=null;
     public static Box SCREEN_BOX=new Box(0, 800,0,800);
+    private ArrayList<AfterCheckTask<Graphics>> renderTasks=new ArrayList<>();
     public Screen(){
         INSTANCE=this;
         frame.addKeyListener(this);
@@ -137,14 +139,15 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
             //if(System.currentTimeMillis()-EngineMain.lastTick>1000/TPS||System.currentTimeMillis()-EngineMain.lastTick<4) continue;
             tickDeltaAdd=(System.currentTimeMillis()-lastRender)/1000.0d*TPS;
             tickDelta=EngineMain.getTickDelta();
+            cs.clientUpdate(tickDeltaAdd);
             repaint();
             lastRender=System.currentTimeMillis();
-            /*try {
-                long s= -(System.currentTimeMillis() - start) +1000/16;
+            try {
+                long s= -(System.currentTimeMillis() - start) +1000/60;
                 if(s>0)Thread.sleep(s); // 60 FPS
             } catch (InterruptedException e) {
                 e.printStackTrace();
-            }*/
+            }
         }
     }
     @Override
@@ -154,7 +157,11 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
             Graphics2D g2d = (Graphics2D) g;
             g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                     RenderingHints.VALUE_ANTIALIAS_ON);
-
+            for(double i=0;i<40;i++){
+                Box b=cs.borderBox.expand(i*i,i*i);
+                g.setColor(Color.GRAY);
+                Util.renderCubeLine(g,b.switchToJFrame());
+            }
             ArrayList<Entity> entities=new ArrayList<>(cs.entities.values());
             for(Entity entity:entities){
                 entity.render(g);
@@ -162,11 +169,10 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
             for(Particle particle:(ArrayList<Particle>)cs.particles.clone()){
                 particle.render(g);
             }
-            for(double i=0;i<40;i++){
-                Box b=cs.borderBox.expand(i*i,i*i);
-                g.setColor(Color.GRAY);
-                Util.renderCubeLine(g,b.switchToJFrame());
+            for(int i=renderTasks.size()-1;i>=0;i--){
+                renderTasks.get(i).run(g);
             }
+            renderTasks.clear();
         }
         catch (Exception e){
             super.paintComponent(g);
@@ -186,5 +192,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
             //e.printStackTrace();
         }
     }
-
+    public void renderAtLast(AfterCheckTask<Graphics> task){
+        renderTasks.add(task);
+    }
 }

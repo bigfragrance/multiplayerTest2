@@ -30,6 +30,7 @@ public abstract class Entity implements NetworkItem {
     Vec2d nextPosition=null;
     Box nextBoundingBox=null;
     public double health;
+    public double prevHealth;
     public double damage;
     public int team;
     public double rotation;
@@ -38,13 +39,12 @@ public abstract class Entity implements NetworkItem {
     public static double collisionVector=0.2;
     public static double collisionMax=10;
     public HashMap<Long,DamageSource> damageTaken=new HashMap<>();
-    private double lastHealth=0;
     public boolean isDamageTick=false;
     public double mass=400;
     public double tickDelta=0;
     @Override
     public void update(JSONObject o) {
-        lastHealth=this.health;
+        this.prevHealth=this.health;
         if(o.has("basic")){
             //this.prevPosition = this.position.copy();
             JSONObject basic = o.getJSONObject("basic");
@@ -76,7 +76,7 @@ public abstract class Entity implements NetworkItem {
         this.boundingBox=this.nextBoundingBox.copy();
         //this.tickDelta=0;
         if(!cs.isServer)this.resetTickDelta();*/
-        isDamageTick=health<lastHealth;
+        this.isDamageTick=health<prevHealth;
     }
     public void tick(){
         this.prevPosition.set(this.position);
@@ -158,6 +158,12 @@ public abstract class Entity implements NetworkItem {
     }
     public Vec2d getRenderPosition(){
         return Util.lerp(this.prevPosition,this.position,tickDelta);
+    }
+    public Vec2d getBulletPosition(){
+        return Util.lerp(this.prevPosition,this.position,tickDelta+1);
+    }
+    public double getRenderHealth(){
+        return Util.lerp(this.prevHealth,this.health,tickDelta);
     }
     public void storeDamage(Entity e,double damage){
         List<Long> toRemove=new ArrayList<>();

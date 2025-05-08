@@ -27,7 +27,7 @@ public class EntityUtils {
     public static Color HealthBarColor=new Color(250,255,100,255);
     public static int nameSize=10;
     public static int scoreSize=7;
-    public static double intersectCheckStep=0.25;
+    public static double intersectCheckStep=0.1;
     public static boolean intersects(Box pb1,Box b1,Box pb2,Box b2) {
         if(pb1==null) pb1=b1;
         if(pb2==null) pb2=b2;
@@ -98,7 +98,7 @@ public class EntityUtils {
         Vec2d a=healthBar.getMinPos();
         Vec2d b=healthBar.getMaxPos();
         double xDelta=b.x-a.x;
-        Box healthBarPercentage=new Box(a,b.add(-xDelta*(1-e.health/maxHealth),0));
+        Box healthBarPercentage=new Box(a,b.add(-xDelta*(1-e.getRenderHealth()/maxHealth),0));
         Util.renderCube(g,healthBarPercentage.switchToJFrame());
 
         g.setColor(Color.BLACK);
@@ -114,15 +114,17 @@ public class EntityUtils {
         Vec2d renderPos=e.getRenderPosition().add(0,30);
         Util.renderString(g, String.valueOf(round(e.score)),renderPos.switchToJFrame(),round(scoreSize*Screen.INSTANCE.zoom));
     }
-    public static void renderSkillPoints(Graphics g,Vec2d pos,double[] skillPoints,int left){
-        g.setColor(Color.DARK_GRAY);
+    public static void renderSkillPoints(Vec2d pos,double[] skillPoints,int left){
+        Screen.INSTANCE.renderAtLast(g->{
+            g.setColor(Color.DARK_GRAY);
 
-        Util.renderString(g,("Skill Points: "+left),pos,round(scoreSize*Screen.INSTANCE.zoom));
-        pos.offset(0,-15);
-        for(int i=0;i<skillPoints.length;i++){
-            Util.renderString(g,PlayerEntity.skillNames[i]+": "+skillPoints[i],pos,round(scoreSize*Screen.INSTANCE.zoom));
+            Util.renderString(g,("Skill Points: "+left),pos,round(scoreSize*Screen.INSTANCE.zoom));
             pos.offset(0,-15);
-        }
+            for(int i=0;i<skillPoints.length;i++){
+                Util.renderString(g,PlayerEntity.skillNames[i]+": "+Util.getRoundedDouble(skillPoints[i],2),pos,round(scoreSize*Screen.INSTANCE.zoom));
+                pos.offset(0,-15);
+            }
+        });
         //Util.renderString(g,getSkillPointsString(skillPoints,left),pos,round(scoreSize*Screen.INSTANCE.zoom));
     }
     public static String getSkillPointsString(double[] skillPoints,int left){
