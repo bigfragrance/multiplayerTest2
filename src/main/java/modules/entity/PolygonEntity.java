@@ -37,7 +37,7 @@ public class PolygonEntity extends MobEntity{
     public static double[] damageMultipliers2={0.5,0.7,1,1.2,1.3,1.4,1.45,1.5,1.55,1.6};
     public static double sizeBase=12;
     public static double damageBase=0.8;
-    public static double speed=0.7;
+    public static double speed=0.3;
     public Vec2d addVelocity=new Vec2d(0,0);
     public int velChangeTimer=0;
     public int sides;
@@ -70,16 +70,16 @@ public class PolygonEntity extends MobEntity{
             return;
         }
         if(velChangeTimer<=0){
-            velChangeTimer=10;
+            velChangeTimer=20;
             addVelocity=Util.randomVec().limit(speed);
         }
         velChangeTimer--;
         this.velocity.offset(addVelocity);
-        this.velocity.multiply1(0.3);
-        this.rotation+=3;
-        this.health+=0.3;
+        this.velocity.multiply1(0.7);
+        this.rotation+=1.5;
+        this.health+=0.15;
         this.health=Math.min(this.health,getHealthMax(sides,type));
-        if(this.prevRotation>180&&this.rotation>180){
+        if(this.prevRotation>280&&this.rotation>280){
             this.prevRotation-=360;
             this.rotation-=360;
         }
@@ -90,34 +90,34 @@ public class PolygonEntity extends MobEntity{
     }
     public void render(Graphics g){
         super.render(g);
-        Color team=sidesColors[sides-3];
+        Color team=ColorUtils.setAlpha(sidesColors[sides-3],getRenderAlpha());
 
         if(isDamageTick){
             team=ColorUtils.brighter(team,0.5);
         }
 
-        double rotation=Util.lerp(this.prevRotation,this.rotation,tickDelta);
+        double rotation=Util.lerp(this.prevRotation,this.rotation,getTickDelta());
         g.setColor(team);
-        Util.renderPolygon(g,Util.lerp(prevBoundingBox,boundingBox,tickDelta).getCenter(),sides,size,rotation,true,true);
+        Util.renderPolygon(g,Util.lerp(prevBoundingBox,boundingBox,getTickDelta()).getCenter(),sides,size,rotation,true,true);
 
         g.setColor(ColorUtils.darker(team,0.6));
         double smaller=size;
         double rotAdd=0;
         double m=getSizeSmallerMultiplier(sides);
-        Util.renderPolygon(g,Util.lerp(prevBoundingBox,boundingBox,tickDelta).getCenter(),sides,smaller,rotation+rotAdd,true,false);
+        Util.renderPolygon(g,Util.lerp(prevBoundingBox,boundingBox,getTickDelta()).getCenter(),sides,smaller,rotation+rotAdd,true,false);
         for(int i=0;i<type;i++){
             smaller*=m;
             rotAdd+=160d/sides;
-            Util.renderPolygon(g,Util.lerp(prevBoundingBox,boundingBox,tickDelta).getCenter(),sides,smaller,rotation+rotAdd,true,false);
+            Util.renderPolygon(g,Util.lerp(prevBoundingBox,boundingBox,getTickDelta()).getCenter(),sides,smaller,rotation+rotAdd,true,false);
         }
         EntityUtils.renderHealthBar(g,this,getHealthMax(sides,type));
     }
     public JSONObject toJSON() {
         JSONObject o=new JSONObject();
-        o.put("type","polygon");
+        o.put(PacketUtil.getShortVariableName("type"),"polygon");
         JSONObject o2=new JSONObject();
         o2.put("sides",sides);
-        o2.put("type",type);
+        o2.put(PacketUtil.getShortVariableName("type"),type);
         o.put("polygon",o2);
         super.addJSON(o);
         return o;
@@ -126,18 +126,18 @@ public class PolygonEntity extends MobEntity{
         return "polygon";
     }
     public static PolygonEntity fromJSON(JSONObject o){
-        JSONObject basic=o.getJSONObject("basic");
+        JSONObject basic=PacketUtil.getJSONObject(o,"basic");
         JSONObject polygon=o.getJSONObject("polygon");
-        PolygonEntity e=new PolygonEntity(Vec2d.fromJSON(basic.getJSONObject(PacketUtil.getShortString("position"))),polygon.getInt("sides"),polygon.getInt("type"));
-        e.id=basic.getLong(PacketUtil.getShortString("id"));
+        PolygonEntity e=new PolygonEntity(Vec2d.fromJSON(basic.getJSONObject(PacketUtil.getShortVariableName("position"))),polygon.getInt("sides"),polygon.getInt(PacketUtil.getShortVariableName("type")));
+        e.id=basic.getLong(PacketUtil.getShortVariableName("id"));
         e.update(o);
         //e.boundingBox=Box.fromJSON(basic.getJSONObject(PacketUtil.getShortString("boundingBox")));
         return e;
     }
     public JSONObject getUpdate(){
         JSONObject o=new JSONObject();
-        o.put("type","entity_update");
-        o.put(PacketUtil.getShortString("id"),this.id);
+        PacketUtil.putPacketType(o,"entity_update");
+        o.put(PacketUtil.getShortVariableName("id"),this.id);
         super.addJSON(o);
         return o;
     }

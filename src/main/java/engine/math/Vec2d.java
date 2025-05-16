@@ -13,6 +13,9 @@ public class Vec2d {
         this.x = x;
         this.y = y;
     }
+    public Vec2d(double rotation){
+        this(Util.cos(rotation),Util.sin(rotation));
+    }
 
     public Vec2d add(double x, double y) {
         return new Vec2d(this.x + x, this.y + y);
@@ -73,7 +76,7 @@ public class Vec2d {
     }
 
     public Vec2d switchToGame1() {
-        return new Vec2d(x - (double) Screen.INSTANCE.windowWidth / 2, -y + (double) Screen.INSTANCE.windowHeight / 2);
+        return new Vec2d((x - (double) Screen.INSTANCE.windowWidth / 2)/Screen.INSTANCE.zoom, (-y + (double) Screen.INSTANCE.windowHeight / 2)/Screen.INSTANCE.zoom);
     }
 
     public Vec2d limit(double l) {
@@ -85,7 +88,16 @@ public class Vec2d {
         if (this.length() <= l) return this.copy();
         return this.limit(l);
     }
-
+    public double dot(Vec2d pos) {
+        return x * pos.x + y * pos.y;
+    }
+    public double cross(Vec2d pos) {
+        return x * pos.y - y * pos.x;
+    }
+    public double angle(){
+        if(this.length()<=0.00000001) return 0;
+        return Math.toDegrees(Math.atan2(y, x));
+    }
     public double distanceTo(Vec2d pos) {
         return this.subtract(pos).length();
     }

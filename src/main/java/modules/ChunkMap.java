@@ -5,12 +5,13 @@ import modules.entity.Entity;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class ChunkMap {
-    public HashMap<BlockPos2d, ArrayList<Entity>> chunks;
+    public ConcurrentHashMap<BlockPos2d, ArrayList<Entity>> chunks;
     public ArrayList<BlockPos2d> created=new ArrayList<>();
     public ChunkMap(){
-        chunks=new HashMap<>();
+        chunks=new ConcurrentHashMap<>();
     }
     public ArrayList<Entity> getChunk(BlockPos2d pos){
         return chunks.getOrDefault(pos,new ArrayList<>());

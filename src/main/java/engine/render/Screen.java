@@ -8,16 +8,14 @@ import engine.math.util.Util;
 import engine.modules.EngineMain;
 import modules.ctrl.InputManager;
 import modules.entity.Entity;
+import modules.entity.bullet.EntityParticle;
 import modules.particle.Particle;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
-import java.util.Map;
 
 import static engine.math.util.Util.round;
 import static engine.modules.EngineMain.TPS;
@@ -128,24 +126,28 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     }
     public void run(){
         while (true) {
-            SCREEN_BOX=new Box(0, Screen.INSTANCE.windowWidth,0,Screen.INSTANCE.windowHeight);
-            long start=System.currentTimeMillis();
-            windowWidth=frame.getWidth();
-            windowHeight=frame.getHeight();
-
-            Vec2d camPos=cs.getCamPos();
-            camX=camPos.x;
-            camY=camPos.y;
-            //if(System.currentTimeMillis()-EngineMain.lastTick>1000/TPS||System.currentTimeMillis()-EngineMain.lastTick<4) continue;
-            tickDeltaAdd=(System.currentTimeMillis()-lastRender)/1000.0d*TPS;
-            tickDelta=EngineMain.getTickDelta();
-            cs.clientUpdate(tickDeltaAdd);
-            repaint();
-            lastRender=System.currentTimeMillis();
             try {
+                SCREEN_BOX=new Box(0, Screen.INSTANCE.windowWidth,0,Screen.INSTANCE.windowHeight);
+                long start=System.currentTimeMillis();
+                windowWidth=frame.getWidth();
+                windowHeight=frame.getHeight();
+
+                Vec2d camPos=cs.getCamPos();
+                camX=camPos.x;
+                camY=camPos.y;
+                //if(System.currentTimeMillis()-EngineMain.lastTick>1000/TPS||System.currentTimeMillis()-EngineMain.lastTick<4) continue;
+                tickDeltaAdd=(System.currentTimeMillis()-lastRender)/1000.0d*TPS;
+                tickDelta=EngineMain.getTickDelta();
+                cs.fastUpdate(tickDeltaAdd);
+                try {
+                    repaint();
+                }catch ( Exception e){
+                    e.printStackTrace();
+                }
+                lastRender=System.currentTimeMillis();
                 long s= -(System.currentTimeMillis() - start) +1000/60;
                 if(s>0)Thread.sleep(s); // 60 FPS
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }
@@ -155,8 +157,10 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
         try {
             super.paintComponent(g);
             Graphics2D g2d = (Graphics2D) g;
-            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                    RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,  RenderingHints.VALUE_ANTIALIAS_ON);
+            g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,  RenderingHints.VALUE_TEXT_ANTIALIAS_LCD_HRGB);
+            g2d.setRenderingHint(RenderingHints.KEY_RENDERING,  RenderingHints.VALUE_RENDER_QUALITY);
+            g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,  RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             for(double i=0;i<40;i++){
                 Box b=cs.borderBox.expand(i*i,i*i);
                 g.setColor(Color.GRAY);
@@ -167,6 +171,9 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
                 entity.render(g);
             }
             for(Particle particle:(ArrayList<Particle>)cs.particles.clone()){
+                particle.render(g);
+            }
+            for(Entity particle:(ArrayList<Entity>)cs.entityParticles.clone()){
                 particle.render(g);
             }
             for(int i=renderTasks.size()-1;i>=0;i--){
@@ -182,6 +189,10 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
             }
             ArrayList<Particle> particles=new ArrayList<>((ArrayList<Particle>)cs.particles.clone());
             for(Particle particle:particles){
+                particle.render(g);
+            }
+            ArrayList<Entity> bulletParticles=new ArrayList<>((ArrayList<Entity>)cs.entityParticles.clone());
+            for(Entity particle:bulletParticles){
                 particle.render(g);
             }
             for(double i=0;i<40;i++){

@@ -15,7 +15,7 @@ public class Weapon4 extends NormalWeapon{
 
     public void shoot(){
         if(cooldown<=0){
-            Vec2d input= Screen.INSTANCE.inputManager.getMouseVec();
+            Vec2d input= owner.targetingPos;
             Vec2d pos=owner.getBulletPosition();
 
             double size=this.size*0.5;
@@ -25,7 +25,7 @@ public class Weapon4 extends NormalWeapon{
             for(int i=0;i<20;i++) {
                 rot+=18d;
                 Vec2d velocity=input.limit(speed*7.5).rotate(rot);
-                cs.networkHandler.sendBulletShoot(pos, velocity.add(Util.randomVec().limit(0.3)), size, health, damage);
+                shootBullet(pos, velocity.add(Util.randomVec().limit(0.3)), size, health, damage);
             }
             cooldown=reload;
         }

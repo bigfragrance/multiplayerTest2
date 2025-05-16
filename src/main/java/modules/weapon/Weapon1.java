@@ -14,13 +14,13 @@ public class Weapon1 extends NormalWeapon{
     }
     public void shoot(){
         if(cooldown<=0){
-            Vec2d input= Screen.INSTANCE.inputManager.getMouseVec();
+            Vec2d input= owner.targetingPos;
             Vec2d pos=owner.getBulletPosition();
             Vec2d velocity=input.limit(speed*6).add(Util.randomVec().limit(0.5));
             double size=this.size;
             double health=this.health;
             double damage=this.damage;
-            cs.networkHandler.sendBulletShoot(pos,velocity,size,health,damage);
+            shootBullet(pos,velocity,size,health,damage);
             cooldown=(reload*0.1);
         }
     }

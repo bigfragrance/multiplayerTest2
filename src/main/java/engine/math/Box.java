@@ -74,6 +74,9 @@ public class Box {
     public double ySize(){
         return this.maxY-this.minY;
     }
+    public double avgSize(){
+        return (xSize()+ySize())/2;
+    }
     public Box switchToJFrame(){
         return new Box(Util.switchXToJFrame(minX), Util.switchXToJFrame(maxX),Util.switchYToJFrame(minY),Util.switchYToJFrame(maxY));
     }

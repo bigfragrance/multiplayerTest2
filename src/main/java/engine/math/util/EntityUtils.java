@@ -5,7 +5,8 @@ import engine.math.Box;
 import engine.math.Vec2d;
 import engine.render.Screen;
 import modules.entity.Entity;
-import modules.entity.PlayerEntity;
+import modules.entity.bullet.BulletEntity;
+import modules.entity.player.PlayerEntity;
 import modules.entity.PolygonEntity;
 
 import java.awt.*;
@@ -69,7 +70,7 @@ public class EntityUtils {
         return teamColors[team%teamColors.length];
     }
     public static void render(Graphics g,Entity e){
-        Color team=getTeamColor(e.team);
+        Color team=ColorUtils.setAlpha(getTeamColor(e.team),e.getRenderAlpha());
         if(e.isDamageTick){
             team=ColorUtils.brighter(team,0.5);
         }
@@ -78,9 +79,9 @@ public class EntityUtils {
         }
 
         g.setColor(ColorUtils.darker(team,0.6));
-        Util.render(g,Util.lerp(e.prevBoundingBox,e.boundingBox,e.tickDelta).switchToJFrame());
+        Util.render(g,Util.lerp(e.prevBoundingBox,e.boundingBox,e.getTickDelta()).switchToJFrame());
         g.setColor(team);
-        Util.render(g,Util.lerp(e.prevBoundingBox,e.boundingBox,e.tickDelta).expand(-2,-2).switchToJFrame());
+        Util.render(g,Util.lerp(e.prevBoundingBox,e.boundingBox,e.getTickDelta()).expand(-2,-2).switchToJFrame());
 
         if(e instanceof PlayerEntity){
             renderHealthBar(g,e,PlayerEntity.healthMax);
@@ -88,6 +89,29 @@ public class EntityUtils {
         if(e instanceof PolygonEntity p){
             renderHealthBar(g,e,PolygonEntity.getHealthMax(p.sides,p.type));
         }
+    }
+    public static void renderBullet(Graphics g, BulletEntity e,double bright){
+        Color team=ColorUtils.setAlpha(getTeamColor(e.team), bright);
+        if(e.isDamageTick){
+            team=ColorUtils.brighter(team,0.5);
+        }
+        if(!e.isAlive){
+            team=new Color(team.getRed(),team.getGreen(),team.getBlue(),50);
+        }
+        if(e.type.type==0) {
+            g.setColor(ColorUtils.darker(team, 0.6));
+            Util.render(g, Util.lerp(e.prevBoundingBox, e.boundingBox, e.getTickDelta()).switchToJFrame());
+            g.setColor(team);
+            Util.render(g, Util.lerp(e.prevBoundingBox, e.boundingBox, e.getTickDelta()).expand(-2, -2).switchToJFrame());
+        }else{
+            g.setColor(ColorUtils.darker(team, 0.6));
+            Util.renderPolygon(g,e.getRenderPosition(),e.type.type+2,e.boundingBox.avgSize()/2,e.getRenderRotation(),true,true,e.type.sharp,e.type.sharpFactor);
+            g.setColor(team);
+            Util.renderPolygon(g,e.getRenderPosition(),e.type.type+2,e.boundingBox.avgSize()/2-2,e.getRenderRotation(),true,true,e.type.sharp,e.type.sharpFactor);
+        }
+    }
+    public static void renderBullet(Graphics g, BulletEntity e){
+        renderBullet(g,e,e.getRenderAlpha());
     }
     public static void renderHealthBar(Graphics g,Entity e,double maxHealth){
         if(e.health/maxHealth>0.95||e.health<=0) return;
@@ -105,12 +129,12 @@ public class EntityUtils {
         Util.renderCubeLine(g,healthBar.switchToJFrame());
     }
     public static void renderPlayerName(Graphics g,PlayerEntity e){
-        g.setColor(Color.DARK_GRAY);
+        g.setColor(ColorUtils.setAlpha(Color.DARK_GRAY,e.getRenderAlpha()));
         Vec2d renderPos=e.getRenderPosition().add(0,15);
         Util.renderString(g,e.name,renderPos.switchToJFrame(),round(nameSize*Screen.INSTANCE.zoom));
     }
     public static void renderScore(Graphics g,Entity e){
-        g.setColor(Color.DARK_GRAY);
+        g.setColor(ColorUtils.setAlpha(Color.DARK_GRAY,e.getRenderAlpha()));
         Vec2d renderPos=e.getRenderPosition().add(0,30);
         Util.renderString(g, String.valueOf(round(e.score)),renderPos.switchToJFrame(),round(scoreSize*Screen.INSTANCE.zoom));
     }
@@ -151,8 +175,8 @@ public class EntityUtils {
     }
     public static void updateCollision(Entity entity, Predicate<Entity> neverCheck,Predicate<Entity> check,AfterCheckTask<Entity> task){
         BlockPos2d pos=entity.getChunkPos();
-        for(int x=-2;x<=2;x++){
-            for(int y=-2;y<=2;y++){
+        for(int x=-1;x<=1;x++){
+            for(int y=-1;y<=1;y++){
                 BlockPos2d pos2=pos.add(x,y);
                 pos2=cs.chunkMap.blockPos(pos2);
                 if(!cs.chunkMap.chunks.containsKey(pos2)) continue;
@@ -165,5 +189,9 @@ public class EntityUtils {
                 }
             }
         }
+    }
+    public static Vec2d getKnockBackVector(Entity self,Entity other,double f){
+        double d=self.velocity.dot(other.velocity.limit(1));
+        return other.velocity.multiply(f);
     }
 }

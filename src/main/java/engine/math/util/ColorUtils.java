@@ -39,4 +39,11 @@ public class ColorUtils {
     public static Color opposite(Color c){
         return new Color(255-c.getRed(),255-c.getGreen(),255-c.getBlue(),c.getAlpha());
     }
+    public static Color setAlpha(Color c,int alpha){
+        return new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha);
+    }
+    public static Color setAlpha(Color c,double alpha){
+        alpha=Math.clamp(alpha,0.01,0.99);
+        return new Color(c.getRed(),c.getGreen(),c.getBlue(),(int)(alpha*255));
+    }
 }

@@ -28,7 +28,7 @@ public class GroundParticle extends Particle{
     public void render(Graphics g){
         super.render(g);
         g.setColor(new Color(0,0,0,50));
-        Util.render(g,new Box(Util.lerp(prevPosition,position,tickDelta),size,size).switchToJFrame());
+        Util.render(g,new Box(Util.lerp(prevPosition,position,getTickDelta()),size,size).switchToJFrame());
     }
     public boolean shouldKill(boolean ignoreTime){
         if(!ignoreTime&&System.currentTimeMillis()-startTime<2000) return false;

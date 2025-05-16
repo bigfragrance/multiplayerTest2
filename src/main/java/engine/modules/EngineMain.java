@@ -1,22 +1,24 @@
 package engine.modules;
 
 
-import engine.math.BlockPos2d;
 import engine.math.Box;
 import engine.math.Vec2d;
+import engine.math.util.PacketUtil;
 import engine.math.util.Setting;
 import engine.math.util.Util;
 import engine.render.Screen;
 import modules.ChunkMap;
-import modules.client.ClientNetwork;
-import modules.entity.ClientPlayerEntity;
+import modules.entity.bullet.EntityParticle;
+import modules.entity.player.ClientPlayerEntity;
 import modules.entity.Entity;
-import modules.entity.PlayerEntity;
+import modules.entity.player.PlayerEntity;
 import modules.entity.PolygonEntity;
+import modules.entity.player.ServerPlayerEntity;
 import modules.network.ClientNetworkHandler;
-import modules.network.ServerNetworkHandler;
 import modules.particle.GroundParticle;
 import modules.particle.Particle;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import server.MultiClientHandler;
 import server.ServerMain;
 
@@ -24,22 +26,21 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.logging.Logger;
 
 import static engine.math.util.Util.round;
-import static java.lang.Math.floor;
 
 public class EngineMain implements Runnable{
     public static volatile EngineMain cs;
-    public HashMap<Long, Entity> entities=new HashMap<>();
-    public HashMap<Long,Entity> addingEntities=new HashMap<>();
+    public ConcurrentHashMap<Long, Entity> entities=new ConcurrentHashMap<>();
+    public ConcurrentHashMap<Long,Entity> addingEntities=new ConcurrentHashMap<>();
     public ArrayList<Particle> particles=new ArrayList<>();
     public ArrayList<Particle> groundParticles=new ArrayList<>();
+    public ArrayList<Entity> entityParticles =new ArrayList<>();
+    public ArrayList<Entity> entityParticlesAdd =new ArrayList<>();
     public volatile AtomicLong lastEntityID=new AtomicLong(0);
-    public static double TPS=10;
+    public static double TPS=20;
     public static double chunkSize=100;
     public boolean isServer=true;
     public ClientNetworkHandler networkHandler;
@@ -105,7 +106,7 @@ public class EngineMain implements Runnable{
     }
     public void clientUpdate(double time){
         if(player!=null){
-            player.updateBullet(time);
+            //player.updateBullet(time);
         }
     }
     public void update(){
@@ -113,12 +114,18 @@ public class EngineMain implements Runnable{
         for(Entity entity:entities.values()){
             if(entity.killed()){
                 toRemove.add(entity.id);
+                spawnParticle(entity);
             }
         }
         for(Long id:toRemove){
             removeEntity(id);
         }
-
+        entityParticles.removeIf(b->b.killed());
+        entityParticles.addAll(entityParticlesAdd);
+        entityParticlesAdd.clear();
+        for(Entity o: entityParticles){
+            o.tick();
+        }
         if(isServer){
             spawnPolygons();
             for(Long id:addingEntities.keySet()){
@@ -135,6 +142,7 @@ public class EngineMain implements Runnable{
                     try {
                         entity.tick();
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }));
             }
@@ -148,10 +156,7 @@ public class EngineMain implements Runnable{
             } finally {
                 executor.shutdownNow();
             }
-
-            for(Entity entity:entities.values()){
-                multiClientHandler.clients.forEach(c->c.serverNetworkHandler.sendEntityUpdate(entity));
-            }
+            sendEntitiesUpdate();
             multiClientHandler.clients.forEach(c->c.serverNetworkHandler.checkDeath());
         }else{
             updateEntityChunk();
@@ -164,7 +169,7 @@ public class EngineMain implements Runnable{
             if(cs.player!=null){
                 prevCamPos.set(camPos);
                 Vec2d sub=player.position.subtract(camPos);
-                camPos=camPos.add(sub.multiply(0.2));
+                camPos=camPos.add(sub.multiply(0.6));
             }
             generateGroundBlocks(false);
         }
@@ -205,6 +210,15 @@ public class EngineMain implements Runnable{
             lastGenerateGround=System.currentTimeMillis();
         }
     }
+    public void spawnParticle(Entity e){
+        if(isServer||e==null) return;
+        e.isParticle=true;
+        e.lifeTime=0;
+        e.isAlive=true;
+        e.id=-1;
+        //e.velocity=e.position.subtract(e.prevPosition);
+        addParticle(e);
+    }
     public int getTeam(){
         HashMap<Integer,Integer> team=new HashMap<>();
 
@@ -226,6 +240,22 @@ public class EngineMain implements Runnable{
         }
         return minTeam;
     }
+    public void sendEntitiesUpdate(){
+        /*JSONObject json=new JSONObject();
+        PacketUtil.putPacketType(json,"entity_update");
+        JSONObject array=new JSONObject();
+        int count=0;
+        for(Entity entity:entities.values()){
+            array.put(String.valueOf(count),entity.getUpdate());
+            count++;
+        }
+        PacketUtil.put(json,"data",array);
+        PacketUtil.put(json,"max",count);
+        multiClientHandler.clients.forEach(c->c.serverNetworkHandler.send(json));*/
+        for(Entity entity:entities.values()){
+            multiClientHandler.clients.forEach(c->c.serverNetworkHandler.sendEntityUpdate(entity));
+        }
+    }
     public void updateEntityChunk(){
         chunkMap.clear();
         for(Entity entity:entities.values()){
@@ -234,10 +264,10 @@ public class EngineMain implements Runnable{
     }
     public void spawnPolygons(){
         int count=getPolygonCount();
-        if(count>100) return;
+        if(count>40) return;
         if(polygonSpawnTimer<=0){
             for(int i=0;i<10;i++) {
-                polygonSpawnTimer = round(Util.random(5,8));
+                polygonSpawnTimer = round(Util.random(10,11));
                 double s = Math.pow(Util.random(0,1),2)*9;
                 double t = Math.pow(Math.random(),6)*4;
                 int sides = (round(s) + 3);
@@ -247,6 +277,13 @@ public class EngineMain implements Runnable{
             }
         }else{
             polygonSpawnTimer--;
+        }
+    }public void fastUpdate(double time){
+        time=Math.min(time,1);
+        for(Entity entity:entities.values()){
+            if(entity instanceof ServerPlayerEntity player){
+                player.updateBullet(time);
+            }
         }
     }
     private int getPolygonCount(){
@@ -270,10 +307,14 @@ public class EngineMain implements Runnable{
             entities.put(entity.id,entity);
         }
     }
+    public void addParticle(Entity particle){
+        entityParticles.add(particle);
+    }
     public void removeEntity(Entity entity){
         removeEntity(entity.id);
     }
     public void removeEntity(Long id){
+        spawnParticle(entities.get(id));
         entities.remove(id);
         if(isServer){
             multiClientHandler.clients.forEach(c->c.serverNetworkHandler.sendEntityRemove(id));

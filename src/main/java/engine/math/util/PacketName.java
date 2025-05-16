@@ -1,0 +1,14 @@
+package engine.math.util;
+
+public class PacketName {
+    public static String player_input="a";
+    public static String player_data="b";
+    public static String player_respawn="c";
+    public static String entity_update="d";
+    public static String update_weapon="e";
+    public static String want_entity="f";
+    public static String entity_spawn="g";
+    public static String entity_remove="h";
+    public static String player_death="i";
+    public static String player_status="j";
+}

@@ -1,5 +1,6 @@
 package modules.client;
 
+import engine.math.util.PacketUtil;
 import modules.network.ClientNetworkHandler;
 import org.json.JSONArray;
 import org.json.JSONObject; 
@@ -40,7 +41,11 @@ public class ClientNetwork {
 
                     // 统一处理消息类型
                     JSONObject msgObj = new JSONObject(message);
-                    cs.networkHandler.apply(msgObj);
+                    try {
+                        cs.networkHandler.apply(msgObj);
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
 
                 } catch (Exception e) {
                     if (running) handleDisconnect(e);
@@ -98,7 +103,7 @@ public class ClientNetwork {
  
     public void sendPixelUpdate(int x, int y, Color color) {
         JSONObject json = new JSONObject();
-        json.put("type",  "pixel_update");
+        json.put(PacketUtil.getShortVariableName("type"),  "pixel_update");
         json.put("x",  x);
         json.put("y",  y);
         json.put("color",  color.getRGB()); 

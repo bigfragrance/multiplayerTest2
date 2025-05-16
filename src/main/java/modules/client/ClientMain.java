@@ -22,8 +22,6 @@ public class ClientMain {
         }*/
         
         SwingUtilities.invokeLater(()  -> {
-
-
             File setting=new File("setting.txt");
             String settingData=null;
             if(!setting.exists()){

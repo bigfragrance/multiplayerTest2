@@ -14,32 +14,37 @@ import javax.swing.*;
 import java.awt.event.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+import static engine.modules.EngineMain.cs;
+
 
 public class InputManager {
     public InputManager(){
 
     }
-    public Vec2d getPlayerInput(){
-        Vec2d input=new Vec2d(0,0);
+    public int[] getPlayerInput(){
+        int[] input={0,0};
         if(Screen.isKeyPressed('w')){
-            input.y=1;
+            input[1]=1;
         }
         if(Screen.isKeyPressed('s')){
-            input.y=-1;
+            input[1]=-1;
         }
         if(Screen.isKeyPressed('a')){
-            input.x=-1;
+            input[0]=-1;
         }
         if(Screen.isKeyPressed('d')){
-            input.x=1;
+            input[0]=1;
         }
-        return input.limit(1);
+        return input;
     }
     public boolean isShooting(){
         return Screen.isKeyPressed(' ')||Screen.isKeyPressed(Screen.MOUSECHAR);
     }
     public boolean isRespawning(){
         return Screen.isKeyPressed('r');
+    }
+    public boolean enableAutoFire(){
+        return Screen.isKeyPressed('g');
     }
     public Vec2d getMouseVec(){
         return Screen.mousePos.switchToGame1();

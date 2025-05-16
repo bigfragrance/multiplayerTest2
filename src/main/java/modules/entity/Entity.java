@@ -4,8 +4,8 @@ import engine.math.BlockPos2d;
 import engine.math.Box;
 import engine.math.Vec2d;
 import engine.math.util.PacketUtil;
+import engine.math.util.PacketVariable;
 import engine.math.util.Util;
-import engine.modules.EngineMain;
 import engine.render.Screen;
 import org.json.JSONObject;
 
@@ -14,21 +14,25 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static engine.math.util.PacketVariable.basic;
 import static engine.math.util.Util.round;
 import static engine.modules.EngineMain.chunkSize;
 import static engine.modules.EngineMain.cs;
-import static engine.render.Screen.SCREEN_BOX;
 
 public abstract class Entity implements NetworkItem {
+    public static double extraVelocityD=0.1;
+    public static int particleLifeTimeMax=4;
+    public static double particleBoundingBoxExpand=60;
     public Box boundingBox;
     public Box prevBoundingBox;
     public Vec2d position;
     public Vec2d prevPosition;
     public Vec2d velocity;
+    public Vec2d extraVelocity=new Vec2d(0,0);
     public long id;
     public boolean isAlive=true;
-    Vec2d nextPosition=null;
-    Box nextBoundingBox=null;
+    protected Vec2d nextPosition=null;
+    protected Box nextBoundingBox=null;
     public double health;
     public double prevHealth;
     public double damage;
@@ -36,37 +40,44 @@ public abstract class Entity implements NetworkItem {
     public double rotation;
     public double prevRotation;
     public double score=0;
-    public static double collisionVector=0.2;
-    public static double collisionMax=10;
+    public static double collisionVector=0.1;
+    public static double collisionMax=6;
     public HashMap<Long,DamageSource> damageTaken=new HashMap<>();
     public boolean isDamageTick=false;
     public double mass=400;
-    public double tickDelta=0;
+    private double tickDelta=0;
+    public Vec2d targetingPos=null;
+    public boolean isParticle=false;
+    public int lifeTime=0;
     @Override
     public void update(JSONObject o) {
         this.prevHealth=this.health;
-        if(o.has("basic")){
+        if(o.has(basic)){
             //this.prevPosition = this.position.copy();
-            JSONObject basic = o.getJSONObject("basic");
+            JSONObject basic = o.getJSONObject(PacketVariable.basic);
             basic.keys().forEachRemaining(key -> {
-                if(PacketUtil.getShortString("position").equals(key)){
-                    JSONObject position = basic.getJSONObject(PacketUtil.getShortString("position"));
+                if(PacketUtil.getShortVariableName("position").equals(key)){
+                    JSONObject position = basic.getJSONObject(PacketUtil.getShortVariableName("position"));
+                    Vec2d last=this.position.copy();
                     this.nextPosition =Vec2d.fromJSON(position);
-                } else if (PacketUtil.getShortString("boundingBox").equals(key)) {
-                    JSONObject boundingBox = basic.getJSONObject(PacketUtil.getShortString("boundingBox"));
+                    this.velocity=this.nextPosition.subtract(last);
+                } else if (PacketUtil.getShortVariableName("boundingBox").equals(key)) {
+                    JSONObject boundingBox = basic.getJSONObject(PacketUtil.getShortVariableName("boundingBox"));
+                    Box last=this.boundingBox.copy();
                     this.nextBoundingBox  = Box.fromJSON(boundingBox);
-                } else if (PacketUtil.getShortString("health").equals(key)) {
-                    this.health  = basic.getDouble(PacketUtil.getShortString("health"));
-                } else if (PacketUtil.getShortString("damage").equals(key)) {
-                    this.damage  = basic.getDouble(PacketUtil.getShortString("damage"));
-                } else if (PacketUtil.getShortString("team").equals(key)) {
-                    this.team  = basic.getInt(PacketUtil.getShortString("team"));
-                } else if (PacketUtil.getShortString("isAlive").equals(key)) {
-                    this.isAlive  = basic.getBoolean(PacketUtil.getShortString("isAlive"));
-                } else if (PacketUtil.getShortString("rotation").equals(key)) {
-                    this.rotation  = basic.getDouble(PacketUtil.getShortString("rotation"));
-                }else if(PacketUtil.getShortString("score").equals(key)){
-                    this.score=basic.getDouble(PacketUtil.getShortString("score"));
+                    this.velocity=this.nextBoundingBox.getCenter().subtract(last.getCenter());
+                } else if (PacketUtil.getShortVariableName("health").equals(key)) {
+                    this.health  = basic.getDouble(PacketUtil.getShortVariableName("health"));
+                } else if (PacketUtil.getShortVariableName("damage").equals(key)) {
+                    this.damage  = basic.getDouble(PacketUtil.getShortVariableName("damage"));
+                } else if (PacketUtil.getShortVariableName("team").equals(key)) {
+                    this.team  = basic.getInt(PacketUtil.getShortVariableName("team"));
+                } else if (PacketUtil.getShortVariableName("isAlive").equals(key)) {
+                    this.isAlive  = basic.getBoolean(PacketUtil.getShortVariableName("isAlive"));
+                } else if (PacketUtil.getShortVariableName("rotation").equals(key)) {
+                    this.rotation  = basic.getDouble(PacketUtil.getShortVariableName("rotation"));
+                }else if(PacketUtil.getShortVariableName("score").equals(key)){
+                    this.score=basic.getDouble(PacketUtil.getShortVariableName("score"));
                 }
             });
         }
@@ -83,13 +94,26 @@ public abstract class Entity implements NetworkItem {
         this.prevBoundingBox=this.boundingBox.copy();
         this.prevRotation=this.rotation;
         this.mass=this.boundingBox.xSize()*this.boundingBox.ySize();
-        if(cs.isServer||this.id==cs.player.id) {
+        lifeTime++;
+        if(isParticle){
+            this.resetTickDelta();
+            Box b=this.boundingBox;
+            this.boundingBox=b.expand(particleBoundingBoxExpand/(b.xSize()*b.xSize()),particleBoundingBoxExpand/(b.ySize()*b.ySize()));
+            if(lifeTime>=particleLifeTimeMax){
+                this.kill();
+            }
+            this.position.offset(this.velocity.add(extraVelocity));
+            this.boundingBox.offset1(this.velocity.add(extraVelocity));
+            this.extraVelocity.multiply1(extraVelocityD);
+        }
+        if(cs.isServer) {
             this.resetTickDelta();
             if(!this.boundingBox.intersects(cs.borderBox)){
                 this.velocity.offset(this.position.subtract(cs.borderBox.getCenter()).multiply(-1).limit(12));
             }
-            this.position.offset(this.velocity);
-            this.boundingBox.offset1(this.velocity);
+            this.position.offset(this.velocity.add(extraVelocity));
+            this.boundingBox.offset1(this.velocity.add(extraVelocity));
+            this.extraVelocity.multiply1(extraVelocityD);
         }else{
             if(this.nextPosition!=null){
                 this.position.set(this.nextPosition);
@@ -123,16 +147,16 @@ public abstract class Entity implements NetworkItem {
     }
     public JSONObject addJSON(JSONObject o) {
         JSONObject basic = new JSONObject();
-        basic.put(PacketUtil.getShortString("position"), this.position.toJSON());
-        basic.put(PacketUtil.getShortString("boundingBox"), this.boundingBox.toJSON());
-        basic.put(PacketUtil.getShortString("health"),this.health);
-        basic.put(PacketUtil.getShortString("damage"),this.damage);
-        basic.put(PacketUtil.getShortString("team"),this.team);
-        basic.put(PacketUtil.getShortString("id"), this.id);
-        basic.put(PacketUtil.getShortString("isAlive"),this.isAlive);
-        basic.put(PacketUtil.getShortString("rotation"),this.rotation);
-        basic.put(PacketUtil.getShortString("score"),this.score);
-        o.put("basic", basic);
+        basic.put(PacketUtil.getShortVariableName("position"), this.position.toJSON());
+        basic.put(PacketUtil.getShortVariableName("boundingBox"), this.boundingBox.toJSON());
+        basic.put(PacketUtil.getShortVariableName("health"),this.health);
+        basic.put(PacketUtil.getShortVariableName("damage"),this.damage);
+        basic.put(PacketUtil.getShortVariableName("team"),this.team);
+        basic.put(PacketUtil.getShortVariableName("id"), this.id);
+        basic.put(PacketUtil.getShortVariableName("isAlive"),this.isAlive);
+        basic.put(PacketUtil.getShortVariableName("rotation"),this.rotation);
+        basic.put(PacketUtil.getShortVariableName("score"),this.score);
+        PacketUtil.put(o,"basic", basic);
 
         return o;
     }
@@ -165,6 +189,9 @@ public abstract class Entity implements NetworkItem {
     public double getRenderHealth(){
         return Util.lerp(this.prevHealth,this.health,tickDelta);
     }
+    public double getRenderRotation(){
+        return Util.lerp(this.prevRotation,this.rotation,tickDelta);
+    }
     public void storeDamage(Entity e,double damage){
         List<Long> toRemove=new ArrayList<>();
         for(Long id:damageTaken.keySet()){
@@ -181,6 +208,12 @@ public abstract class Entity implements NetworkItem {
             damageTaken.put(e.getDamageSourceID(),new DamageSource(e.getDamageSourceID(),damage));
         }
         damageTaken.get(e.getDamageSourceID()).increase(damage);
+    }
+    public double getRenderAlpha(){
+        return isParticle? Math.clamp(0.5* (particleLifeTimeMax - lifeTime+tickDelta) /particleLifeTimeMax,0.01,0.99):1;
+    }
+    public double getTickDelta(){
+        return isParticle?Screen.tickDelta:tickDelta;
     }
     public void addScore(){
         double total=0;

@@ -1,9 +1,9 @@
 package server;
 
-import engine.math.Vec2d;
 import engine.math.util.EntityUtils;
-import modules.entity.PlayerEntity;
-import modules.network.ClientNetworkHandler;
+import engine.math.util.PacketUtil;
+import modules.entity.player.PlayerEntity;
+import modules.entity.player.ServerPlayerEntity;
 import modules.network.ServerNetworkHandler;
 import org.json.JSONObject;
 
@@ -22,12 +22,12 @@ public class ClientHandler implements Runnable {
     private PrintWriter writer;
 
     public ServerNetworkHandler serverNetworkHandler;
-    public PlayerEntity player;
+    public ServerPlayerEntity player;
     private long lastReceive=0;
     public ClientHandler(Socket socket, CanvasManager manager) {
         this.clientSocket  = socket;
         this.canvas  = manager;
-        this.player=new PlayerEntity(EntityUtils.getRandomSpawnPosition());
+        this.player=new ServerPlayerEntity(EntityUtils.getRandomSpawnPosition());
         this.player.isAlive=true;
         this.player.team=cs.getTeam();
         cs.addEntity(player);
@@ -47,7 +47,7 @@ public class ClientHandler implements Runnable {
  
             // Send initial snapshot 
             /*JSONObject initMsg = new JSONObject();
-            initMsg.put("type",  "full_snapshot");
+            initMsg.put(PacketUtil.getShortVariableName("type"),  "full_snapshot");
             initMsg.put("data",  canvas.getFullSnapshot()); 
             writer.println(initMsg.toString()); */
  
@@ -84,10 +84,8 @@ public class ClientHandler implements Runnable {
         
         if (canvas.updatePixel(x,  y, color)) {
             JSONObject broadcast = new JSONObject(update.toString()); 
-            broadcast.put("type",  "pixel_update");
-            //anti tiu
+            broadcast.put(PacketUtil.getShortVariableName("type"),  "pixel_update");
             broadcastQueue.offer(broadcast.toString());
-
         }
     }
     public void send(JSONObject o){
