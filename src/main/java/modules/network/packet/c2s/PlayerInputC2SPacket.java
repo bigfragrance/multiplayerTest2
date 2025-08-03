@@ -48,6 +48,7 @@ public class PlayerInputC2SPacket implements Packet<ServerNetworkHandler> {
             player.inputManager.aimPos=aimPos;
             player.inputManager.shoot=shoot;
             player.inputManager.upgradingSkill=upgradingSkill;
+            player.rotation=aimPos.angle();
             //System.out.println("input:"+forward+","+side+","+aimPos+","+shoot+","+upgradingSkill);
         }
     }

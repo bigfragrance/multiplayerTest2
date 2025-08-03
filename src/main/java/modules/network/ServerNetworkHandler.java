@@ -4,6 +4,7 @@ import engine.math.Box;
 import engine.math.Vec2d;
 import engine.math.util.EntityUtils;
 import engine.math.util.PacketUtil;
+import modules.entity.BlockEntity;
 import modules.entity.bullet.BulletEntity;
 import modules.entity.Entity;
 import modules.entity.player.PlayerEntity;
@@ -12,12 +13,21 @@ import modules.network.packet.Packet;
 import org.json.JSONObject;
 import server.ClientHandler;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+
 import static engine.math.util.PacketName.*;
 import static engine.modules.EngineMain.cs;
 
 public class ServerNetworkHandler {
+    public static double updateRange=10;
+    public static double updateRangeBlocks=10;
     public ClientHandler clientHandler;
     public boolean deathSent=false;
+    public ConcurrentHashMap<Long,Boolean> sentRemove=new ConcurrentHashMap<>();
     public ServerNetworkHandler(ClientHandler client){
         this.clientHandler =client;
     }
@@ -37,10 +47,7 @@ public class ServerNetworkHandler {
             case("want_entity")->{
                 handleWantEntity(o);
             }
-            case("bullet_shoot")->{
-                handleBulletShoot(o);
-            }
-            case("player_data")->{
+            case("player_data_other")->{
                 handlePlayerData(o);
             }
         }
@@ -50,6 +57,7 @@ public class ServerNetworkHandler {
     }
     public void sendEntitySpawn(Entity e){
         if(e!=null){
+            if(!inRange(e)) return;
             JSONObject o2=new JSONObject();
             o2.put(PacketUtil.getShortVariableName("type"),entity_spawn);
 
@@ -61,11 +69,17 @@ public class ServerNetworkHandler {
             send(o2);
         }
     }
+    public boolean inRange(Entity e){
+        double distance=e.prevPosition.distanceTo(clientHandler.player.position)+e.boundingBox.avgSize()/2;
+        distance /=clientHandler.player.getFov();
+        return e instanceof BlockEntity?distance<updateRangeBlocks:distance<updateRange;
+    }
     public void sendEntityRemove(long id){
         JSONObject o2=new JSONObject();
         o2.put(PacketUtil.getShortVariableName("type"),entity_remove);
         o2.put(PacketUtil.getShortVariableName("id"),id);
         send(o2);
+        //sentRemove.remove(id);
     }
     public void sendPlayerSpawn(Entity e){
         if(e!=null){
@@ -81,9 +95,25 @@ public class ServerNetworkHandler {
         }
     }
     public void sendEntityUpdate(Entity e){
-        if(e!=null){
-            send(e.getUpdate());
+        if(e==null) return;
+        if(!inRange(e)) {
+            sendEntityRemove(e.id);
+            sentRemove.put(e.id,true);
+            return;
         }
+        sentRemove.put(e.id,false);
+        send(e.getUpdate());
+    }
+    public void clearTemp(){
+        List<Long> toRemove=new ArrayList<>();
+        for(long id:sentRemove.keySet()){
+            if(!cs.entities.containsKey(id)){
+                toRemove.add(id);
+            }
+        }
+        toRemove.forEach(id -> {
+            sentRemove.remove(id);
+        });
     }
     public void checkDeath(){
         if(clientHandler.player!=null){
@@ -103,9 +133,9 @@ public class ServerNetworkHandler {
     }
     public void sendPlayerData(PlayerEntity player){
         JSONObject o=new JSONObject();
-        o.put(PacketUtil.getShortVariableName("type"),player_data);
-        o.put("name",player.name);
-        o.put(PacketUtil.getShortVariableName("id"),player.id);
+        PacketUtil.putPacketType(o,"player_data_other");
+        PacketUtil.put(o,"name",player.name);
+        PacketUtil.put(o,"id",player.id);
         send(o);
     }
     public void handlePlayerMove(JSONObject o){
@@ -120,11 +150,16 @@ public class ServerNetworkHandler {
         if(e!=null){
             if(e.isAlive) return;
             e.isAlive=true;
-            e.setPosition(EntityUtils.getRandomSpawnPosition());
+            e.setPosition(EntityUtils.getRandomSpawnPosition(e.team));
             e.health=PlayerEntity.healthMax;
             e.noEnemyTimer=10;
             e.score*=0.5;
             sendPlayerRespawn(e);
+            /*cs.multiClientHandler.clients.forEach(c->{
+                if(c.player.id!=e.id){
+                    c.serverNetworkHandler.sendEntityRemove(e.id);
+                }
+            });*/
         }else{
             ServerPlayerEntity player=new ServerPlayerEntity(new Vec2d(0,0));
             player.team=cs.getTeam();
@@ -139,7 +174,7 @@ public class ServerNetworkHandler {
             sendEntitySpawn(e);
         }
     }
-    public void handleBulletShoot(JSONObject o){
+    /*public void handleBulletShoot(JSONObject o){
         Vec2d pos=Vec2d.fromJSON(o.getJSONObject(PacketUtil.getShortVariableName("position")));
         Vec2d velocity=Vec2d.fromJSON(o.getJSONObject(PacketUtil.getShortVariableName("velocity")));
         double size=o.getDouble("size");
@@ -149,11 +184,11 @@ public class ServerNetworkHandler {
             b.ownerId=e.id;
             cs.addEntity(b);
         }
-    }
+    }*/
     public void handlePlayerData(JSONObject o){
         PlayerEntity e= clientHandler.player;
         if(e!=null){
-            e.name=o.getString("name");
+            e.name= PacketUtil.getString(o,"name");
             cs.multiClientHandler.clients.forEach(c -> {
                 if(c.player.id!=e.id){
                     c.serverNetworkHandler.sendPlayerData(e);

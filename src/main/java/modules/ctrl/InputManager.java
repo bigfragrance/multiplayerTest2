@@ -3,19 +3,6 @@ package modules.ctrl;
 import engine.math.Vec2d;
 import engine.render.Screen;
 
-import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
-import java.lang.reflect.Field;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.swing.*;
-import java.awt.event.*;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static engine.modules.EngineMain.cs;
-
 
 public class InputManager {
     public InputManager(){
@@ -67,13 +54,69 @@ public class InputManager {
             case(4)->{
                 c='b';
             }
+            case(5)-> {
+                c = 'n';
+            }
+            case(6)-> {
+                c = 'm';
+            }
+            case(7)-> {
+                c = ',';
+            }
+            case(8)-> {
+                c = '.';
+            }
+            case(9)-> {
+                c = '/';
+            }
             default -> {
                 return false;
             }
         }
         return Screen.isKeyPressed(c);
     }
-
+    public boolean isGeneratingMaze(){
+        return Screen.isKeyPressed('m');
+    }
+    public boolean isPlacingMaze(){
+        return Screen.isKeyPressed('b');
+    }
+    public boolean isPlacingBase(){
+        return Screen.isKeyPressed('f');
+    }
+    public boolean isRemovingMaze(){
+        return Screen.isKeyPressed('n');
+    }
+    public boolean isSaving(){
+        return Screen.isKeyPressed('z');
+    }
+    public boolean isLoading(){
+        return Screen.isKeyPressed('c');
+    }
+    public boolean isLocking() {
+        return Screen.isKeyPressed('v');
+    }
+    public boolean isChangingShowingCurrentBlock() {
+        return Screen.isKeyPressed('l');
+    }
+    public boolean isIncreasingMobRarity() {
+        return Screen.isKeyPressed('k');
+    }
+    public boolean isDecreasingMobRarity() {
+        return Screen.isKeyPressed('j');
+    }
+    public boolean isIncreasingPlaceRadius() {
+        return Screen.isKeyPressed('o');
+    }
+    public boolean isDecreasingPlaceRadius() {
+        return Screen.isKeyPressed('p');
+    }
+    public boolean isPuttingMobRarity() {
+        return Screen.isKeyPressed('h');
+    }
+    public boolean isRenderingMobRarity() {
+        return Screen.isKeyPressed('g');
+    }
     /*private final ConcurrentHashMap<Integer, Boolean> keyStates = new ConcurrentHashMap<>();
     private final JPanel targetPanel;
 

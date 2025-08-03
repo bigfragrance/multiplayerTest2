@@ -5,6 +5,8 @@ import engine.math.util.PacketUtil;
 import modules.entity.player.PlayerEntity;
 import modules.entity.player.ServerPlayerEntity;
 import modules.network.ServerNetworkHandler;
+import modules.network.packet.s2c.TanksDataS2CPacket;
+import modules.weapon.GunList;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -18,32 +20,36 @@ import static engine.modules.EngineMain.cs;
 public class ClientHandler implements Runnable {
     private final BlockingQueue<String> broadcastQueue = new LinkedBlockingQueue<>();
     private final Socket clientSocket;
-    private final CanvasManager canvas;
     private PrintWriter writer;
 
     public ServerNetworkHandler serverNetworkHandler;
     public ServerPlayerEntity player;
-    private long lastReceive=0;
-    public ClientHandler(Socket socket, CanvasManager manager) {
+    private volatile long lastReceive=0;
+    private long connectionStartTime;
+    public ClientHandler(Socket socket) {
         this.clientSocket  = socket;
-        this.canvas  = manager;
-        this.player=new ServerPlayerEntity(EntityUtils.getRandomSpawnPosition());
+        spawnPlayer();
+        lastReceive=System.currentTimeMillis();
+        connectionStartTime=System.currentTimeMillis();
+    }
+    public void spawnPlayer(){
+        this.player=new ServerPlayerEntity(EntityUtils.getRandomSpawnPosition(cs.getTeam()));
         this.player.isAlive=true;
         this.player.team=cs.getTeam();
         cs.addEntity(player);
         this.serverNetworkHandler=new ServerNetworkHandler(this);
         this.serverNetworkHandler.sendPlayerSpawn(player);
+        this.serverNetworkHandler.send(new TanksDataS2CPacket(GunList.data).toJSON());
+        this.player.networkHandler=this.serverNetworkHandler;
         cs.multiClientHandler.addClient(this);
-        lastReceive=System.currentTimeMillis();
     }
- 
     @Override 
     public void run() {
         try (BufferedReader reader = new BufferedReader(
              new InputStreamReader(clientSocket.getInputStream())))  {
              
             writer = new PrintWriter(
-                new OutputStreamWriter(clientSocket.getOutputStream(),  "UTF-8"), true);
+                new OutputStreamWriter(clientSocket.getOutputStream(),  "UTF-8"), false);
  
             // Send initial snapshot 
             /*JSONObject initMsg = new JSONObject();
@@ -57,46 +63,56 @@ public class ClientHandler implements Runnable {
             // Handle incoming messages 
             String inputLine;
             lastReceive=System.currentTimeMillis();
+            boolean handshaked=false;
             while ((inputLine = reader.readLine())  != null&&System.currentTimeMillis()-lastReceive<6000) {
+                if(inputLine.equals("handshake")){
+                    handshaked=true;
+                    lastReceive=System.currentTimeMillis();
+                    continue;
+                }else if(!handshaked){
+                    disconnect();
+                    Thread.currentThread().interrupt();
+                }
                 JSONObject msg = new JSONObject(inputLine);
-                lastReceive=System.currentTimeMillis();
                 serverNetworkHandler.apply(msg);
+                lastReceive=System.currentTimeMillis();
             }
             disconnect();
         } catch (Exception e) {
             disconnect();
-            System.err.println("Client  error: " + e.getMessage()); 
+            System.err.println("Client  error: " );
+            e.printStackTrace();
+        }
+    }
+    public void checkConnecting(){
+        if(System.currentTimeMillis()-lastReceive>3000||(System.currentTimeMillis()-connectionStartTime>3000&&player.name.equals(PlayerEntity.defName))){
+            disconnect();
         }
     }
     private void disconnect() {
         try {
             cs.removeEntity(player.id);
             clientSocket.close();
+            ServerMain.connectedPlayers.remove(clientSocket.getInetAddress().hashCode());
         } catch (IOException e) {
             System.err.println("Error closing client socket: " + e.getMessage());
         }
     }
- 
-    private void handlePixelUpdate(JSONObject update) {
-        int x = update.getInt("x"); 
-        int y = update.getInt("y"); 
-        Color color = new Color(update.getInt("color"),  true);
-        
-        if (canvas.updatePixel(x,  y, color)) {
-            JSONObject broadcast = new JSONObject(update.toString()); 
-            broadcast.put(PacketUtil.getShortVariableName("type"),  "pixel_update");
-            broadcastQueue.offer(broadcast.toString());
-        }
-    }
+
     public void send(JSONObject o){
         broadcastQueue.offer(o.toString());
     }
- 
+    private int sent=0;
     private void processBroadcasts() {
         try {
             while (!Thread.interrupted())  {
                 String msg = broadcastQueue.take(); 
-                writer.println(msg); 
+                writer.println(msg);
+                sent++;
+                if(broadcastQueue.isEmpty()||sent>50){
+                    writer.flush();
+                    sent=0;
+                }
             }
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt(); 

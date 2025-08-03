@@ -22,7 +22,7 @@ public class ClientMain {
         }*/
         
         SwingUtilities.invokeLater(()  -> {
-            File setting=new File("setting.txt");
+            File setting=new File(EngineMain.SETTING_PATH);
             String settingData=null;
             if(!setting.exists()){
                 try {

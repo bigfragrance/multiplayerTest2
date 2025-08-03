@@ -9,13 +9,14 @@ import modules.entity.MobEntity;
 import modules.entity.player.PlayerEntity;
 
 import static engine.modules.EngineMain.cs;
+import static modules.entity.Entity.sizeMultiplier;
 
 public class Weapon{
     public static double damageBase=10;
-    public static double speedBase=5;
+    public static double speedBase=5*sizeMultiplier;
     public static double healthBase=1;
     public static int reloadBase=10;
-    public static double sizeBase=5;
+    public static double sizeBase=5*sizeMultiplier;
     public static double autoTargetDistanceMax=300;
     public static double extrapolateBase=1.5;
     public static double extrapolateCheckMax=10;
@@ -28,18 +29,18 @@ public class Weapon{
     public double size;
     public Weapon(Entity owner){
         this.owner=owner;
-        this.damage=10;
-        this.speed=5;
-        this.health=1;
-        this.reload=10;
-        this.size=5;
+        this.damage=damageBase;
+        this.speed=speedBase;
+        this.health=healthBase;
+        this.reload=reloadBase;
+        this.size=sizeBase;
     }
     public void setMultiplier(double[] multiplier){
         this.damage=damageBase*multiplier[0];
         this.speed=speedBase*multiplier[1];
         this.health=healthBase*multiplier[2];
-        this.reload= (reloadBase/multiplier[3]);
-        this.size=sizeBase*multiplier[4];
+        this.size=sizeBase*multiplier[3];
+        this.reload= (reloadBase/multiplier[4]);
     }
     public void update(double time){
 
@@ -52,66 +53,34 @@ public class Weapon{
             case(0)->{
                 return new Weapon0(owner);
             }
-            case(1)->{
-                return new Weapon1(owner);
-            }
-            case(2)->{
-                return new Weapon2(owner);
-            }
-            case(3)->{
-                return new Weapon3(owner);
-            }
-            case(4)->{
-                return new Weapon4(owner);
-            }
-            case(5)->{
-                return new Weapon5(owner);
-            }
-            case(6)->{
-                return new Weapon6(owner);
-            }
-            case(7)->{
-                return new Weapon7(owner);
-            }
-            case(8)->{
-                return new Weapon8(owner);
-            }
-            case(9)->{
-                return new Weapon9(owner);
-            }
-            case(10)->{
-                return new Weapon10(owner);
-            }
-            case(11)->{
-                return new Weapon11(owner);
-            }
-            case(12)->{
-                return new Weapon12(owner);
-            }
-            case(13)->{
-                return new Weapon13(owner);
-            }
-            case(14)->{
-                return new Weapon14(owner);
-            }
-            case(1258764)->{
-                return new Weapon00(owner);
-            }
         }
         return null;
     }
-    public BulletEntity shootBullet(Vec2d pos,Vec2d velocity,double size,double health,double damage){
+    public static Weapon getB(Entity owner,int type){
+        switch (type){
+
+        }
+        return null;
+    }
+    /*public BulletEntity shootBullet(Vec2d pos,Vec2d velocity,double size,double health,double damage){
         BulletEntity b=new BulletEntity(pos,velocity,new Box(pos,size,size),health,damage,owner.team);
-        b.ownerId=owner.id;
+        b.ownerId=owner.getOwnerID();
+        cs.addEntity(b);
+        return b;
+    }
+    public BulletEntity shootBullet(Vec2d pos,Vec2d velocity,double size,double health,double damage,int lifeTime){
+        BulletEntity b=new BulletEntity(pos,velocity,new Box(pos,size,size),health,damage,owner.team);
+        b.ownerId=owner.getOwnerID();
+        b.maxLifeTime=lifeTime;
         cs.addEntity(b);
         return b;
     }
     public AimBullet shootAimBullet(Vec2d pos,Vec2d velocity,double size,double health,double damage){
         AimBullet b=new AimBullet(pos,velocity,new Box(pos,size,size),health,damage,owner.team);
-        b.ownerId=owner.id;
+        b.ownerId=owner.getOwnerID();
         cs.addEntity(b);
         return b;
-    }
+    }*/
     public Entity getTarget(Vec2d targeting){
         Entity bestPlayer=null;
         Entity bestOther=null;
@@ -145,7 +114,7 @@ public class Weapon{
         int count=0;
         for(Entity e:cs.entities.values()){
             if(e instanceof BulletEntity b){
-                if(b.ownerId==owner.id) count++;
+                if(b.ownerId==owner.id&&b instanceof AimBullet) count++;
             }
         }
         return count;

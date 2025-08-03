@@ -8,6 +8,7 @@ import modules.entity.bullet.BulletEntity;
 import modules.entity.player.ClientPlayerEntity;
 import modules.entity.player.PlayerEntity;
 import modules.network.packet.Packet;
+import modules.network.packet.c2s.WantChunkC2SPacket;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -50,8 +51,8 @@ public class ClientNetworkHandler {
     }
     public void sendPlayerData(PlayerEntity player){
         JSONObject o=new JSONObject();
-        o.put(PacketUtil.getShortVariableName("type"),player_data);
-        o.put("name",player.name);
+        PacketUtil.putPacketType(o,"player_data_other");
+        PacketUtil.put(o,"name",player.name);
         send(o);
     }
     public void apply(JSONObject o){
@@ -79,7 +80,7 @@ public class ClientNetworkHandler {
             case("player_death")->{
                 cs.player.isAlive=false;
             }
-            case("player_data")->{
+            case("player_data_other")->{
                 handlePlayerData(o);
             }
         }
@@ -121,6 +122,9 @@ public class ClientNetworkHandler {
             case("polygon")->{
                 cs.addEntity(PolygonEntity.fromJSON(o2.getJSONObject("data")));
             }
+            case("block")->{
+                cs.addEntity(BlockEntity.fromJSON(o2.getJSONObject("data")));
+            }
         }
     }
     public void handleEntityRemove(JSONObject o){
@@ -144,9 +148,13 @@ public class ClientNetworkHandler {
         }
     }
     public void handlePlayerData(JSONObject o){
-        Entity e=cs.entities.get(o.getLong(PacketUtil.getShortVariableName("id")));
+        Entity e=cs.entities.get(PacketUtil.getLong(o,"id"));
         if(e instanceof PlayerEntity player){
-            player.name=o.getString("name");
+            player.name=PacketUtil.getString(o,"name");
         }
+    }
+
+    public void sendPacket(Packet<?> packet) {
+        send(packet.toJSON());
     }
 }

@@ -1,1 +1,1 @@
-{"chosen_tank":9,"is_server":false,"name":"Player-319.0","server_port":48887,"server_address":"frp-sea.com"}
+{"chosen_tank":"single","is_server":false,"name":"Player-319.0","server_port":8088,"server_address":"localhost"}

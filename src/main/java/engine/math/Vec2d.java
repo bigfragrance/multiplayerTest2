@@ -17,6 +17,10 @@ public class Vec2d {
         this(Util.cos(rotation),Util.sin(rotation));
     }
 
+    public static Vec2d zero() {
+        return new Vec2d(0, 0);
+    }
+
     public Vec2d add(double x, double y) {
         return new Vec2d(this.x + x, this.y + y);
     }
@@ -66,17 +70,29 @@ public class Vec2d {
     public void set(Vec2d vec) {
         set(vec.x, vec.y);
     }
-
+    public Vec2d mirrorXAxis(){
+        return new Vec2d(x,-y);
+    }
+    public Vec2d mirrorYAxis(){
+        return new Vec2d(-x,y);
+    }
     public Vec2d switchToJFrame() {
         return new Vec2d(Util.switchXToJFrame(x), Util.switchYToJFrame(y));
     }
-
+    public Vec2d switchToJFrame(double zoom) {
+        return new Vec2d(Util.switchXToJFrame(x,zoom), Util.switchYToJFrame(y,zoom));
+    }
+    public Vec2d switchToJFrameOld(double zoom) {
+        return new Vec2d(Util.switchXToJFrameOld(x,zoom), Util.switchYToJFrameOld(y,zoom));
+    }
     public Vec2d switchToGame() {
         return new Vec2d(Util.switchXToGame(x), Util.switchYToGame(y));
     }
-
+    public Vec2d switchToGame(double zoom) {
+        return new Vec2d(Util.switchXToGame(x,zoom), Util.switchYToGame(y,zoom));
+    }
     public Vec2d switchToGame1() {
-        return new Vec2d((x - (double) Screen.INSTANCE.windowWidth / 2)/Screen.INSTANCE.zoom, (-y + (double) Screen.INSTANCE.windowHeight / 2)/Screen.INSTANCE.zoom);
+        return new Vec2d((x - (double) Screen.sc.windowWidth / 2)/Screen.sc.getRealZoom(), (-y + (double) Screen.sc.windowHeight / 2)/Screen.sc.getRealZoom());
     }
 
     public Vec2d limit(double l) {
@@ -121,8 +137,8 @@ public class Vec2d {
     }
     public JSONObject toJSON() {
         JSONObject json = new JSONObject();
-        json.put("x", x);
-        json.put("y", y);
+        json.put("x",Util.getRoundedDouble(x,1));
+        json.put("y",Util.getRoundedDouble(y,1));
         return json;
     }
     public static Vec2d fromJSON(JSONObject json) {

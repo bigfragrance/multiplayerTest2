@@ -3,12 +3,11 @@ package engine.modules;
 
 import engine.math.Box;
 import engine.math.Vec2d;
-import engine.math.util.PacketUtil;
 import engine.math.util.Setting;
 import engine.math.util.Util;
 import engine.render.Screen;
 import modules.ChunkMap;
-import modules.entity.bullet.EntityParticle;
+import modules.entity.BlockEntity;
 import modules.entity.player.ClientPlayerEntity;
 import modules.entity.Entity;
 import modules.entity.player.PlayerEntity;
@@ -17,8 +16,11 @@ import modules.entity.player.ServerPlayerEntity;
 import modules.network.ClientNetworkHandler;
 import modules.particle.GroundParticle;
 import modules.particle.Particle;
-import org.json.JSONArray;
-import org.json.JSONObject;
+import modules.server.ServerController;
+import modules.weapon.GunList;
+import modules.world.ClientWorld;
+import modules.world.ServerWorld;
+import modules.world.World;
 import server.MultiClientHandler;
 import server.ServerMain;
 
@@ -30,18 +32,21 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static engine.math.util.Util.round;
+import static engine.render.Screen.sc;
 
 public class EngineMain implements Runnable{
+    public static String SETTING_PATH="setting.json";
     public static volatile EngineMain cs;
     public ConcurrentHashMap<Long, Entity> entities=new ConcurrentHashMap<>();
     public ConcurrentHashMap<Long,Entity> addingEntities=new ConcurrentHashMap<>();
+    public ArrayList<BlockEntity> groundBlocks=new ArrayList<>();
     public ArrayList<Particle> particles=new ArrayList<>();
     public ArrayList<Particle> groundParticles=new ArrayList<>();
     public ArrayList<Entity> entityParticles =new ArrayList<>();
     public ArrayList<Entity> entityParticlesAdd =new ArrayList<>();
     public volatile AtomicLong lastEntityID=new AtomicLong(0);
     public static double TPS=20;
-    public static double chunkSize=100;
+    public static double chunkSize=16;
     public boolean isServer=true;
     public ClientNetworkHandler networkHandler;
     public MultiClientHandler multiClientHandler=null;
@@ -51,15 +56,19 @@ public class EngineMain implements Runnable{
     public static long lastTick=0;
     public Vec2d camPos=new Vec2d(0,0);
     public Vec2d prevCamPos=new Vec2d(0,0);
-    public Box borderBox=new Box(new Vec2d(0,0),500,500);
+    public Box borderBox=new Box(new Vec2d(0,0),60,60);
+    public ServerController serverController;
     public boolean ticking=false;
     public Setting setting=null;
-    public int polygonSpawnTimer=0;
+    public World world;
     public EngineMain(String ip,int port,boolean isServer){
         cs=this;
         this.isServer=isServer;
         if(isServer){
-            Screen.INSTANCE.zoom=0.3;
+            GunList.init();
+            world=new ServerWorld();
+            serverController=new ServerController();
+            sc.zoom=10/ sc.zoom2;
             try {
                 new Thread(()->{
                     try {
@@ -74,6 +83,7 @@ public class EngineMain implements Runnable{
             }
             multiClientHandler=new MultiClientHandler();
         }else {
+            world=new ClientWorld();
             try {
                 networkHandler = new ClientNetworkHandler(ip, port);
             } catch (IOException e) {
@@ -84,18 +94,24 @@ public class EngineMain implements Runnable{
     @Override
     public void run() {
         while (true) {
-            lastTick= System.currentTimeMillis();
-            long start=System.currentTimeMillis();
+            lastTick = System.currentTimeMillis();
+            long start = System.currentTimeMillis();
             try {
+                sc.renderTasks2.update(50);
+                ticking = true;
                 update();
-                lastTick= System.currentTimeMillis();
-            }
-            catch (Exception e){
+                ticking = false;
+                lastTick = System.currentTimeMillis();
+                if (System.currentTimeMillis() - sc.lastRender >= 200) {
+                    sc.renderTasks.clear();
+                }
+            } catch (Exception e) {
                 e.printStackTrace();
             }
+            ticking = false;
             try {
-                long s= (long) (-(System.currentTimeMillis() - start) +1000 / TPS);
-                if(s>0)Thread.sleep(s);
+                long s = (long) (-(System.currentTimeMillis() - start) + 1000 / TPS);
+                if (s > 0) Thread.sleep(s);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -126,8 +142,10 @@ public class EngineMain implements Runnable{
         for(Entity o: entityParticles){
             o.tick();
         }
+        sc.tick();
+        this.world.tick();
         if(isServer){
-            spawnPolygons();
+            serverController.update();
             for(Long id:addingEntities.keySet()){
                 entities.put(id,addingEntities.get(id));
             }
@@ -152,12 +170,16 @@ public class EngineMain implements Runnable{
                     f.get(500,  TimeUnit.MILLISECONDS);
                 }
             } catch (Exception e) {
-                // 超时/执行异常处理
+                e.printStackTrace();
             } finally {
                 executor.shutdownNow();
             }
+            for(Entity entity:entities.values()){
+                entity.addScoreAdd();
+            }
             sendEntitiesUpdate();
             multiClientHandler.clients.forEach(c->c.serverNetworkHandler.checkDeath());
+            multiClientHandler.clients.forEach(c->c.serverNetworkHandler.clientHandler.checkConnecting());
         }else{
             updateEntityChunk();
             for(Entity entity:entities.values()){
@@ -166,17 +188,27 @@ public class EngineMain implements Runnable{
             if(networkHandler!=null) {
                 networkHandler.sendKeepAlive();
             }
-            if(cs.player!=null){
-                prevCamPos.set(camPos);
-                Vec2d sub=player.position.subtract(camPos);
-                camPos=camPos.add(sub.multiply(0.6));
-            }
+
             generateGroundBlocks(false);
         }
 
-        Screen.lastKeyPressed= (HashMap<Character, Boolean>) Screen.keyPressed.clone();
+        Screen.lastKeyPressed= getCloneKeyPressed();
     }
-
+    public ConcurrentHashMap<Character,Boolean> getCloneKeyPressed(){
+        ConcurrentHashMap<Character,Boolean> clone=new ConcurrentHashMap<>();
+        clone.putAll(Screen.keyPressed);
+        return clone;
+    }
+    public void updateCamPos(){
+        /*if(cs.player!=null){
+            prevCamPos.set(camPos);
+            Vec2d sub=player.getRenderPosition().subtract(camPos);
+            camPos=camPos.add(sub.multiply(0.8));
+        }*/
+        prevCamPos.set(camPos);
+        if(player==null) return;
+        camPos.set(player.position);
+    }
     private long lastGenerateGround=0;
     public void generateGroundBlocks(boolean full){
         groundParticles.forEach(p->p.update());
@@ -187,9 +219,9 @@ public class EngineMain implements Runnable{
         double zoomPlus=32;//Screen.INSTANCE.zoom*Screen.INSTANCE.zoom;
         if(full){
             for(int i=0;i<40*zoomPlus;i++){
-                Vec2d vec=new Vec2d(Util.random((double) -Screen.INSTANCE.windowWidth /2-100, (double) Screen.INSTANCE.windowWidth /2+100),Util.random((double) -Screen.INSTANCE.windowHeight /2-100, (double) Screen.INSTANCE.windowHeight /2+100));
+                Vec2d vec=new Vec2d(Util.random((double) -sc.windowWidth /2-100, (double) sc.windowWidth /2+100),Util.random((double) -sc.windowHeight /2-100, (double) sc.windowHeight /2+100));
                 double size=Util.random(15,25);
-                vec=vec.add(Screen.INSTANCE.camX,Screen.INSTANCE.camY);
+                vec=vec.add(sc.camX, sc.camY);
                 GroundParticle ground=new GroundParticle(vec);
                 groundParticles.add(ground);
                 particles.add(ground);
@@ -198,9 +230,9 @@ public class EngineMain implements Runnable{
         else{
             if(groundParticles.size()>=200*zoomPlus||System.currentTimeMillis()-lastGenerateGround<16*(10/player.velocity.length())) return;
             for(int i=1;i<2*zoomPlus;i++){
-                Vec2d vec=new Vec2d(Util.random((double) -Screen.INSTANCE.windowWidth /2-100, (double) Screen.INSTANCE.windowWidth /2+100),Util.random((double) -Screen.INSTANCE.windowHeight /2-100, (double) Screen.INSTANCE.windowHeight /2+100));
+                Vec2d vec=new Vec2d(Util.random((double) -sc.windowWidth /2-100, (double) sc.windowWidth /2+100),Util.random((double) -sc.windowHeight /2-100, (double) sc.windowHeight /2+100));
                 double size=Util.random(15,25);
-                vec=vec.add(Screen.INSTANCE.camX,Screen.INSTANCE.camY).add(player.velocity.multiply(3));
+                vec=vec.add(sc.camX, sc.camY).add(player.velocity.multiply(3));
                 GroundParticle ground=new GroundParticle(vec);
                 if(!ground.shouldKill(true)) continue;
                 groundParticles.add(ground);
@@ -211,7 +243,7 @@ public class EngineMain implements Runnable{
         }
     }
     public void spawnParticle(Entity e){
-        if(isServer||e==null) return;
+        if(isServer||e==null||e instanceof PlayerEntity) return;
         e.isParticle=true;
         e.lifeTime=0;
         e.isAlive=true;
@@ -220,7 +252,7 @@ public class EngineMain implements Runnable{
         addParticle(e);
     }
     public int getTeam(){
-        HashMap<Integer,Integer> team=new HashMap<>();
+         ConcurrentHashMap<Integer,Integer> team=new  ConcurrentHashMap<>();
 
         for(int i=0;i<maxTeams;i++){
             team.put(i,0);
@@ -255,6 +287,7 @@ public class EngineMain implements Runnable{
         for(Entity entity:entities.values()){
             multiClientHandler.clients.forEach(c->c.serverNetworkHandler.sendEntityUpdate(entity));
         }
+        multiClientHandler.clients.forEach(c->c.serverNetworkHandler.clearTemp());
     }
     public void updateEntityChunk(){
         chunkMap.clear();
@@ -262,30 +295,14 @@ public class EngineMain implements Runnable{
             entity.updateChunk();
         }
     }
-    public void spawnPolygons(){
-        int count=getPolygonCount();
-        if(count>40) return;
-        if(polygonSpawnTimer<=0){
-            for(int i=0;i<10;i++) {
-                polygonSpawnTimer = round(Util.random(10,11));
-                double s = Math.pow(Util.random(0,1),2)*9;
-                double t = Math.pow(Math.random(),6)*4;
-                int sides = (round(s) + 3);
-                int type = round(t);
-                Vec2d pos = Util.randomInBox(borderBox);
-                addEntity(new PolygonEntity(pos, sides, type));
-            }
-        }else{
-            polygonSpawnTimer--;
-        }
-    }public void fastUpdate(double time){
+    /*public void fastUpdate(double time){
         time=Math.min(time,1);
         for(Entity entity:entities.values()){
             if(entity instanceof ServerPlayerEntity player){
                 player.updateBullet(time);
             }
         }
-    }
+    }*/
     private int getPolygonCount(){
         int count=0;
         for(Entity entity:entities.values()){
@@ -307,6 +324,19 @@ public class EngineMain implements Runnable{
             entities.put(entity.id,entity);
         }
     }
+    public void addEntityBlock(BlockEntity entity){
+        if(isServer){
+            entity.id=lastEntityID.get();
+            addingEntities.put(entity.id,entity);
+            lastEntityID.incrementAndGet();
+            groundBlocks.add(entity);
+            multiClientHandler.clients.forEach(c->c.serverNetworkHandler.sendEntitySpawn(entity));
+        }
+        else{
+            entities.put(entity.id,entity);
+            groundBlocks.add(entity);
+        }
+    }
     public void addParticle(Entity particle){
         entityParticles.add(particle);
     }
@@ -316,6 +346,7 @@ public class EngineMain implements Runnable{
     public void removeEntity(Long id){
         spawnParticle(entities.get(id));
         entities.remove(id);
+        addingEntities.remove(id);
         if(isServer){
             multiClientHandler.clients.forEach(c->c.serverNetworkHandler.sendEntityRemove(id));
         }

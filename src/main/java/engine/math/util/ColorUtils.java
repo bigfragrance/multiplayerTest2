@@ -43,7 +43,26 @@ public class ColorUtils {
         return new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha);
     }
     public static Color setAlpha(Color c,double alpha){
-        alpha=Math.clamp(alpha,0.01,0.99);
+        alpha=Math.clamp(alpha,0,1);
         return new Color(c.getRed(),c.getGreen(),c.getBlue(),(int)(alpha*255));
+    }
+    public static Color getRainbowColor(double value) {
+        if (value < 0) value = 0;
+        if (value > 1) value = 1;
+        double hue = value * 360;
+
+        if (hue < 60) {
+            return new Color(255, (int)(255 * hue/60), 0);
+        } else if (hue < 120) {
+            return new Color(255 - (int)(255 * (hue-60)/60), 255, 0);
+        } else if (hue < 180) {
+            return new Color(0, 255, (int)(255 * (hue-120)/60));
+        } else if (hue < 240) {
+            return new Color(0, 255 - (int)(255 * (hue-180)/60), 255);
+        } else if (hue < 300) {
+            return new Color((int)(255 * (hue-240)/60), 0, 255);
+        } else {
+            return new Color(255, 0, 255 - (int)(255 * (hue-300)/60));
+        }
     }
 }

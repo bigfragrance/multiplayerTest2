@@ -1,40 +1,30 @@
 package modules;
 
-import engine.math.BlockPos2d;
+import engine.math.BlockPos;
 import modules.entity.Entity;
+import modules.world.ChunkPos;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ChunkMap {
-    public ConcurrentHashMap<BlockPos2d, ArrayList<Entity>> chunks;
-    public ArrayList<BlockPos2d> created=new ArrayList<>();
+    public ConcurrentHashMap<Long, ArrayList<Entity>> chunks;
     public ChunkMap(){
         chunks=new ConcurrentHashMap<>();
     }
-    public ArrayList<Entity> getChunk(BlockPos2d pos){
-        return chunks.getOrDefault(pos,new ArrayList<>());
+    public ArrayList<Entity> getChunk(BlockPos pos){
+        return chunks.getOrDefault(pos.toLong(),new ArrayList<>());
     }
-    public void addEntity(Entity e,BlockPos2d pos){
-        ArrayList<Entity> chunk=chunks.getOrDefault(pos,new ArrayList<>());
+    public void addEntity(Entity e,BlockPos pos){
+        ArrayList<Entity> chunk=chunks.getOrDefault(pos.toLong(),new ArrayList<>());
         chunk.add(e);
-        if(!chunks.containsKey(pos)){
-            chunks.put(pos,chunk);
+        if(!chunks.containsKey(pos.toLong())){
+            chunks.put(pos.toLong(),chunk);
         }
     }
     public void clear(){
         for(ArrayList<Entity> e:chunks.values()){
             e.clear();
         }
-    }
-    public BlockPos2d blockPos(BlockPos2d pos){
-        for(BlockPos2d b:created){
-            if(b.equals(pos)){
-                return b;
-            }
-        }
-        created.add(pos);
-        return pos;
     }
 }

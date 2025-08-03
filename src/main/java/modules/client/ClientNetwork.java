@@ -9,6 +9,8 @@ import java.awt.*;
 import java.io.*; 
 import java.net.*;
 import java.nio.charset.StandardCharsets;
+import java.util.LinkedList;
+import java.util.Queue;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static engine.modules.EngineMain.cs;
@@ -24,6 +26,8 @@ public class ClientNetwork {
     private int port = 8088;
     private volatile boolean running = true;
     public ClientNetworkHandler networkHandler;
+    private boolean connected=false;
+    private Queue<String> toSend=new LinkedList<>();
     public ClientNetwork(ClientNetworkHandler networkHandler) {
         this.networkHandler = networkHandler;
     }
@@ -80,12 +84,18 @@ public class ClientNetwork {
     private void establishConnection() throws IOException {
         socket = new Socket();
         socket.connect(new  InetSocketAddress(serverAddress, port), 3000);
-        socket.setTcpNoDelay(true); 
-        
+        socket.setTcpNoDelay(true);
         out = new PrintWriter(
             new OutputStreamWriter(socket.getOutputStream(),  StandardCharsets.UTF_8), true);
         in = new BufferedReader(
             new InputStreamReader(socket.getInputStream(),  StandardCharsets.UTF_8));
+        out.println("handshake");
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        connected=true;
     }
  
     private void handleDisconnect(Exception e) {
@@ -112,6 +122,13 @@ public class ClientNetwork {
         out.println(json.toString());
     }
     public void send(JSONObject json) {
+        if(!connected){
+            toSend.add(json.toString());
+            return;
+        }
+        while(!toSend.isEmpty()){
+            out.println(toSend.poll());
+        }
         out.println(json.toString());
     }
  

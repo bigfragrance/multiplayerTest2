@@ -15,11 +15,20 @@ public class Box {
         this.minY=Math.min(minY,maxY);
         this.maxY=Math.max(minY,maxY);
     }
+    public Box(BlockPos pos){
+        this(pos.x+1,pos.x,pos.y+1,pos.y);
+    }
+    public Box(int x,int y){
+        this(x+1,x,y+1,y);
+    }
     public Box(Vec2d v1,Vec2d v2){
         this(v1.x,v2.x,v1.y,v2.y);
     }
     public Box(Vec2d center, double dx, double dy){
         this(center.x-dx, center.x+dx, center.y -dy,center.y+dy);
+    }
+    public Box(Vec2d center, double d){
+        this(center,d,d);
     }
     public boolean intersects(Box box) {
         return this.intersects(box.minX, box.minY, box.maxX, box.maxY);
@@ -30,6 +39,45 @@ public class Box {
     }
     public Box expand(double x,double y){
         return new Box(maxX+x,minX-x,maxY+y,minY-y);
+
+    }
+    public Box expand(double d){
+        return expand(d,d);
+    }
+    public Box stretch(double x, double y) {
+        double d = this.minX;
+        double e = this.minY;
+        double g = this.maxX;
+        double h = this.maxY;
+        if (x < 0.0) {
+            d += x;
+        } else if (x > 0.0) {
+            g += x;
+        }
+
+        if (y < 0.0) {
+            e += y;
+        } else if (y > 0.0) {
+            h += y;
+        }
+
+
+        return new Box(d, g, e, h);
+    }
+    public SegmentY getRightSegment() {
+        return new SegmentY(minY, maxY, maxX);
+    }
+
+    public SegmentY getLeftSegment() {
+        return new SegmentY(minY, maxY, minX);
+    }
+
+    public SegmentX getTopSegment() {
+        return new SegmentX(minX, maxX, maxY);
+    }
+
+    public SegmentX getBottomSegment() {
+        return new SegmentX(minX, maxX, minY);
     }
     /**
      * Checks if this box intersects the box of the given coordinates.
@@ -45,7 +93,6 @@ public class Box {
     public boolean intersects(Vec2d pos1, Vec2d pos2) {
         return this.intersects(Math.min(pos1.x, pos2.x), Math.min(pos1.y, pos2.y), Math.max(pos1.x, pos2.x), Math.max(pos1.y, pos2.y));
     }
-
     /**
      * Checks if the given position is in this box.
      */
@@ -67,6 +114,12 @@ public class Box {
     }
     public void offset1(Vec2d vec){
         offset1(vec.x,vec.y);
+    }
+    public Box offset(double x,double y){
+        return new Box(minX+x,maxX+x,minY+y,maxY+y);
+    }
+    public Box offset(Vec2d vec){
+        return offset(vec.x,vec.y);
     }
     public double xSize(){
         return this.maxX-this.minX;
@@ -115,14 +168,14 @@ public class Box {
     }
     public JSONObject toJSON(){
         JSONObject json=new JSONObject();
-        json.put("minX",minX);
-        json.put("maxX",maxX);
-        json.put("minY",minY);
-        json.put("maxY",maxY);
+        json.put("a",Util.getRoundedDouble(minX,1));
+        json.put("b",Util.getRoundedDouble(maxX,1));
+        json.put("c",Util.getRoundedDouble(minY,1));
+        json.put("d",Util.getRoundedDouble(maxY,1));
         return json;
     }
     public static Box fromJSON(JSONObject json){
-        return new Box(json.getDouble("minX"),json.getDouble("maxX"),json.getDouble("minY"),json.getDouble("maxY"));
+        return new Box(json.getDouble("a"),json.getDouble("b"),json.getDouble("c"),json.getDouble("d"));
     }
 
     public Vec2d getMinPos(){
@@ -130,5 +183,8 @@ public class Box {
     }
     public Vec2d getMaxPos(){
         return new Vec2d(maxX,maxY);
+    }
+    public boolean valueEquals(Box other){
+        return minX==other.minX&&maxX==other.maxX&&minY==other.minY&&maxY==other.maxY;
     }
 }

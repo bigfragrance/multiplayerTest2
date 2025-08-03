@@ -4,12 +4,8 @@ import engine.math.Vec2d;
 import modules.network.ClientNetworkHandler;
 import modules.network.ServerNetworkHandler;
 import modules.network.packet.Packet;
-import modules.network.packet.c2s.PlayerInputC2SPacket;
-import modules.network.packet.c2s.PlayerRespawnC2SPacket;
-import modules.network.packet.c2s.UpdateWeaponC2SPacket;
-import modules.network.packet.s2c.PlayerDataS2CPacket;
-import modules.network.packet.s2c.PlayerSpawnS2CPacket;
-import modules.network.packet.s2c.PlayerStatusS2CPacket;
+import modules.network.packet.c2s.*;
+import modules.network.packet.s2c.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -125,6 +121,19 @@ public class PacketUtil {
             case("player_status")->{
                 return new PlayerStatusS2CPacket(o);
             }
+            case("block_state_update")->{
+                return new BlockStateUpdateS2CPacket(o);
+            }
+            case("chunk_update")->{
+                return new ChunkUpdateS2CPacket(o);
+            }
+            case("weapon_update")->{
+                return new PlayerWeaponUpdateS2CPacket(o);
+            }
+            case("tanks_data")->{
+                return new TanksDataS2CPacket(o);
+            }
+
         }
         return null;
     }
@@ -146,6 +155,12 @@ public class PacketUtil {
             case("update_weapon")->{
                 return new UpdateWeaponC2SPacket(o);
             }
+            case("want_chunk")->{
+                return new WantChunkC2SPacket(o);
+            }
+            case("want_weapon")->{
+                return new WantWeaponC2SPacket(o);
+            }
         }
         return null;
     }
@@ -164,7 +179,7 @@ public class PacketUtil {
                 }
             }
         } catch (Exception  e) {
-            e.printStackTrace();
+
         }
         return null;
     }
@@ -175,7 +190,7 @@ public class PacketUtil {
             Object value = field.get(null);
             return (String) value;
         } catch (Exception e) {
-            e.printStackTrace();
+
         }
         return null;
     }
@@ -210,27 +225,57 @@ public class PacketUtil {
         o.put(getShortVariableName("type"),getShortPacketName(value));
     }
     public static Object get(JSONObject o,String name){
+        if(o.has(name)){
+            return o.get(name);
+        }
         return o.get(getShortVariableName(name));
     }
     public static double getDouble(JSONObject o,String name){
+        if(o.has(name)){
+            return o.getDouble(name);
+        }
         return o.getDouble(getShortVariableName(name));
     }
     public static int getInt(JSONObject o,String name){
+        if(o.has(name)){
+            return o.getInt(name);
+        }
         return o.getInt(getShortVariableName(name));
     }
     public static long getLong(JSONObject o,String name){
+        if(o.has(name)){
+            return o.getLong(name);
+        }
         return o.getLong(getShortVariableName(name));
     }
     public static boolean getBoolean(JSONObject o,String name){
+        if(o.has(name)) {
+            return o.getBoolean(name);
+        }
         return o.getBoolean(getShortVariableName(name));
     }
     public static String getString(JSONObject o,String name){
+        if(o.has(name)) {
+            return o.getString(name);
+        }
         return o.getString(getShortVariableName(name));
     }
     public static JSONObject getJSONObject(JSONObject o,String name){
+        if(o.has(name)) {
+            return o.getJSONObject(name);
+        }
         return o.getJSONObject(getShortVariableName(name));
     }
     public static JSONArray getJSONArray(JSONObject o,String name){
+        if(o.has(name)) {
+            return o.getJSONArray(name);
+        }
         return o.getJSONArray(getShortVariableName(name));
+    }
+    public static boolean contains(JSONObject o,String name){
+        if(o.has(name)) {
+            return true;
+        }
+        return o.has(getShortVariableName(name));
     }
 }

@@ -10,7 +10,7 @@ public class DamageSource {
         this.time = System.currentTimeMillis();
     }
     public boolean isExpired() {
-        return System.currentTimeMillis() - time > 2000;
+        return System.currentTimeMillis() - time > 5000;
     }
     public void increase(double dmg){
         this.damage+=dmg;

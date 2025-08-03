@@ -25,4 +25,7 @@ public class PacketVariable {
     public static String sharpFactor="v";
     public static String data="w";
     public static String basic="x";
+    public static String shield="y";
+    public static String blockState="z";
+    public static String block="0";
 }

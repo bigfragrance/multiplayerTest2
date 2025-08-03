@@ -2,17 +2,27 @@ package engine.math.util;
 
 
 
+import engine.math.BlockPos;
 import engine.math.Box;
 import engine.math.Vec2d;
-import engine.render.Screen;
+import engine.modules.EngineMain;
+import org.json.JSONArray;
 
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import static engine.modules.EngineMain.cs;
+import static engine.render.Screen.sc;
+
 public class Util {
-    public static Random random=new Random(114514);
+    public static Random random=new Random(System.nanoTime());
     public static double sin(double d){
         return Math.sin(Math.toRadians(d));
     }
@@ -29,11 +39,15 @@ public class Util {
     public static boolean withIn(double min,double max,double d,boolean leftInclusive,boolean rightInclusive){
         return (leftInclusive?d>=min:d>min)&&(rightInclusive?d<=max:d<max);
     }
-    public static String getRoundedDouble(double d,int m){
-        int i=round(d*Math.pow(10,m));
+    public static String getRoundedDouble(double d,int n){
+        return  String.valueOf(d);
+        /*int i=round(d*Math.pow(10,m));
         String s=String.valueOf(i);
         if(s.length()<m) return "0."+"0".repeat(m-s.length())+s;
-        else return s.substring(0,s.length()-m)+"."+s.substring(s.length()-m);
+        else return s.substring(0,s.length()-m)+"."+s.substring(s.length()-m);*/
+    }
+    public static String formatDouble(double d){
+        return String.format("%."+3+"f",d);
     }
 
     public static void render( Graphics g,double mx, double my, double xs, double ys){
@@ -62,7 +76,7 @@ public class Util {
     }
     public static void renderString(Graphics g,String s,Vec2d centerPos,int size){
         double offX=s.length()*size/4d;
-        g.setFont(new Font("Arial",Font.BOLD,size));
+        g.setFont(new Font("微软雅黑",Font.BOLD,size));
         g.drawString(s,round(centerPos.x-offX),round(centerPos.y+ (double) size /2));
     }
     public static void renderPolygon(Graphics g,Vec2d center,int nSides,double radius,double rotation,boolean side,boolean fill,boolean sharp,double sharpFactor){
@@ -96,31 +110,72 @@ public class Util {
             if(side) g.drawPolygon(xPoints, yPoints, nSides);
         }
     }
+    public static void render(Graphics g,boolean fill,Vec2d... points){
+        int[] xPoints = new int[points.length];
+        int[] yPoints = new int[points.length];
+        for (int i = 0; i < points.length; i++) {
+            Vec2d point = points[i].switchToJFrame();
+            xPoints[i] = round(point.x);
+            yPoints[i] = round(point.y);
+        }
+        if(fill)g.fillPolygon(xPoints, yPoints, points.length);
+        g.drawPolygon(xPoints, yPoints, points.length);
+    }
+    public static void renderThickLine(int x1,int y1,int x2,int y2,double size){
+        Vec2d v1=new Vec2d(x1,y1);
+        Vec2d v2=new Vec2d(x2,y2);
+        Vec2d sub=v2.subtract(v1);
+        Vec2d off=v2.rotate(90).limit(size/2);
+
+    }
     public static void renderPolygon(Graphics g,Vec2d center,int nSides,double radius,double rotation,boolean side,boolean fill){
         renderPolygon(g,center,nSides,radius,rotation,side,fill,false,1);
     }
     public static double switchXToJFrame(double x){
-        return (x - Screen.INSTANCE.camX)* Screen.INSTANCE.zoom+ (double) Screen.INSTANCE.windowWidth /2;
+        return (x - sc.camX)* sc.zoom+ (double) sc.windowWidth /2;
     }
     public static double switchYToJFrame(double y){
-        return -((y-Screen.INSTANCE.camY)*Screen.INSTANCE.zoom)+ (double) Screen.INSTANCE.windowHeight /2;
+        return -((y- sc.camY)* sc.zoom)+ (double) sc.windowHeight /2;
+    }
+    public static double switchXToJFrame(double x,double zoom){
+        return (x - sc.camX)* zoom+ (double) sc.windowWidth /2;
+    }
+    public static double switchYToJFrame(double y,double zoom){
+        return -((y- sc.camY)*zoom)+ (double) sc.windowHeight /2;
     }
     public static double switchXToGame(double x){
-        return (x- (double) Screen.INSTANCE.windowWidth /2+Screen.INSTANCE.camX)/Screen.INSTANCE.zoom ;
+        return (x- (double) sc.windowWidth /2+ sc.camX)/ sc.zoom ;
     }
     public static double switchYToGame(double y){
-        return  (-y+Screen.INSTANCE.camY+ (double) Screen.INSTANCE.windowHeight /2)/Screen.INSTANCE.zoom;
+        return  (-y+ sc.camY+ (double) sc.windowHeight /2)/ sc.zoom;
     }
-    public static double[] zoom(double d,Vec2d pos){
-        double oz=Screen.INSTANCE.zoom;
-        double nz=oz+d;
-        if(Screen.INSTANCE.zoom<=0){
-            Screen.INSTANCE.zoom=d;
-            return null;
+    public static double switchXToGame(double x,double zoom){
+        return (x- (double) sc.windowWidth /2+ sc.camX)/ zoom ;
+    }
+    public static double switchYToGame(double y,double zoom){
+        return  (-y+ sc.camY+ (double) sc.windowHeight /2)/ zoom;
+    }
+    public static double switchXToJFrameOld(double x,double zoom){
+        return x*zoom - sc.camX+ (double) sc.windowWidth /2;
+    }
+    public static double switchYToJFrameOld(double y,double zoom){
+        return -(y*zoom-sc.camY)+ (double) sc.windowHeight /2;
+    }
+    public static double[] getDoubles(JSONArray array){
+        double[] doubles=new double[array.length()];
+        for(int i=0;i<array.length();i++){
+            doubles[i]=array.getDouble(i);
         }
-        Vec2d newPos=pos.multiply(nz);
-        Vec2d s=newPos.subtract(pos.multiply(oz));
-        return new double[]{(Screen.INSTANCE.camX+s.x),(Screen.INSTANCE.camY+s.y),nz};
+        return doubles;
+    }
+    public static Box toMiniMap(Box b){
+        Vec2d center=b.getCenter();
+        double sx=b.xSize()/60;
+        double sy=b.ySize()/60;
+        return new Box(toMiniMap(center),sx,sy);
+    }
+    public static Vec2d toMiniMap(Vec2d v){
+        return v.multiply(1/30d).add(cs.getCamPos()).add(4,4);
     }
     public static double random(double min,double max){
         return min+random.nextDouble()*(max-min);
@@ -139,6 +194,22 @@ public class Util {
     }
     public static Box lerp(Box b1,Box b2,double t){
         return new Box(lerp(b1.getMinPos(),b2.getMinPos(),t),lerp(b1.getMaxPos(),b2.getMaxPos(),t));
+    }
+    public static BlockPos getChunkPos(Vec2d vec){
+        return new BlockPos((int) Math.floor(vec.x/ EngineMain.chunkSize), (int) Math.floor(vec.y/EngineMain.chunkSize));
+    }
+    public static double[] zoom(double d,Vec2d pos){
+        double oz=sc.getRealZoom();
+        double nz=oz+d;
+        if(sc.getRealZoom()<=0){
+            sc.setRealZoom(d);
+            return null;
+        }
+        pos=pos.switchToJFrameOld(sc.getRealZoom());
+        pos=pos.switchToGame(sc.getRealZoom());
+        Vec2d newPos=pos.multiply(nz);
+        Vec2d s=newPos.subtract(pos.multiply(oz));
+        return new double[]{(sc.camX+s.x),(sc.camY+s.y),nz};
     }
     public static Vec2d getVec2dFromString(String str){
         try {
@@ -163,5 +234,48 @@ public class Util {
             return Arrays.asList();
         }
         return Arrays.asList(input.split("\\s+"));
+    }
+    public static void write(String path,String data){
+        File setting=new File(path);
+        if(!setting.exists()){
+            try {
+                setting.createNewFile();
+                Files.write(setting.toPath(),data.getBytes(StandardCharsets.UTF_8),
+                        StandardOpenOption.CREATE,   // 文件不存在时创建
+                        StandardOpenOption.TRUNCATE_EXISTING);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else{
+            try {
+                Files.write(setting.toPath(),data.getBytes(StandardCharsets.UTF_8),
+                        StandardOpenOption.CREATE,   // 文件不存在时创建
+                        StandardOpenOption.TRUNCATE_EXISTING);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    public static String read(String path){
+        File setting=new File(path);
+        String settingData=null;
+        if(!setting.exists()){
+            try {
+                setting.createNewFile();
+                settingData=Setting.create();
+                Files.write(setting.toPath(),settingData.getBytes(StandardCharsets.UTF_8),
+                        StandardOpenOption.CREATE,   // 文件不存在时创建
+                        StandardOpenOption.TRUNCATE_EXISTING);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }else{
+            try {
+                settingData=Files.readString(setting.toPath(),  StandardCharsets.UTF_8);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return settingData;
     }
 }

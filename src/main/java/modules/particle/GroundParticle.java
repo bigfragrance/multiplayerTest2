@@ -10,7 +10,7 @@ import java.awt.*;
 import static engine.render.Screen.SCREEN_BOX;
 
 public class GroundParticle extends Particle{
-    public static double size=5;
+    public static double size=0.1;
     long startTime;
     public GroundParticle(Vec2d position) {
         super(position,new Vec2d(0,0),new Box(position,size,size));
@@ -27,12 +27,12 @@ public class GroundParticle extends Particle{
     }
     public void render(Graphics g){
         super.render(g);
-        g.setColor(new Color(0,0,0,50));
-        Util.render(g,new Box(Util.lerp(prevPosition,position,getTickDelta()),size,size).switchToJFrame());
+        g.setColor(new Color(0,0,0,20));
+        Util.renderCube(g,new Box(Util.lerp(prevPosition,position,getTickDelta()),size,size).switchToJFrame());
     }
     public boolean shouldKill(boolean ignoreTime){
         if(!ignoreTime&&System.currentTimeMillis()-startTime<2000) return false;
-        Vec2d pos=this.position.switchToJFrame();
-        return pos.x < 0 - size || pos.y < 0 - size || pos.x > Screen.INSTANCE.windowWidth + size || pos.y > Screen.INSTANCE.windowHeight + size;
+        Vec2d pos=this.position.switchToJFrame(Screen.sc.getRealZoom());
+        return pos.x < 0 - size || pos.y < 0 - size || pos.x > Screen.sc.windowWidth + size || pos.y > Screen.sc.windowHeight + size;
     }
 }

@@ -1,6 +1,7 @@
 package modules.network.packet.s2c;
 
 import engine.math.util.PacketUtil;
+import engine.math.util.Util;
 import modules.network.ClientNetworkHandler;
 import modules.network.packet.Packet;
 import org.json.JSONArray;
@@ -16,7 +17,7 @@ public class PlayerDataS2CPacket implements Packet<ClientNetworkHandler> {
         this.skillPointCount = skillPointCount;
     }
     public PlayerDataS2CPacket(JSONObject o) {
-        this((double[]) PacketUtil.get(o,"skillPoints"),PacketUtil.getInt(o,"skillPointCount"));
+        this(Util.getDoubles(PacketUtil.getJSONArray(o, "skillPoints")),PacketUtil.getInt(o,"skillPointCount"));
     }
     @Override
     public JSONObject toJSON() {
