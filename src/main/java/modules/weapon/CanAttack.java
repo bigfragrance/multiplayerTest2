@@ -16,7 +16,10 @@ public class CanAttack extends Entity {
     public void render(Graphics g){
 
     }
-    public int getLayer() {
+    public void setSize(double m){
+
+    }
+    public double getLayer() {
         return 0;
     }
     public JSONObject toJSON(){

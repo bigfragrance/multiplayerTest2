@@ -6,6 +6,7 @@ import engine.math.util.AutoRecorder;
 import engine.math.util.EntityUtils;
 import engine.math.util.Util;
 import modules.ctrl.ServerInputManager;
+import modules.entity.Controllable;
 import modules.entity.Entity;
 import modules.entity.MobEntity;
 import modules.entity.PolygonEntity;
@@ -17,43 +18,43 @@ import java.util.List;
 
 import static engine.modules.EngineMain.cs;
 
-public class AutoController {
+public class AutoController<T extends Entity&Controllable> {
     public static double followingRange=8;
     public static double stopFollowDistance=2;
     public static double changeDiff=0.8;
     public static int dodgeCheck=10;
-    public ServerPlayerEntity owner;
+    public T owner;
     public ServerInputManager inputManager;
     private Entity target=null;
     private AutoRecorder<Vec2d> positionRecorder=new AutoRecorder<>(4);
-    public AutoController(ServerPlayerEntity owner,ServerInputManager inputManager){
+    public AutoController(T owner,ServerInputManager inputManager){
         this.owner=owner;
         this.inputManager=inputManager;
     }
     public void tick(){
-        if(owner.weapon==null) return;
+        if(owner.getWeapon()==null) return;
         updateTarget();
         updateAim();
         updateMovement();
         inputManager.upgradingSkill= Util.random.nextInt(10);
     }
     public void updateAim(){
-        owner.rotation=owner.getRealVelocity().angle();
+        owner.setRotation(owner.getRealVelocity().angle());
         inputManager.shoot=false;
         if(target==null) return;
         positionRecorder.add(target.position);
         if(positionRecorder.size()<3) return;
         Vec2d velocity=positionRecorder.getLast().subtract(positionRecorder.getFirst()).multiply(1d/(positionRecorder.size()-1));
-        Gun gun=owner.weapon.getGoingToFire();
+        Gun gun=owner.getWeapon().getGoingToFire();
         if(gun==null) return;
         Vec2d realAim=target.getPos().add(target.getRealVelocity());
-        if(owner.weapon.extradata.getBoolean("addVelocity")) {
-            realAim = EntityUtils.extrapolate2(target.position, velocity, owner.position, gun.getBulletSpeed(gun.getBulletType()), owner.getRealVelocity());
+        if(owner.getWeapon().extradata.getBoolean("addVelocity")) {
+            realAim = EntityUtils.extrapolate2(target.position, velocity, owner.getPosition(), gun.getBulletSpeed(gun.getBulletType()), owner.getRealVelocity());
             //realAim = EntityUtils.extrapolate2(aimPos, owner.getRealVelocity().multiply(-1), owner.position, gun.getBulletSpeed(), Vec2d.zero());
         }
-        inputManager.aimPos=realAim.subtract(owner.position);
+        inputManager.aimPos=realAim.subtract(owner.getPosition());
         inputManager.shoot=true;
-        owner.rotation=inputManager.aimPos.angle();
+        owner.setRotation(inputManager.aimPos.angle());
     }
     public void updateMovement(){
         updateFollow();
@@ -84,7 +85,7 @@ public class AutoController {
                 for(int y=-1;y<=1;y++){
                     movements[index][0]=x;
                     movements[index][1]=y;
-                    Vec2d velocityAdd=new Vec2d(x,y).limit(owner.speed);
+                    Vec2d velocityAdd=new Vec2d(x,y).limit(owner.getSpeed());
                     velocities[index].multiply1(ServerPlayerEntity.drag);
                     velocities[index].offset(velocityAdd);
                     boxes[index].offset1(velocities[index]);

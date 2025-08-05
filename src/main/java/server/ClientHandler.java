@@ -2,6 +2,7 @@ package server;
 
 import engine.math.util.EntityUtils;
 import engine.math.util.PacketUtil;
+import modules.entity.player.PlayerData;
 import modules.entity.player.PlayerEntity;
 import modules.entity.player.ServerPlayerEntity;
 import modules.network.ServerNetworkHandler;
@@ -26,9 +27,11 @@ public class ClientHandler implements Runnable {
     public ServerPlayerEntity player;
     private volatile long lastReceive=0;
     private long connectionStartTime;
+    private boolean interrupted=false;
+    private Thread processThread=null;
+    private boolean handshaked=false;
     public ClientHandler(Socket socket) {
         this.clientSocket  = socket;
-        spawnPlayer();
         lastReceive=System.currentTimeMillis();
         connectionStartTime=System.currentTimeMillis();
     }
@@ -58,26 +61,29 @@ public class ClientHandler implements Runnable {
             writer.println(initMsg.toString()); */
  
             // Start broadcast receiver 
-            new Thread(this::processBroadcasts).start();
+            processThread= new Thread(this::processBroadcasts);
+            processThread.start();
  
             // Handle incoming messages 
             String inputLine;
             lastReceive=System.currentTimeMillis();
-            boolean handshaked=false;
-            while ((inputLine = reader.readLine())  != null&&System.currentTimeMillis()-lastReceive<6000) {
+            while ((inputLine = reader.readLine())  != null&&System.currentTimeMillis()-lastReceive<6000&&!interrupted&&!Thread.currentThread().isInterrupted()) {
                 if(inputLine.equals("handshake")){
                     handshaked=true;
+                    spawnPlayer();
                     lastReceive=System.currentTimeMillis();
                     continue;
                 }else if(!handshaked){
                     disconnect();
-                    Thread.currentThread().interrupt();
+                    return;
                 }
                 JSONObject msg = new JSONObject(inputLine);
                 serverNetworkHandler.apply(msg);
                 lastReceive=System.currentTimeMillis();
             }
             disconnect();
+            Thread.currentThread().interrupt();
+            processThread.interrupt();
         } catch (Exception e) {
             disconnect();
             System.err.println("Client  error: " );
@@ -91,12 +97,16 @@ public class ClientHandler implements Runnable {
     }
     private void disconnect() {
         try {
+            if(handshaked){
+                ServerMain.connectedPlayersEntity.put(player.name.hashCode(),new PlayerData(player));
+            }
             cs.removeEntity(player.id);
             clientSocket.close();
             ServerMain.connectedPlayers.remove(clientSocket.getInetAddress().hashCode());
         } catch (IOException e) {
             System.err.println("Error closing client socket: " + e.getMessage());
         }
+        interrupted=true;
     }
 
     public void send(JSONObject o){

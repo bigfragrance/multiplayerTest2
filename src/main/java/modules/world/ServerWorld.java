@@ -50,7 +50,7 @@ public class ServerWorld extends World{
         for(Entity e:cs.entities.values()){
             if(e instanceof ServerBotEntity) count++;
         }
-        if(count>=8) return;
+        if(count>=2) return;
         Vec2d pos= EntityUtils.getRandomSpawnPosition(cs.getTeam());
         ServerBotEntity player=new ServerBotEntity(pos);
         player.team=cs.getTeam();

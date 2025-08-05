@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -37,8 +38,8 @@ import static engine.render.Screen.sc;
 public class EngineMain implements Runnable{
     public static String SETTING_PATH="setting.json";
     public static volatile EngineMain cs;
-    public ConcurrentHashMap<Long, Entity> entities=new ConcurrentHashMap<>();
-    public ConcurrentHashMap<Long,Entity> addingEntities=new ConcurrentHashMap<>();
+    public Map<Long, Entity> entities=new ConcurrentHashMap<>();
+    public Map<Long,Entity> addingEntities=new ConcurrentHashMap<>();
     public ArrayList<BlockEntity> groundBlocks=new ArrayList<>();
     public ArrayList<Particle> particles=new ArrayList<>();
     public ArrayList<Particle> groundParticles=new ArrayList<>();
@@ -344,9 +345,12 @@ public class EngineMain implements Runnable{
         removeEntity(entity.id);
     }
     public void removeEntity(Long id){
-        spawnParticle(entities.get(id));
+        Entity e=entities.get(id);
+        spawnParticle(e);
         entities.remove(id);
         addingEntities.remove(id);
+        entities.values().remove(e);
+        addingEntities.values().remove(e);
         if(isServer){
             multiClientHandler.clients.forEach(c->c.serverNetworkHandler.sendEntityRemove(id));
         }

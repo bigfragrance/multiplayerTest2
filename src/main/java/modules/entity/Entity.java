@@ -8,6 +8,7 @@ import engine.math.util.PacketUtil;
 import engine.math.util.PacketVariable;
 import engine.math.util.Util;
 import engine.render.Screen;
+import modules.entity.boss.VisitorEntity;
 import modules.entity.bullet.BulletType;
 import modules.entity.player.PlayerEntity;
 import modules.weapon.GunList;
@@ -139,7 +140,7 @@ public abstract class Entity implements NetworkItem {
             }
             this.move(this.velocity.add(extraVelocity));
             this.extraVelocity.multiply1(extraVelocityD);
-            if(this.weapon!=null&&!(this instanceof PlayerEntity)){
+            if(this.weapon!=null&&!(this instanceof PlayerEntity)&&!(this instanceof VisitorEntity)){
                 this.weapon.tick(true);
             }
             if(EntityUtils.isInsideWall(boundingBox.expand(-0.01,-0.01))){

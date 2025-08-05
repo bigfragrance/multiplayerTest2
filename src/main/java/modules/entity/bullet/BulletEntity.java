@@ -14,7 +14,7 @@ import java.awt.*;
 import static engine.modules.EngineMain.cs;
 
 public class BulletEntity extends Entity {
-    public static double[] baseValues={10,0.1,4,0.1,100,20,0.01,0.05};//damage speed health size lifeTime kbFactor randomVelocity selfKB
+    public static double[] baseValues={10,0.1,4,0.1,100,20,0.003,0.05};//damage speed health size lifeTime kbFactor randomVelocity selfKB
     public long ownerId;
     private boolean invisibleTick=false;
     public BulletType type;
@@ -24,7 +24,7 @@ public class BulletEntity extends Entity {
         super();
         this.position=position;
         this.prevPosition=position.copy();
-        this.velocity=velocity.add(Util.randomVec().multiply(baseValues[6]*type.getMultiplier(6)));
+        this.velocity=velocity;
         this.type=type;
         this.health=baseValues[2]*type.getMultiplier(2);
         this.damage=baseValues[0]*type.getMultiplier(0);

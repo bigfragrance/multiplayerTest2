@@ -271,6 +271,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
             }
         }
         catch (Exception e){
+            e.printStackTrace();
             super.paintComponent(g);
             ArrayList<Entity> entities= (ArrayList<Entity>) new ArrayList<>(cs.entities.values().stream().toList()).clone();
             for(Entity entity:entities){

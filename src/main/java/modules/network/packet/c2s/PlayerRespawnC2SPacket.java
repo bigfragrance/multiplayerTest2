@@ -28,12 +28,7 @@ public class PlayerRespawnC2SPacket implements Packet<ServerNetworkHandler> {
         PlayerEntity e=serverNetworkHandler.clientHandler.player;
         if(e!=null){
             if(e.isAlive) return;
-            e.isAlive=true;
-            e.setPosition(EntityUtils.getRandomSpawnPosition(e.team));
-            e.health=PlayerEntity.healthMax;
-            e.shield=PlayerEntity.shieldMax;
-            e.noEnemyTimer=10;
-            //e.score*=0.5;
+            e.respawn();
         }else{
             ServerPlayerEntity player=new ServerPlayerEntity(new Vec2d(0,0));
             player.team=cs.getTeam();

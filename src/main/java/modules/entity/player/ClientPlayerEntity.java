@@ -4,12 +4,14 @@ import engine.math.Box;
 import engine.math.Vec2d;
 import engine.math.util.EntityUtils;
 import engine.math.util.PacketUtil;
+import engine.math.util.Util;
 import engine.render.Screen;
 import modules.ctrl.InputManager;
 import modules.ctrl.ServerInputManager;
 import modules.network.packet.c2s.UpdateWeaponC2SPacket;
 import modules.network.packet.c2s.WantWeaponC2SPacket;
 import modules.screen.TankChooseScreen;
+import modules.weapon.Gun;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -25,6 +27,7 @@ public class ClientPlayerEntity extends PlayerEntity {
     public String currentWeapon="dai";
     public int lastAutoFire=0;
     public boolean autoFire=false;
+    private Vec2d prevMousePos=new Vec2d(0,0);
     public ClientPlayerEntity(Vec2d position) {
         super(position);
         inputManager= sc.inputManager;
@@ -44,29 +47,19 @@ public class ClientPlayerEntity extends PlayerEntity {
             cs.networkHandler.send(new UpdateWeaponC2SPacket(cs.setting.getChosenTank()));
             currentWeapon=cs.setting.getChosenTank();
         }
-
-        //cs.networkHandler.sendPacket(new WantWeaponC2SPacket(this.id));
         super.tick();
         if(weapon!=null) weapon.tick(false);
         cs.updateCamPos();
         sc.zoom=(12.8/0.02)/this.getFov();
         Screen.tickDelta=0;
         updateInput();
-        if(isAlive) {
-            /*this.velocity.multiply1(0.3);
-            this.velocity.offset(input.multiply(speed));
-            this.updateCollision(false);*/
-            //cs.networkHandler.sendPlayerMove(this.position);
-            //updateBullet();
-        }else{
-            /*this.velocity=new Vec2d(0,0);
-            this.prevPosition.set(this.position);
-            this.prevBoundingBox=this.boundingBox.copy();*/
+        if(!isAlive) {
             if(inputManager.isRespawning()){
                 cs.networkHandler.sendPlayerRespawn();
                 sc.setScreen(TankChooseScreen.INSTANCE);
             }
         }
+        prevMousePos=inputManager.getMouseVec();
     }
     private void updateInput(){
         updateSkillPoint();
@@ -96,6 +89,15 @@ public class ClientPlayerEntity extends PlayerEntity {
     public void render(Graphics g){
         super.render(g);
         EntityUtils.renderSkillPoints(getSkillPointRenderPosition(),skillPoints,skillPointCanUse);
+        renderMouse(g);
+    }
+    private void renderMouse(Graphics g){
+        Graphics2D g2d=(Graphics2D) g;
+        //g2d.setStroke(new BasicStroke((float) (1f)));
+        Vec2d center=Util.lerp(prevMousePos,inputManager.getMouseVec(),Screen.tickDelta);
+        Vec2d off=new Vec2d(0.1*getFov(),0.1*getFov());
+        Util.renderLine(g,center.add(off).switchToGame1(),center.add(off.multiply(-1)).switchToGame1());
+        Util.renderLine(g,center.add(off.rotate(90)).switchToGame1(),center.add(off.rotate(-90)).switchToGame1());
     }
     private Vec2d getSkillPointRenderPosition(){
         return Screen.SCREEN_BOX.getMaxPos().add(-100,-50).subtract(sc.getMiddle()).multiply(1/sc.zoom2).add(sc.getMiddle());

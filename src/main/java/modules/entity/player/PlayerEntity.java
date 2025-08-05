@@ -28,7 +28,7 @@ public class PlayerEntity extends Entity {
     public static double shieldRegen=0.7;
     public static int shieldRespawn=400;
     public static double shieldMax=80;
-    public static double scoreMultiplier=1;
+    public static double scoreMultiplier=0.001;
     public static int maxSkillPoints=50;
     //                                     0           1          2           3          4            5               6                7                 8
     public static String[] skillNames=              {"Damage[z]","Speed[x]","Health[c]","Size[v]","Reload[b]","MoveSpeed[n]","DamageAbsorb[m]","ShieldRegen[,]","HealthRegen[.]","Fov[/]"};
@@ -37,8 +37,8 @@ public class PlayerEntity extends Entity {
     public static double SIZE=10*sizeMultiplier;
     public static String noEnemyID="God";
     public String name=defName;
-    public double[] skillPoints= {1,1,1,1,1,1,1,1,1,1};
-    public double[] skillPointLevels={0,0,0,0,0,0,0,0,0,0};
+    public double[] skillPoints= Util.createDoubles(0.2,10);
+    public double[] skillPointLevels=Util.createDoubles(0,10);
     public int noEnemyTimer=0;
     public double speed=SPEED;
     public boolean havingShield=false;
@@ -98,7 +98,7 @@ public class PlayerEntity extends Entity {
         return d*skillPoints[4];
     }
     public double getSizeMultiplier(){
-        return Math.max(1,skillPoints[3]);
+        return this instanceof ServerPlayerEntity? skillPoints[3]:this.boundingBox.avgSize()*0.5/SIZE;
     }
     public void addDamage(double d){
         d=d/skillPoints[6];
@@ -149,6 +149,14 @@ public class PlayerEntity extends Entity {
         this.prevPosition.set(this.nextPosition);
         this.prevBoundingBox=this.nextBoundingBox.copy();
     }
+    public void respawn(){
+        this.isAlive=true;
+        this.setPosition(EntityUtils.getRandomSpawnPosition(this.team));
+        this.health=PlayerEntity.healthMax;
+        this.shield=PlayerEntity.shieldMax;
+        this.noEnemyTimer=0;
+        //this.score*=0.5;
+    }
     public void render(Graphics g){
         super.render(g);
         EntityUtils.render(g,this);
@@ -158,6 +166,7 @@ public class PlayerEntity extends Entity {
             sc.restoreZoom();
         });
         //EntityUtils.renderHealthBar(g,this,);
+        //System.out.println(this.name);
         EntityUtils.renderPlayerName(g,this);
         EntityUtils.renderScore(g,this);
     }

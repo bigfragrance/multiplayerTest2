@@ -39,6 +39,11 @@ public class Util {
     public static boolean withIn(double min,double max,double d,boolean leftInclusive,boolean rightInclusive){
         return (leftInclusive?d>=min:d>min)&&(rightInclusive?d<=max:d<max);
     }
+    public static double[] createDoubles(double def,int c){
+        double[] d=new double[c];
+        Arrays.fill(d,def);
+        return d;
+    }
     public static String getRoundedDouble(double d,int n){
         return  String.valueOf(d);
         /*int i=round(d*Math.pow(10,m));
@@ -73,6 +78,9 @@ public class Util {
         g.drawLine((int) b.minX, (int) b.minY, (int) b.minX, (int) b.maxY);
         g.drawLine((int) b.maxX, (int) b.maxY, (int) b.minX, (int) b.maxY);
         g.drawLine((int) b.maxX, (int) b.maxY, (int) b.maxX, (int) b.minY);
+    }
+    public static void renderLine(Graphics g,Vec2d start,Vec2d end){
+        g.drawLine(round(start.x),round(start.y),round(end.x),round(end.y));
     }
     public static void renderString(Graphics g,String s,Vec2d centerPos,int size){
         double offX=s.length()*size/4d;
@@ -121,13 +129,7 @@ public class Util {
         if(fill)g.fillPolygon(xPoints, yPoints, points.length);
         g.drawPolygon(xPoints, yPoints, points.length);
     }
-    public static void renderThickLine(int x1,int y1,int x2,int y2,double size){
-        Vec2d v1=new Vec2d(x1,y1);
-        Vec2d v2=new Vec2d(x2,y2);
-        Vec2d sub=v2.subtract(v1);
-        Vec2d off=v2.rotate(90).limit(size/2);
 
-    }
     public static void renderPolygon(Graphics g,Vec2d center,int nSides,double radius,double rotation,boolean side,boolean fill){
         renderPolygon(g,center,nSides,radius,rotation,side,fill,false,1);
     }

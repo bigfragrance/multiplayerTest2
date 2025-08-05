@@ -5,6 +5,7 @@ import engine.math.Vec2d;
 import engine.math.util.Util;
 import modules.ctrl.ServerInputManager;
 import modules.entity.Attackable;
+import modules.entity.Controllable;
 import modules.network.ServerNetworkHandler;
 import modules.network.packet.Packet;
 import modules.network.packet.s2c.PlayerDataS2CPacket;
@@ -13,7 +14,7 @@ import org.json.JSONObject;
 
 import static java.lang.Math.floor;
 
-public class ServerPlayerEntity extends PlayerEntity implements Attackable {
+public class ServerPlayerEntity extends PlayerEntity implements Attackable, Controllable {
 
     public static double drag=0.67;
     public ServerInputManager inputManager=null;
@@ -25,7 +26,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable {
     public ServerPlayerEntity(Vec2d position) {
         super(position);
         inputManager=new ServerInputManager();
-        this.score=5000;
+        this.score=100/scoreMultiplier+10;
     }
     public void tick(){
         skillPointNow=(int)floor(score*scoreMultiplier);
@@ -54,7 +55,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable {
             this.health=healthMax;
             this.speed=SPEED*3;
         }else{
-            this.speed=SPEED*(1+skillPointLevels[5]/10);
+            this.speed=SPEED*skillPoints[5];
         }
     }
     public void whenAlive(){
@@ -67,9 +68,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable {
             this.kill();
             this.health=0;
         }
-
         regenShieldAndHealth();
-
     }
     public JSONObject getUpdate(){
         return super.getUpdate();
@@ -85,19 +84,19 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable {
                 break;
             }
             if(inputManager.upgradingSkill==i){
-                /*if(skillPointUsed>=skillNames.length*10){
+                if(skillPointUsed>=100){
                     instantRegen();
                     upgradeTimer=2;
                     skillPointUsed++;
                     break;
                 }
-                if(skillPointLevels[i]>=10){
+                if(skillPointLevels[i]>=18){
                     break;
-                }*/
+                }
                 skillPointLevels[i]+=1;
                 skillPoints[i]=1+getMultiplier(skillPointLevels[i],skillPointMultipliersMax[i]);
-                upgradeTimer=0;
-                instantRegen();
+                upgradeTimer=2;
+                //instantRegen();
                 skillPointUsed++;
                 break;
             }
@@ -116,7 +115,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable {
         weapon.tick(inputManager.shoot);
     }
     public static double getMultiplier(double level,double max){
-        return max*level/10;
+        return max*level/8-0.8;
     }
 
     @Override
@@ -130,7 +129,27 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable {
     }
 
     @Override
+    public void setRotation(double rotation) {
+        this.rotation=rotation;
+    }
+
+    @Override
+    public ServerInputManager getInputManager() {
+        return inputManager;
+    }
+
+    @Override
     public Vec2d getPosition() {
         return position;
+    }
+
+    @Override
+    public GunList getWeapon() {
+        return weapon;
+    }
+
+    @Override
+    public double getSpeed() {
+        return speed;
     }
 }

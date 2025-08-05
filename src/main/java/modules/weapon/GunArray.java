@@ -23,7 +23,7 @@ public class GunArray extends CanAttack{
             gun.tick(fire);
         }
     }
-    public int getLayer() {
+    public double getLayer() {
         return guns[0].layer;
     }
 }

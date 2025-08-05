@@ -19,7 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class GunList {
     public static JSONObject data=new JSONObject();
     public JSONObject extradata=createDefData();
-    public ConcurrentHashMap<Long,Gun> list;
+    public ConcurrentHashMap<Long,CanAttack> list;
     public AtomicInteger id=new AtomicInteger(0);
     public GunList(){
         this.list=new ConcurrentHashMap<>();
@@ -30,10 +30,15 @@ public class GunList {
         }
     }
     public void render(Graphics g){
-        ArrayList<Gun> list=new ArrayList<>(this.list.values());
-        list.sort(Comparator.comparingInt(CanAttack::getLayer));
+        ArrayList<CanAttack> list=new ArrayList<>(this.list.values());
+        list.sort(Comparator.comparingDouble(CanAttack::getLayer));
         for(CanAttack canAttack:list){
             canAttack.render(g);
+        }
+    }
+    public void setSize(double m){
+        for(CanAttack canAttack:list.values()){
+            canAttack.setSize(m);
         }
     }
     public void add(Gun gun){
@@ -72,10 +77,12 @@ public class GunList {
     public Gun getGoingToFire(){
         Gun bestGun=null;
         double minTime=1000;
-        for(Gun gun:list.values()){
-            if(gun.getReload()<minTime){
-                minTime=gun.getReload();
-                bestGun=gun;
+        for(CanAttack ttgun:list.values()){
+            if(ttgun instanceof Gun gun) {
+                if (gun.getReload() < minTime) {
+                    minTime = gun.getReload();
+                    bestGun = gun;
+                }
             }
         }
         return bestGun;

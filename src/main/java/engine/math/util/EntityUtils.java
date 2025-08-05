@@ -31,7 +31,7 @@ public class EntityUtils {
     public static Color ShieldBarColor=new Color(100, 255, 255,255);
     public static int nameSize=10;
     public static int scoreSize=7;
-    public static double intersectCheckStep=0.1;
+    public static double intersectCheckStep=0.05;
     public static double extrapolateBase=1.5;
     public static double extrapolateCheckMax=10;
     public static double extrapolateCheckStep=0.5;

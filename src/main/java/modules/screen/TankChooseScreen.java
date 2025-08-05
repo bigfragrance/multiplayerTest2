@@ -28,24 +28,27 @@ public class TankChooseScreen extends GUI {
     public static JSONObject tanksList=new JSONObject();
     public int currentIndex=0;
     public ArrayList<PlayerEntity> toShow=new ArrayList<>();
+    public double sizeMultiplier=1;
     public TankChooseScreen(){
     }
     public void tick(){
+        sizeMultiplier=cs.player==null?1: cs.player.getFov();
         for(int i=0;i<toShow.size();i++){
             PlayerEntity player=toShow.get(i);
             player.prevPosition.set(player.position);
             player.prevBoundingBox=player.boundingBox.copy();
             player.prevRotation=player.rotation;
             player.position=(getPos(i%tankPerPage));
-            player.boundingBox=new Box(player.position,PlayerEntity.SIZE);
-            player.rotation+=2;
+            player.boundingBox=new Box(player.position,PlayerEntity.SIZE*sizeMultiplier);
+            player.rotation+=10;
+            if(player.weapon!=null)player.weapon.setSize(sizeMultiplier);
         }
         if(Screen.isKeyClinked(Screen.MOUSECHAR)){
             Vec2d mouse=sc.inputManager.getMouseVec().add(cs.getCamPos());
             for(int i=currentIndex*tankPerPage;i<(currentIndex+1)*tankPerPage;i++){
                 if(i>=toShow.size())break;
                 PlayerEntity player=toShow.get(i);
-                if(player.position.distanceTo(mouse)<0.5){
+                if(player.position.distanceTo(mouse)<0.5*(sizeMultiplier)){
                     if(player.name.equals("PageBack")){
                         currentIndex--;
                         if(currentIndex<0) currentIndex=0;
@@ -130,6 +133,6 @@ public class TankChooseScreen extends GUI {
         }
     }
     private Vec2d getPos(int index){
-        return cs.camPos.add(start.add(index*distance,0));
+        return cs.camPos.add(start.add(index*distance,0).multiply(sizeMultiplier));
     }
 }

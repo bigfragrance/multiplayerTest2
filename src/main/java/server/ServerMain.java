@@ -1,5 +1,8 @@
 package server;
 
+import modules.entity.player.PlayerData;
+import modules.entity.player.ServerPlayerEntity;
+
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Queue;
@@ -15,6 +18,7 @@ public class ServerMain {
     public static ConcurrentHashMap<Integer,Boolean> connectedPlayers = new ConcurrentHashMap<>();
     private static long lastConnectionTime = 0;
     private static double minAvgDelay=100;
+    public static ConcurrentHashMap<Integer, PlayerData> connectedPlayersEntity = new ConcurrentHashMap<>();
     public static void main(String[] args) throws Exception {
         ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS); 
         lastConnectionTime = System.currentTimeMillis();
@@ -23,11 +27,11 @@ public class ServerMain {
             
             while (true) {
                 Socket client = server.accept();
-                /*if(connectedPlayers.getOrDefault(client.getInetAddress().hashCode(),false)){
+                if(connectedPlayers.getOrDefault(client.getInetAddress().hashCode(),false)){
                     client.close();
                     continue;
                 }
-                int count=0;
+                /*int count=0;
                 double delay=0;
                 for(double d:connectionTimes){
                     count++;

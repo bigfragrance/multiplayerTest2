@@ -12,6 +12,7 @@ import modules.entity.player.ServerPlayerEntity;
 import modules.network.packet.Packet;
 import org.json.JSONObject;
 import server.ClientHandler;
+import server.ServerMain;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -186,9 +187,12 @@ public class ServerNetworkHandler {
         }
     }*/
     public void handlePlayerData(JSONObject o){
-        PlayerEntity e= clientHandler.player;
+        ServerPlayerEntity e= clientHandler.player;
         if(e!=null){
             e.name= PacketUtil.getString(o,"name");
+            if(ServerMain.connectedPlayersEntity.containsKey(e.name.hashCode())){
+                ServerMain.connectedPlayersEntity.get(e.name.hashCode()).set(e);
+            }
             cs.multiClientHandler.clients.forEach(c -> {
                 if(c.player.id!=e.id){
                     c.serverNetworkHandler.sendPlayerData(e);
