@@ -1,0 +1,435 @@
+type /taɪp/ n. 类型，种类
+vt. & vi. 打字 (1)
+comedy /ˈkɒmədi/ n. 喜剧片，喜剧 (1)
+*documentary /ˌdɒkjuˈmentri/ 
+n. 纪录片，纪实节目
+adj. 文件的；纪录的	 	 (1)
+fantasy /ˈfæntəsi/ n. 幻想作品；幻想，
+想象 (1)
+horror /ˈhɒrə(r)/ n. 恐怖电影（或故事等）；
+震惊，恐惧 (1)
+romance /rəʊˈmæns; ˈrəʊmæns/ n.爱情故事；
+浪漫史；爱情 (1)
+fiction /ˈfɪkʃn/ n. 小说；虚构的事 (1)
+science fiction (informal sci-fi; abbr. 
+SF) 科幻电影（或小说等） (1)
+behind the scenes 在后台，在幕后 (2)
+actually /ˈæktʃuəli/ adv. 实际上，事实上 (2)
+brief /briːf/ adj. 简洁的，简单的；短时间的 (2)
+familiar /fəˈmɪliə(r)/ adj. 熟悉的，常见的	 (2)
+factor /ˈfæktə(r)/ n. 因素，要素 (2)
+dinosaur /ˈdaɪnəsɔː(r)/ n. 恐龙 (2)
+*roar /rɔː(r)/ n. & vi. 咆哮，吼叫 (2)
+sheet /ʃiːt/ n. 一张（纸）；床单，被单；薄片 (2)
+envelope /ˈenvələʊp/ n. 信封 (2)
+attach /əˈtætʃ/ vt. 认为有重要性，重视；
+把…固定，附上 (3)
+visual /ˈvɪʒuəl/ adj. 视力的，视觉的 (3)
+frequently /ˈfriːkwəntli/ adv. 频繁地，经常	 (3)
+studio /ˈstjuːdiəʊ/ n. 电影摄影棚；录音室 (3)
+enable /ɪˈneɪbl/ vt. 使能够，使可行 (3)
+aid /eɪd/ n., vt. & vi. 帮助；援助 (3)
+prefer /prɪˈfɜː(r)/ vt. 较喜欢，更喜欢 (3)
+creative /kriˈeɪtɪv/ adj. 创造性的，创作的；
+有创造力的 (3)
+approach /əˈprəʊtʃ/ n. 方法；接近，靠近
+vt. 接近，靠近；处理 (3)
+angle /ˈæŋɡl/ n. 角度；立场，观点 (3)
+*prop /prɒp/ n. 道具；支柱，支撑物 (3)
+revise /rɪˈvaɪz/ vt. 改变，修改；修订；复习	(3)
+historian /hɪˈstɔːriən/ n. 史学工作者，
+历史学家 (3)
+ensure /ɪnˈʃʊə(r); ɪnˈʃɔː(r)/ vt. 保证，确保 (3)
+Atlantic /ətˈlæntɪk/ adj. 大西洋的 (3)
+ocean /ˈəʊʃn/ n. 大洋，海洋 (3)
+not to mention 更不用说，且不说 (3)
+lecture /ˈlektʃə(r)/ n. 讲座，演讲；教训，训斥
+vi. 开讲座，讲课
+vt. 指责，训斥 (3)
+justice /ˈdʒʌstɪs/ n. 公平，公正；公道，合理(3)
+do justice to 恰当处理（某人或某事）；公
+平对待（某人或某事），给予公正的评价(3)
+*iceberg /ˈaɪsbɜːɡ/ n. 冰山 (3)
+dragon /ˈdræɡən/ n. 龙 (5)
+award /əˈwɔːd/ n. 奖，奖品，奖金
+vt. 授予，给予 (5)
+audience /ˈɔːdiəns/ n. 观众，听众 (5)
+perform /pəˈfɔːm/ vi. 表演；工作，运转
+vt. 表演；做，履行 (5)
+location /ləʊIkeɪʃn/ n. 外景拍摄地；地方，
+地点 (5)
+in addition to 除…以外（还） (5)
+*martial /Imɑ:ʃl/ adj. 战争的，军事的 (5)
+martial art 武术 (5)
+desert /Idezət/ n. 沙漠，荒漠 (5)
+jungle /Idʒʌŋɡl/ n. 丛林，密林 (6)
+title /Itaɪtl/ n. 名称，标题；称号；职位名称􀀃(6)
+adapt /əIdæpt/ vt. 改编，改写；使适应
+vi. 适应 (6)
+regard /rɪIɡɑ:d/ vt. 将…认为，看待；注视 (6)
+classic /Iklæsɪk/ n. 经典作品，名著
+adj. 经典的；古典的􀀃 (6)
+super /Isu:pə(r); Isju:pə(r)/ adj. 极好的，
+了不起的，超级的 (7)
+solution /səIlu:ʃn/ n. 解决方法，处理手段；
+答案 (7)
+onto /Iɒntə; Iɒntu/ prep. 向，朝 (7)
+system /Isɪstəm/ n. 系统；制度，体制 (7)
+cure /kjʊə(r)/ n. 药物，疗法；治疗
+vt. 治好 (9)
+eventually /ɪIventʃuəli/ adv. 最后，终于 (9)
+typical /Itɪpɪkl/ adj. 典型的，有代表性的 (9)
+fancy /Ifænsi/ adj. 复杂的；花哨的；昂贵的
+vt. 想要，想做；倾慕 (9)
+narrow /Inærəʊ/ adj. 狭窄的；勉强的；狭隘的
+vt. & vi.（使）窄小，缩小 (9)
+recommend /IrekəImend/ vt. 推荐，举荐；
+劝告，建议 (9)
+personality /Ipɜ:səInæləti/ n. 性格，个性；
+气质 (11)
+despite /dɪIspaɪt/ prep. 即使，尽管 (11)
+major /Imeɪdʒə(r)/ adj. 主要的，重要的 (11)
+event /ɪIvent/ n. 事件；活动 (11)
+pull up 停车，停止 (11)
+wave /weɪv/ vi. & vt. 挥手，招手；挥舞
+n. 海浪；大量涌现 (11)
+*recollect /IrekəIlekt/ vt. & vi. 记起，回忆起(12)
+recall /rɪIkɔ:l/ vt. & vi. 回想，回忆起 (12)
+*angel /Ieɪndʒl/ n. 天使；善人 (12)
+*dandy /Idændi/ adj. 非常好的，极佳的 (12)
+*crooked /Ikrʊkɪd/ adj. 不直的，弯曲的 (12)
+arrow /Iærəʊ/ n. 箭；箭头 (12)
+*pea /pi:/ n. 豌豆 (12)
+Unit 2 
+soccer /Isɒkə(r)/ n. 〈美〉足球运动 (15)
+bat /bæt/ n. 蝙蝠；球棒，球板
+vt. & vi. 用球棒（板）击球 (15)
+skydiving /Iskaɪdaɪvɪŋ/ n. 跳伞运动 (15)
+congratulation /kənIɡrætʃuIleɪʃn/ n. 祝贺，
+恭喜；贺辞；恭贺 (16)
+assume /əIsju:m/ vt.假定，认为；承担（责任），
+就（职）；呈现，显露 (16)
+do wonders 创造奇迹，产生神奇作用 (16)
+lung /lʌŋ/ n. 肺 (16)
+over the long term 长期 (16)
+tend /tend/ vi. 往往会；趋向
+vt. 照看 (16)
+*immune /ɪImju:n/ adj. 有免疫力；不受
+影响的；免除的 (16)
+disease /dɪIzi:z/ n. 病，疾病 (16)
+moreover /mɔ:rIəʊvə(r)/ adv. 此外，而且(16)
+reduce /rɪIdju:s/ vt. 减少，缩小 (16)
+routine /ru:Iti:n/ n. 常规，惯例
+adj. 常规的，例行的；乏味的 (17)
+muscle /Imʌsl/ n. 肌肉，肌 (17)
+*aerobic /eəIrəʊbɪk/ adj. 有氧的；需氧的 (17)
+jogging /Idʒɒɡɪŋ/ n. 慢跑锻炼 (17)
+skiing /Iski:ɪŋ/ n. 滑雪（运动） (17)
+pull-up /Ipʊl ʌp/ n. 引体向上 (17)
+bone /bəʊn/ n. 骨头，骨 (17)
+gymnastics /dʒɪmInæstɪks/ n. 体操，体操
+训练 (17)
+*tai chi /Itaɪ Itʃi:/ n. 太极拳，太极 (17)
+stretch /stretʃ/ vt. & vi. 伸展，舒展；拉长；
+伸出；（使）延伸 (17)
+range /reɪndʒ/ n.（变动或浮动的）范围，界限，
+区间；一系列 (17)
+movement /ˈmu:vmənt/ n. 活动，转动；
+移动；运动 (17)
+stick with 持续，坚持 (17)
+petrol /ˈpetrəl/ n. 汽油 (17)
+*carbohydrate /Ikɑ:bəʊˈhaɪdreɪt/ n. 碳水
+化合物，糖类 (17)
+energy /ˈenədʒi/ n. 能，能量；精力；能源 (17)
+protein /ˈprəʊti:n/ n. 蛋白质 (17)
+average /ˈævərɪdʒ/ n. 平均水平，一般水准
+adj. 平均的；典型的 (17)
+throughout /θru:ˈaʊt/ prep. 自始至终；
+各处，遍及 (17)
+make up for 弥补，补偿 (17)
+sweat /swet/ n. 汗水
+vt. & vi. 出汗，流汗 (17)
+injury /ˈɪndʒəri/ n. 伤害，损伤 (17)
+prevent /prɪˈvent/ vt. 阻止，阻碍 (17)
+tissue /ˈtɪʃu:/ n.（人、动植物细胞的）组织；
+（尤指用作手帕的）纸巾，手巾纸 (17)
+equipment /ɪˈkwɪpmənt/ n. 设备；配备，
+装备 (17)
+lack /læk/ n. 缺乏，匮乏，短缺
+vt. & vi. 没有，缺乏，不足，短缺(19)
+maintain /meɪnˈteɪn/ vt. 维持；维修，保养(19)
+announce /əˈnaʊns/ vt. 宣布，宣告；通知 (20)
+put the finishing touches to 对…进行最后
+的润色或修饰 (20)
+update /Iʌpˈdeɪt/ vt. 使现代化，更新；向…提
+供最新信息
+/ˈʌpdeɪt/ n. 最新消息 (20)
+in response to 对…作出反应；作为对…
+的回复 (20)
+replace /rɪˈpleɪs/ vt. 用…替换；代替，
+取代；更换，更新 (20)
+athlete /ˈæθli:t/ n. 运动员 (20)
+boxing /ˈbɒksɪŋ/ n. 拳击运动 (21)
+champion /ˈtʃæmpiən/ n. 冠军，第一名􀀃 (21)
+court /kɔ:t/ n. 球场；法院，法庭；宫廷 (21)
+under the weather 略有不适，不舒服 (23)
+plus /plʌs/ conj. 而且，此外
+prep. 加；和 (23)
+nearby /Inɪəˈbaɪ/ adj. 附近的，邻近的
+adv. 在附近，不远 (23)
+gym /dʒɪm/ n. 健身房，体育馆 (23)
+partner /ˈpɑ:tnə(r)/ n. 搭档，同伴；伙伴；
+合伙人 (23)
+position /pəˈzɪʃn/ n. 处境；位置；姿势；
+观点；地位 (23)
+hesitate /ˈhezɪteɪt/ vi. 犹豫，迟疑 (25)
+admit /ədˈmɪt/ vt. & vi. 承认；招认；准许
+进入；准许加入 (25)
+inspire /ɪnˈspaɪə(r)/ vt. 激励，鼓舞；启发思
+考；使产生（感觉或情感） (25)
+explore /ɪkˈsplɔ:(r)/ vt. & vi. 探究，探索；
+勘探，勘察 (25)
+*crane /kreɪn/ n. 鹤 (25)
+*rooster /ˈru:stə(r)/ n. 雄鸡 (25)
+inspiration /Iɪnspəˈreɪʃn/ n. 灵感；鼓舞人
+心的人（或事物） (25)
+nowadays /ˈnaʊədeɪz/ adv. 现今，现在 (25)
+master /ˈmɑ:stə(r)/ n. 大师，能手；主人
+vt. 精通，掌握；控制 (25)
+no wonder 不足为奇，并不奇怪 (25)
+*imitate /ˈɪmɪteɪt/ vt. 模仿；仿效 (25)
+ache /eɪk/ vi. & n. 疼痛，隐痛 (26)
+satisfaction /Isætɪsˈfækʃn/ n. 满意；满足，
+达到 (26)
+root /ru:t/ vt. & vi.（使）生根
+n. 根，根茎；根源，起因 (26)
+be rooted in 起源于 (26)
+philosophy /fəˈlɒsəfi/ n. 哲学 (26)
+*unity /ˈju:nəti/ n. 统一体，联合体，整体；团结
+一致，联合，统一 (26)
+exist /ɪɡˈzɪst/ vi. 存在；生活，生存 (26)
+backwards /ˈbækwədz/ (also backward) 
+adv. 向后；朝反方向 (26)
+breathe /bri:ð/ vi. & vt. 呼吸；呼出 (26)
+diagram /Idaɪəɡræm/ n. 简图，图解，图表，
+示意图 (27)
+ Unit 3 
+wedding /Iwedɪŋ/ n. 婚礼，结婚庆典 (30)
+*ceremony /Iserəməni/ n. 典礼，仪式 (30)
+decorate /Idekəreɪt/ vt. & vi. 装饰；点缀；
+粉刷，油漆 (30)
+formal /Ifɔ:ml/ adj.（穿着、言语、行为等）适
+合正式场合的，正规的，庄重的 (30)
+tradition /trəIdɪʃn/ n. 传统，传统的信仰
+（或风俗） (30)
+bride /braɪd/ n. 新娘 (30)
+eye-catching /Iaɪ kætʃɪŋ/ adj. 惹人注意的，
+引人注目的 (30)
+*sari /Isɑ:ri/ n. 莎丽（南亚妇女裹在身上
+的长巾） (30)
+custom /Ikʌstəm/ n. 风俗，习俗；个人习
+惯；光顾 (30)
+impression /ɪmIpreʃn/ n. 印象，感想；
+影响，效果 (30)
+bridegroom /Ibraɪdɡru:m/ n. 新郎 (30)
+entrance /Ientrəns/ n. 进入，出场；入口；
+进入权；准许加入 (30)
+anything but 决不，根本不 (30)
+ordinary /Iɔ:dnri/ adj. 普通的，平常的；
+平庸的 (30)
+romantic /rəʊImæntɪk/ adj. 浪漫的；爱情的；
+(Romantic) 浪漫主义的 (30)
+flight /flaɪt/ n. 班机，航班；航程；飞行 (31)
+occasion /əIkeɪʒn/ n. 特殊场合，盛会；时刻；
+时机 (31)
+in the air 可感觉到；在传播中 (31)
+merry /Imeri/ adj. 愉快的，高兴的 (31)
+band /bænd/ n. 乐队，乐团；一伙，一帮；
+带，箍 (31)
+costume /Ikɒstju:m/ n. 戏装，装扮用服装(31)
+*samba /Isæmbə/ n. 桑巴舞，桑巴舞曲 (31)
+*twist /twɪst/ vi. & vt. 扭转，转动；使弯曲；曲折
+n. 转动；转折；曲折处 (31)
+clap /klæp/ vi. & vt. 鼓掌，拍手
+n. 鼓掌，拍手 (31)
+march /mɑ:tʃ/ vi. 齐步走，前进；游行示威
+n. 游行示威；行进 (31)
+current /Ikʌrənt/ n. 水流，潮流；电流；思潮
+adj. 当前的；通用的 (31)
+beer /bɪə(r)/ n. 啤酒 (31)
+roast /rəʊst/ vt. & vi. 烘，烤，焙（肉等） (31)
+be caught up in 被卷入，陷入 (31)
+annual /Iænjuəl/ adj. 每年的，年度的；
+一年的 (33)
+engine /Iendʒɪn/ n. 发动机，引擎 (33)
+fire engine 消防车 (33)
+acid /Iæsɪd/ n. 酸
+adj. 酸性的；酸味的 (33)
+stuff /stʌf/ n. 东西，物品；活儿，话
+vt. 填满，装满；把…塞进 (33)
+vehicle /Ivi:əkl/ n. 交通工具，车辆；手段，
+工具 (33)
+earn /ɜ:n/ vt. & vi. 赚得；获利；赢得 (34)
+mirror /Imɪrə(r)/ n. 镜子 (34)
+apartment /əIpɑ:tmənt/ n. 公寓套房 (34)
+hunt /hʌnt/ vi. & vt. 寻找，搜寻；打猎，
+猎杀；追捕 (34)
+chain /tʃeɪn/ n. 链子，链条；一系列；连锁店
+vt. 用锁链拴住 (34)
+pass down 使世代相传，流传 (34)
+income /Iɪnkʌm; Iɪnkəm/ n. 收入，收益 (35)
+per /pə(r); pɜ:(r)/ prep. 每，每一 (35)
+*comb /kəʊm/ n. 梳子；梳理（头发）
+vt. 梳，梳理；搜寻 (35)
+package /Ipækɪdʒ/ n. 包，盒；包裹；一套，
+一揽子
+vt. 将…包装好；包装􀀃(35)
+promote /prəIməʊt/ vt. 促进，推动；促销；
+提升，晋升 (36)
+fall on 适逢，正当 (36)
+lunar /Ilu:nə(r)/ adj. 月亮的，月球的 (36)
+observe /əbIzɜ:v/ vt. 遵守；注意到；观察；
+庆祝 (36)
+nation /Ineɪʃn/ n. 民族，国家；国民 (36)
+honour /Iɒnə(r)/ (AmE honor) 
+n. 尊敬，尊重；荣幸；荣誉
+vt. 尊重，尊敬；给予表扬；信守 (36)
+in honour of 为向…表示敬意 (36)
+generation /IdʒenəIreɪʃn/ n. 一代人；
+代，一代；产生 (36)
+source /sɔ:s/ n. 来源；起源；源头 (36)
+identity /aɪIdentəti/ n. 特性；身份 (36)
+previous /Ipri:viəs/ adj. 先前的，以往的；
+稍前的 (36)
+duty /Idju:ti/ n. 责任，义务；上班，值班；
+职责；税 (36)
+precious /Ipreʃəs/ adj. 宝贵的，珍贵的；珍奇
+的，珍稀的 (39)
+eve /i:v/ n. 前夜，前夕 (39)
+china /Itʃaɪnə/ n. 瓷；瓷器 (39)
+plate /pleɪt/ n. 盘子，碟子；板块；车牌 (39)
+sort /sɔ:t/ n. 种类，类别
+vt. 整理，分类；妥善处理 (39)
+pork /pɔ:k/ n. 猪肉 (39)
+bite /baɪt/ n.（咬下的）一口；咬；咬伤
+vt. & vi. (bit, bitten) 咬，叮 (39)
+select /sɪIlekt/ vt. 选择，挑选 (39)
+settle /Isetl/ vi. & vt. 定居；结束；解决；
+决定；使处于舒适的位置 (39)
+convenient /kənIvi:niənt/ adj. 方便的，省事
+的，便利的，实用的 (39)
+neat /ni:t/ adj. 整洁的，整齐的；有条理的(39)
+*couplet /Ikʌplət/ n. 对联，对句 (39)
+represent /IreprɪIzent/ vt. 代表；为…代言；
+体现 (39)
+midnight /Imɪdnaɪt/ n. 午夜，子夜 (40)
+snack /snæk/ n. 点心，小吃 (40)
+set off 使爆炸 (40)
+*firecracker /Ifaɪəkrækə(r)/ n. 鞭炮，爆竹(40)
+firework /Ifaɪəwɜ:k/ n. 烟火，烟花 (40)
+fortune /Ifɔ:tʃu:n/ n. 机会，运气；巨款；命运(40)
+lantern /Ilæntən/ n. 灯笼，提灯 (41)
+riddle /Irɪdl/ n. 谜，谜语 (41)
+*willow /Iwɪləʊ/ n. 柳，柳树 (41)
+*creep /kri:p/ vi. (crept, crept) 渐渐出现(41)
+tear /tɪə(r)/ n. 眼泪，泪珠
+/teə(r)/ vt. & vi. (tore, torn) 撕裂，
+撕碎 (41)
+*sleeve /sli:v/ n. 袖子 (41)
+Unit 4 
+devote /dɪIvəʊt/ oneself to 致力，专心，献身(43)
+*earnest /Iɜ:nɪst/ adj. 非常认真的；诚实的，
+真诚的 (43)
+*butterfly /Ibʌtəflaɪ/ n. 蝴蝶 (43)
+literature /Ilɪtrətʃə(r)/ n. 文学，文学作品(44)
+*shell /ʃel/ n. 贝壳；壳 (44)
+in store (for sb) 即将发生（在某人身上），等
+待着（某人） (44)
+appeal /əIpi:l/ vi. 有吸引力；申诉；呼吁
+n. 吸引力；申诉；呼吁 (44)
+determine /dɪItɜ:mɪn/ vt. 确定；支配；决心
+vi. 决心 (44)
+significant /sɪɡInɪfɪkənt/ adj. 有重要意义的，
+显著的 (44)
+description /dɪIskrɪpʃn/ n. 描述，形容，说明􀀃(45)
+sensitive /Isensətɪv/ adj. 感觉敏锐的；
+体贴的；敏感的；灵敏的 (45)
+soul /səʊl/ n. 灵魂；心性，内心 (45)
+reflect /rɪIflekt/ vt. & vi. 反映，显示；映出（影
+像）；反射（声、光、热等）；沉思 (45)
+capable /Ikeɪpəbl/ adj. 有能力，有才能；能力
+强的 (45)
+awaken /əIweɪkən/ vt. & vi. 唤起，被唤起；
+（使）醒来 (45)
+launch /lɔ:ntʃ/ vt. 使（船）下水；开始从事，发动 (45)
+permanence /Ipɜ:mənəns/ n. 永久，持久性(45)
+contain /kənIteɪn/ vt. 包含，含有，容纳 (45)
+element /Ielɪmənt/ n. 要素，基本部分 (45)
+universal /Iju:nɪIvɜ:sl/ adj. 普遍的，共同
+的；普遍存在的 (45)
+summary /Isʌməri/ n. 总结，概括，概要 (45)
+ in summary 总的来说 (45)
+feature /Ifi:tʃə(r)/ n. 特色，特征
+vt. 以…为特色，是…
+的特征􀀃 􀀃 (47)
+author /Iɔ:θə(r)/ n. 作者，作家 (47)
+therefore /Iðeəfɔ:(r)/ adv. 因此，所以 (47)
+issue /Iɪʃu:; Iɪsju:/ n. 重要议题，争论的
+问题；问题，担忧；（报刊）一期
+vt. 宣布，公布 (47)
+novel /Inɒvl/ n.（长篇）小说 (47)
+draw on 凭借，利用 (47)
+upper /Iʌpə(r)/ adj. 上部的；上面的 (47)
+gap /ɡæp/ n. 差距；间隙 (47)
+context /Ikɒntekst/ n.（事情发生的）背景，
+环境，来龙去脉；上下文，语境 (47)
+specific /spəIsɪfɪk/ adj. 特定的；明确的，
+具体的 (47)
+ought to /Iɔ:t tə; Iɔ:t tu/ modal v. 应该，
+应当 (48)
+particular /pəItɪkjələ(r)/ adj. 特别的，格外
+的；特指的；挑剔的 (48)
+ in particular 尤其，特别 (48)
+topic /Itɒpɪk/ n. 话题；题目；标题 (48)
+collection /kəIlekʃn/ n.（同类）收藏品；
+作品集；募捐 (48)
+section /Isekʃn/ n. 部分，部门；部件，散件 (48)
+mean /mi:n/ adj. 吝啬的，小气的；不善良的，
+刻薄的 (49)
+transport /trænIspɔ:t/ vt. 运输，运送
+/Itrænspɔ:t/ n. 交通运输系统；
+交通车辆；运输 (49)
+turkey /Itɜ:ki/ n. 火鸡；火鸡肉 (49)
+generosity /IdʒenəIrɒsəti/ n. 慷慨，大方，
+宽宏大量 (49)
+chapter /Itʃæptə(r)/ n. 章节；篇章 (50)
+poetry /Ipəʊətri/ n. 诗集，诗歌 (50)
+stage /steɪdʒ/ n. 舞台；阶段；步骤
+vt. 上演，举办 (50)
+*autobiography /Iɔ:təbaɪIɒɡrəfi/ n. 自传 (50)
+*biography /baɪIɒɡrəfi/ n. 传记，传记作品 (50)
+extremely /ɪkIstri:mli/ adv. 极其，非常，
+极端 (53)
+destroy /dɪIstrɔɪ/ vt. 摧毁，毁灭，破坏 (53)
+defeat /dɪIfi:t/ vt. 击败，战胜
+n. 失败，战败；击败 (53)
+attempt /əItempt/ vt. & n. 努力，尝试，
+试图 (53)
+straighten /Istreɪtn/ vt. 挺直；（使）变直，
+变正 (53)
+*strain /streɪn/ n. 用劲，使力；压力，拉力；
+重负 (53)
+alongside /əIlɒŋIsaɪd/ adv. 在…旁边；
+与…一起 (53)
+*accomplish /əIkʌmplɪʃ/ vt. 完成 (53)
+noble /Inəʊbl/ adj. 贵族的，高贵的；崇高的；
+宏伟的 (54)
+confused /kənIfju:zd/ adj. 糊涂的，迷惑的；
+不清楚的，混乱的 (54)
+clear up （头脑）清醒；使整洁，清理 (54)
+be on the point of doing sth 正要做某事 (54)
+*weave /wi:v/ vi. & vt. (weaved, weaved)
+迂回行进，穿行；(wove, woven) 编􀀃 (54)
+*mushy /Imʌʃi/ adj. 糊状的，软而稠的 (54)
+flash /flæʃ/ n. 闪光；闪现
+vt. & vi. （使）闪光；（使）闪现(54)
