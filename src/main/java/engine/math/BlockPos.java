@@ -44,4 +44,8 @@ public class BlockPos {
             return false;
         }
     }
+
+    public double distanceTo(BlockPos pos) {
+        return Math.sqrt((x-pos.x)*(x-pos.x)+(y-pos.y)*(y-pos.y));
+    }
 }

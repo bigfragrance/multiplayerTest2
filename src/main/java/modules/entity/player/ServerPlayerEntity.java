@@ -12,6 +12,7 @@ import modules.network.packet.s2c.PlayerDataS2CPacket;
 import modules.weapon.GunList;
 import org.json.JSONObject;
 
+import static engine.modules.EngineMain.cs;
 import static java.lang.Math.floor;
 
 public class ServerPlayerEntity extends PlayerEntity implements Attackable, Controllable {
@@ -102,7 +103,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
             }
         }
     }
-    private void instantRegen(){
+    public void instantRegen(){
         if(!havingShield){
             havingShield=true;
             shield=shieldMax;
@@ -112,7 +113,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
     }
     public void updateBullet(){
         if(weapon==null||!isAlive) return;
-        weapon.tick(inputManager.shoot);
+        weapon.tick(inputManager.shoot,cs.isServer);
     }
     public static double getMultiplier(double level,double max){
         return max*level/8-0.8;

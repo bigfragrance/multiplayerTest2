@@ -27,10 +27,10 @@ public class ServerMain {
             
             while (true) {
                 Socket client = server.accept();
-                if(connectedPlayers.getOrDefault(client.getInetAddress().hashCode(),false)){
+                /*if(connectedPlayers.getOrDefault(client.getInetAddress().hashCode(),false)){
                     client.close();
                     continue;
-                }
+                }*/
                 /*int count=0;
                 double delay=0;
                 for(double d:connectionTimes){

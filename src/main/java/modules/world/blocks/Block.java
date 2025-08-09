@@ -1,11 +1,12 @@
-package modules.world;
+package modules.world.blocks;
 
 import engine.math.BlockPos;
 import engine.math.Box;
 import engine.math.util.ColorUtils;
 import engine.math.util.PacketUtil;
 import engine.math.util.Util;
-import engine.render.Screen;
+import modules.world.BlockState;
+import modules.world.Blocks;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -26,11 +27,11 @@ public class Block {
         PacketUtil.put(json,"id",id);
         return json;
     }
-    public void tick(BlockState state,int x,int y){
+    public void tick(BlockState state, int x, int y){
 
     }
     public void render(Graphics g,BlockState state,int x,int y){
-        if(this==Blocks.STONE){
+        if(this== Blocks.STONE){
             render(g,new Box(new BlockPos(x,y)),Color.GRAY);
         }
         if(this==Blocks.TEST){

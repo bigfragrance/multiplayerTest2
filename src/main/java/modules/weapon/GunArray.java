@@ -9,12 +9,12 @@ import static engine.modules.EngineMain.cs;
 
 public class GunArray extends CanAttack{
     //only exists in server side
-    public Gun[] guns;
+    public CanAttack[] guns;
     public GunArray(){
 
     }
-    public void render(Graphics g){
-        for(Gun gun:guns){
+   /* public void render(Graphics g){
+        for(CanAttack gun:guns){
             gun.render(g);
         }
     }
@@ -22,8 +22,8 @@ public class GunArray extends CanAttack{
         for(Gun gun:guns){
             gun.tick(fire);
         }
-    }
+    }*/
     public double getLayer() {
-        return guns[0].layer;
+        return guns[0].getLayer();
     }
 }

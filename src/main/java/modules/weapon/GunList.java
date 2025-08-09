@@ -24,9 +24,9 @@ public class GunList {
     public GunList(){
         this.list=new ConcurrentHashMap<>();
     }
-    public void tick(boolean fire){
+    public void tick(boolean fire,boolean server){
         for(CanAttack canAttack:list.values()){
-            canAttack.tick(fire);
+            canAttack.tick(fire,server);
         }
     }
     public void render(Graphics g){
@@ -41,21 +41,23 @@ public class GunList {
             canAttack.setSize(m);
         }
     }
-    public void add(Gun gun){
+    public void add0(CanAttack gun){
         gun.id=id.getAndIncrement();
         list.put(gun.id,gun);
     }
     public void add(GunArray array){
-        for(Gun gun:array.guns){
-            add(gun);
+        for(CanAttack gun:array.guns){
+            add0(gun);
         }
     }
     public void add(CanAttack canAttack){
         if(canAttack instanceof Gun gun){
-            add(gun);
+            add0(gun);
         }
         else if(canAttack instanceof GunArray gunArray){
             add(gunArray);
+        }else{
+            add0(canAttack);
         }
     }
     public JSONArray getUpdate(){
@@ -108,7 +110,10 @@ public class GunList {
             JSONObject gunObj=array.getJSONObject(i);
             PacketUtil.put(gunObj,"owner",owner.id);
             CanAttack o=CanAttack.fromJSON(gunObj);
-            if(o==null) continue;
+            if(o==null) {
+                System.out.println("Error loading gun");
+                continue;
+            }
             gunList.add(o);
         }
         if(obj.has("extradata")){
@@ -133,7 +138,8 @@ public class GunList {
         GunList gunList=new GunList();
         for(int i=0;i<array.length();i++){
             JSONObject gunObj=array.getJSONObject(i);
-            Gun gun=Gun.fromJSON(gunObj);
+            CanAttack gun=CanAttack.fromJSONClient(gunObj);
+            if(gun==null) continue;
             gunList.list.put(gun.id,gun);
         }
         return gunList;
@@ -157,9 +163,7 @@ public class GunList {
         JSONObject obj=new JSONObject();
         JSONArray array=new JSONArray();
         for(CanAttack o:list.values()){
-            if(o instanceof Gun gun){
-                array.put(gun.toJSON());
-            }
+            array.put(o.toJSON());
         }
         obj.put("data",array);
         return obj;

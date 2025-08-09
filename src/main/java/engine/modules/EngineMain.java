@@ -47,7 +47,7 @@ public class EngineMain implements Runnable{
     public ArrayList<Entity> entityParticlesAdd =new ArrayList<>();
     public volatile AtomicLong lastEntityID=new AtomicLong(0);
     public static double TPS=20;
-    public static double chunkSize=16;
+    public static double chunkSize=3;
     public boolean isServer=true;
     public ClientNetworkHandler networkHandler;
     public MultiClientHandler multiClientHandler=null;
@@ -66,6 +66,7 @@ public class EngineMain implements Runnable{
         cs=this;
         this.isServer=isServer;
         if(isServer){
+
             GunList.init();
             world=new ServerWorld();
             serverController=new ServerController();

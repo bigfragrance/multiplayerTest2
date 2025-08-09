@@ -73,7 +73,7 @@ public class ServerNetworkHandler {
     public boolean inRange(Entity e){
         double distance=e.prevPosition.distanceTo(clientHandler.player.position)+e.boundingBox.avgSize()/2;
         distance /=clientHandler.player.getFov();
-        return e instanceof BlockEntity?distance<updateRangeBlocks:distance<updateRange;
+        return e instanceof ServerPlayerEntity|| (e instanceof BlockEntity?distance<updateRangeBlocks:distance<updateRange);
     }
     public void sendEntityRemove(long id){
         JSONObject o2=new JSONObject();

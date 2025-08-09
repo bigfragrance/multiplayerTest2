@@ -1,11 +1,14 @@
 package modules.world;
 
+import modules.world.blocks.BaseBlock;
+import modules.world.blocks.Block;
+
 import java.awt.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Blocks {
-    public static ConcurrentHashMap<Integer,Block> blocks_id=new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<Integer, Block> blocks_id=new ConcurrentHashMap<>();
     public static AtomicInteger id=new AtomicInteger(0);
     public static final Block AIR=register("air",false,new Color(150,150,150,20));
     public static final Block STONE=register("stone");

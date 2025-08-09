@@ -59,7 +59,7 @@ public abstract class Entity implements NetworkItem {
     public Map<Long,DamageSource> damageTaken=new ConcurrentHashMap<>();
     public boolean isDamageTick=false;
     public double mass=400;
-    private double tickDelta=0;
+    protected double tickDelta=0;
     public Vec2d targetingPos=null;
     public boolean isParticle=false;
     public boolean checkBorderCollision=true;
@@ -141,7 +141,7 @@ public abstract class Entity implements NetworkItem {
             this.move(this.velocity.add(extraVelocity));
             this.extraVelocity.multiply1(extraVelocityD);
             if(this.weapon!=null&&!(this instanceof PlayerEntity)&&!(this instanceof VisitorEntity)){
-                this.weapon.tick(true);
+                this.weapon.tick(true,cs.isServer);
             }
             if(EntityUtils.isInsideWall(boundingBox.expand(-0.01,-0.01))){
                 this.insideWall=true;
@@ -149,6 +149,7 @@ public abstract class Entity implements NetworkItem {
             }else{
                 this.insideWall=false;
             }
+            this.prevHealth=health;
 
         }else{
             if(this.nextPosition!=null){
@@ -342,5 +343,8 @@ public abstract class Entity implements NetworkItem {
     }
     public Vec2d getPos() {
         return this.position;
+    }
+    public double getFovMultiplier(){
+        return 1;
     }
 }

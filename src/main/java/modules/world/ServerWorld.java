@@ -11,10 +11,14 @@ import engine.render.Screen;
 import modules.entity.Entity;
 import modules.entity.MobEntity;
 import modules.entity.PolygonEntity;
+import modules.entity.boss.VisitorEntity;
 import modules.entity.player.ServerBotEntity;
 import modules.network.packet.s2c.BlockStateUpdateS2CPacket;
+import modules.world.blocks.Block;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static engine.math.util.Util.random;
 import static engine.math.util.Util.round;
@@ -23,11 +27,23 @@ import static modules.world.Chunk.CHUNK_SIZE;
 
 public class ServerWorld extends World{
     public static int randomTickSpeed=80;
+    public static int botsCount=2;
     private IntTimer mobSpawnTimer=new IntTimer(50);
     private IntTimer botSpawnTimer=new IntTimer(1);
+    private IntTimer visitorSpawnTimer=new IntTimer(10);
+    private IntTimer waveTimer=new IntTimer(100);
+    private int waitedSpawn=0;
+    private Vec2d visitorSpawningPosition=null;
+    private boolean waveStarted=false;
+    private int currentWave=0;
+    public ServerWorld(){
+        super();
+        visitorSpawnTimer.reset();
+    }
     public void tick(){
         spawnMobs();
         spawnBot();
+        updateVisitorSpawnSiege();
         randomTicks();
     }
     public void randomTicks(){
@@ -42,6 +58,75 @@ public class ServerWorld extends World{
             }
         }
     }
+    public void updateVisitorSpawnSiege(){
+        visitorSpawnTimer.update();
+        waveTimer.update();
+        if(!waveTimer.passed()) return;
+        if(getVisitorCount()>=currentWave+1) {
+            waveStarted=true;
+            return;
+        }
+        if(waveStarted&&getVisitorCount()<1){
+            waveTimer.reset();
+            currentWave++;
+            waveStarted=false;
+            return;
+        }
+        if(waveStarted) return;
+        Vec2d pos=EntityUtils.getVisitorSpawnPosition();
+        if(pos==null) return;
+        cs.addEntity(new VisitorEntity(pos,Util.floor(currentWave/3d)));
+    }
+    public void updateVisitorSpawn(){
+        visitorSpawnTimer.update();
+        waveTimer.update();
+        if(!waveTimer.passed()) return;
+        if(getVisitorCount()>=currentWave+1) {
+            waveStarted=true;
+            return;
+        }
+        if(waveStarted&&getVisitorCount()<1){
+            waveTimer.reset();
+            currentWave++;
+            waveStarted=false;
+            return;
+        }
+        if(!visitorSpawnTimer.passed()) return;
+        /*if(Math.random()>1&&visitorSpawningPosition==null) {
+            visitorSpawnTimer.reset();
+            return;
+        }*/
+        if(visitorSpawningPosition==null)visitorSpawningPosition= EntityUtils.getVisitorSpawnPosition();
+        List<Entity> tokill=new ArrayList<>();
+        for(Entity e:cs.entities.values()){
+            if(e instanceof PolygonEntity){
+                Vec2d sub=e.position.subtract(visitorSpawningPosition);
+                double l=sub.length();
+                if(l>60) continue;
+                if(l<2) tokill.add(e);
+                double a=Util.lerp(0,90,Math.pow(1-l/60,10));
+                Vec2d vel=sub.limit(1).multiply(-0.5/l).limitOnlyOver(0.5).rotate(a);
+                e.velocity.offset(vel);
+            }
+        }
+        waitedSpawn++;
+        if(waitedSpawn>=10){
+            for(Entity e:tokill){
+                e.kill();
+            }
+            cs.addEntity(new VisitorEntity(visitorSpawningPosition,Util.floor(currentWave/10d)));
+            visitorSpawningPosition=null;
+            waitedSpawn=0;
+            visitorSpawnTimer.reset();
+        }
+    }
+    private int getVisitorCount(){
+        int count=0;
+        for(Entity e:cs.entities.values()){
+            if(e instanceof VisitorEntity) count++;
+        }
+        return count;
+    }
     public void spawnBot(){
         botSpawnTimer.update();
         if(!botSpawnTimer.passed()) return;
@@ -50,7 +135,7 @@ public class ServerWorld extends World{
         for(Entity e:cs.entities.values()){
             if(e instanceof ServerBotEntity) count++;
         }
-        if(count>=2) return;
+        if(count>=botsCount) return;
         Vec2d pos= EntityUtils.getRandomSpawnPosition(cs.getTeam());
         ServerBotEntity player=new ServerBotEntity(pos);
         player.team=cs.getTeam();

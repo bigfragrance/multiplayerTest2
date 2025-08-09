@@ -3,14 +3,12 @@ package modules.world;
 import engine.math.BlockPos;
 import engine.math.Box;
 import modules.entity.Entity;
+import modules.world.blocks.Block;
 import org.json.JSONObject;
 
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -50,7 +48,7 @@ public class World {
         Chunk chunk=getChunk(Chunk.toChunk(x),Chunk.toChunk(y));
         chunk.chunkBlocks[xc][yc]=blockState;
     }
-    public Block getBlock(int x,int y){
+    public Block getBlock(int x, int y){
         return getBlockState(x,y).getBlock();
     }
     public Block getBlock(BlockPos pos){

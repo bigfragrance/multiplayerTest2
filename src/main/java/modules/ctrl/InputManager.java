@@ -117,6 +117,9 @@ public class InputManager {
     public boolean isRenderingMobRarity() {
         return Screen.isKeyPressed('g');
     }
+    public boolean isTickSpeeding(){
+        return Screen.isKeyPressed('t');
+    }
     /*private final ConcurrentHashMap<Integer, Boolean> keyStates = new ConcurrentHashMap<>();
     private final JPanel targetPanel;
 

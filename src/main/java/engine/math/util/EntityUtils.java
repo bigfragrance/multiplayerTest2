@@ -5,6 +5,8 @@ import modules.entity.Entity;
 import modules.entity.bullet.BulletEntity;
 import modules.entity.player.PlayerEntity;
 import modules.entity.PolygonEntity;
+import modules.world.BlockState;
+import modules.world.Blocks;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -31,7 +33,7 @@ public class EntityUtils {
     public static Color ShieldBarColor=new Color(100, 255, 255,255);
     public static int nameSize=10;
     public static int scoreSize=7;
-    public static double intersectCheckStep=0.05;
+    public static double intersectCheckStep=0.5;
     public static double extrapolateBase=1.5;
     public static double extrapolateCheckMax=10;
     public static double extrapolateCheckStep=0.5;
@@ -50,17 +52,13 @@ public class EntityUtils {
         if(pb1==null) pb1=b1;
         if(pb2==null) pb2=b2;
         if(b1==null||b2==null) return false;
-        for(double d=intersectCheckStep;d<=1;d+=intersectCheckStep){
-            if(Util.lerp(pb1,b1,d).intersectsCircle(Util.lerp(pb2,b2,d))){
-                return true;
-            }
-        }
-        return false;
+        return ThickLineIntersectionNoCaps.isThickLineIntersect(pb1.getCenter(),b1.getCenter(),b1.avgSize()*0.5,pb2.getCenter(),b2.getCenter(),b2.avgSize()*0.5);
     }
     public static boolean intersectsCircle(Entity e1,Entity e2){
         return e1.boundingBox.intersects(e2.boundingBox)||EntityUtils.intersectsCircle(e1.prevBoundingBox,e1.boundingBox,e2.prevBoundingBox,e2.boundingBox);
     }
     public static Vec2d getPushVector(Entity e,Entity checking){
+
         Vec2d sub=e.position.subtract(checking.position);
         double subLength=sub.length();
         if(subLength<0.0000001) return new Vec2d(0,0);
@@ -86,11 +84,17 @@ public class EntityUtils {
         if(!e.isAlive){
             team=new Color(team.getRed(),team.getGreen(),team.getBlue(),50);
         }
-
-        g.setColor(ColorUtils.darker(team,0.6));
-        Util.render(g,Util.lerp(e.prevBoundingBox,e.boundingBox,e.getTickDelta()).switchToJFrame());
-        g.setColor(team);
-        Util.render(g,smaller(Util.lerp(e.prevBoundingBox,e.boundingBox,e.getTickDelta())).switchToJFrame());
+        if(e.team>=0) {
+            g.setColor(ColorUtils.darker(team, 0.6));
+            Util.render(g, Util.lerp(e.prevBoundingBox, e.boundingBox, e.getTickDelta()).switchToJFrame());
+            g.setColor(team);
+            Util.render(g, smaller(Util.lerp(e.prevBoundingBox, e.boundingBox, e.getTickDelta())).switchToJFrame());
+        }else{
+            g.setColor(team);
+            Util.renderPolygon(g, Util.lerp(e.prevBoundingBox, e.boundingBox, e.getTickDelta()).getCenter(),3,e.boundingBox.avgSize()*0.5,e.getRenderRotation(),false,true);
+            g.setColor(ColorUtils.darker(team, 0.6));
+            Util.renderPolygon(g, Util.lerp(e.prevBoundingBox, e.boundingBox, e.getTickDelta()).getCenter(),3,e.boundingBox.avgSize()*0.5,e.getRenderRotation(),true,false);
+        }
         if(!healthBar) return;
         if(e instanceof PlayerEntity){
             renderHealthBar(g,e,PlayerEntity.healthMax);
@@ -219,6 +223,36 @@ public class EntityUtils {
         }
 
         return farthest;
+    }
+    public static Vec2d getVisitorSpawnPosition(){
+        Vec2d closest=Util.randomInBox(cs.borderBox);
+        double closestDistance=100000;
+        for(int i=0;i<700;i++){
+            Vec2d pos=Util.randomInBox(cs.borderBox);
+            if(EntityUtils.isInsideWall(new Box(pos,1.5,1.5))){
+                continue;
+            }
+            BlockState state=cs.world.getBlockState(BlockPos.ofFloor(pos));
+            if(state.getTeam()<0&&state.getBlock()== Blocks.BASE_BLOCK){
+                return pos;
+            }
+        }
+        for(int i=0;i<7;i++){
+            Vec2d pos=Util.randomInBox(cs.borderBox);
+            if(cs.world.getBlockState(BlockPos.ofFloor(pos)).getTeam()>=0){
+                continue;
+            }
+            if(EntityUtils.isInsideWall(new Box(pos,1.5,1.5))){
+                continue;
+            }
+            double distance=pos.length();
+            if(distance<closestDistance){
+                closest=pos;
+                closestDistance=distance;
+            }
+        }
+
+        return closest;
     }
     public static double[] getBetterDamage(double thisHealth,double thisDamage,double othersHealth,double othersDamage){
         //[0] to enemy, [1] to self

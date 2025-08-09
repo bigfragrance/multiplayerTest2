@@ -10,6 +10,9 @@ import modules.screen.WordHelperScreen;
 import modules.weapon.GunList;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static engine.modules.EngineMain.cs;
 
 public class TanksDataS2CPacket implements Packet<ClientNetworkHandler> {
@@ -19,7 +22,17 @@ public class TanksDataS2CPacket implements Packet<ClientNetworkHandler> {
     }
     @Override
     public JSONObject toJSON() {
-        JSONObject weaponData=new JSONObject(tanksData.toString());
+        JSONObject tankData=new JSONObject(this.tanksData.toString());
+        List<String> keys=new ArrayList<>();
+        for(String s:tankData.keySet()){
+            if(s.contains("visitor")){
+                keys.add(s);
+            }
+        }
+        for(String s:keys){
+            tankData.remove(s);
+        }
+        JSONObject weaponData=new JSONObject(tankData.toString());
         PacketUtil.putPacketType(weaponData,getType());
         return weaponData;
     }

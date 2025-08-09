@@ -48,7 +48,7 @@ public class ClientPlayerEntity extends PlayerEntity {
             currentWeapon=cs.setting.getChosenTank();
         }
         super.tick();
-        if(weapon!=null) weapon.tick(false);
+        //if(weapon!=null) weapon.tick(false);
         cs.updateCamPos();
         sc.zoom=(12.8/0.02)/this.getFov();
         Screen.tickDelta=0;
@@ -89,7 +89,7 @@ public class ClientPlayerEntity extends PlayerEntity {
     public void render(Graphics g){
         super.render(g);
         EntityUtils.renderSkillPoints(getSkillPointRenderPosition(),skillPoints,skillPointCanUse);
-        renderMouse(g);
+        //renderMouse(g);
     }
     private void renderMouse(Graphics g){
         Graphics2D g2d=(Graphics2D) g;

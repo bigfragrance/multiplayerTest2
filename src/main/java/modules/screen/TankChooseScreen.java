@@ -40,8 +40,11 @@ public class TankChooseScreen extends GUI {
             player.prevRotation=player.rotation;
             player.position=(getPos(i%tankPerPage));
             player.boundingBox=new Box(player.position,PlayerEntity.SIZE*sizeMultiplier);
-            player.rotation+=10;
-            if(player.weapon!=null)player.weapon.setSize(sizeMultiplier);
+            player.rotation+=1;
+            if(player.weapon!=null){
+                player.weapon.setSize(sizeMultiplier);
+                player.weapon.tick(false,true);
+            }
         }
         if(Screen.isKeyClinked(Screen.MOUSECHAR)){
             Vec2d mouse=sc.inputManager.getMouseVec().add(cs.getCamPos());

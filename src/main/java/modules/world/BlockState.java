@@ -1,6 +1,7 @@
 package modules.world;
 
 import engine.math.util.PacketUtil;
+import modules.world.blocks.Block;
 import org.json.JSONObject;
 
 public class BlockState {

@@ -34,6 +34,7 @@ public class ClientHandler implements Runnable {
         this.clientSocket  = socket;
         lastReceive=System.currentTimeMillis();
         connectionStartTime=System.currentTimeMillis();
+        spawnPlayer();
     }
     public void spawnPlayer(){
         this.player=new ServerPlayerEntity(EntityUtils.getRandomSpawnPosition(cs.getTeam()));
@@ -70,7 +71,7 @@ public class ClientHandler implements Runnable {
             while ((inputLine = reader.readLine())  != null&&System.currentTimeMillis()-lastReceive<6000&&!interrupted&&!Thread.currentThread().isInterrupted()) {
                 if(inputLine.equals("handshake")){
                     handshaked=true;
-                    spawnPlayer();
+                    //spawnPlayer();
                     lastReceive=System.currentTimeMillis();
                     continue;
                 }else if(!handshaked){
@@ -88,10 +89,12 @@ public class ClientHandler implements Runnable {
             disconnect();
             System.err.println("Client  error: " );
             e.printStackTrace();
+            Thread.currentThread().interrupt();
+            processThread.interrupt();
         }
     }
     public void checkConnecting(){
-        if(System.currentTimeMillis()-lastReceive>3000||(System.currentTimeMillis()-connectionStartTime>3000&&player.name.equals(PlayerEntity.defName))){
+        if(System.currentTimeMillis()-lastReceive>1000||(System.currentTimeMillis()-connectionStartTime>1000&&player.name.equals(PlayerEntity.defName))){
             disconnect();
         }
     }

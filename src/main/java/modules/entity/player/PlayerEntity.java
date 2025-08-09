@@ -58,6 +58,9 @@ public class PlayerEntity extends Entity {
     }
     public void tick() {
         super.tick();
+        if(!cs.isServer){
+            if(weapon!=null) weapon.tick(false,cs.isServer);
+        }
     }
 
     protected void updateCollision(){
@@ -105,6 +108,7 @@ public class PlayerEntity extends Entity {
         if(havingShield){
             if(shield>=d){
                 this.shield-=d;
+                this.health-=d*0.5;
                 return;
             }
             this.shield-=d;
@@ -211,6 +215,8 @@ public class PlayerEntity extends Entity {
     public BlockPos getBlockPos() {
         return BlockPos.ofFloor(this.position);
     }
-
+    public double getFovMultiplier(){
+        return getFov();
+    }
 
 }

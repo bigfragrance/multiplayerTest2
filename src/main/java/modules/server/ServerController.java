@@ -10,8 +10,9 @@ import engine.math.util.Util;
 import engine.math.util.timer.IntTimer;
 import engine.math.util.timer.Timer;
 import engine.math.util.timer.TimerList;
+import engine.modules.EngineMain;
 import modules.ctrl.InputManager;
-import modules.world.Block;
+import modules.world.blocks.Block;
 import modules.world.BlockState;
 import modules.world.Blocks;
 import org.json.JSONObject;
@@ -39,9 +40,15 @@ public class ServerController {
     private double currentPlaceRadius=1;
     public ServerController(){
         inputManager= sc.inputManager;
+        //loadWorld();
     }
     public void update(){
         timers.update();
+        if(inputManager.isTickSpeeding()){
+            EngineMain.TPS =10000;
+        }else{
+            EngineMain.TPS =20;
+        }
         if(inputManager.isGeneratingMaze()&&mazeGenTimer.passed()){
             mazeGenTimer.reset();
             generateMaze();

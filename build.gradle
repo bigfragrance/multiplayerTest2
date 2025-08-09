@@ -4,12 +4,21 @@ plugins {
 }
 
 repositories {
+    maven {
+        name = "meteor-maven"
+        url = uri("https://maven.meteordev.org/releases")
+    }
+    maven {
+        name = "meteor-maven-snapshots"
+        url = uri("https://maven.meteordev.org/snapshots")
+    }
     mavenCentral()
 }
 
 dependencies {
     implementation 'org.json:json:20240303'
     implementation 'com.formdev:flatlaf:3.4.1'
+    implementation("meteordevelopment:orbit:0.2.4")
 }
 
 application {

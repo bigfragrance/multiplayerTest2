@@ -141,6 +141,9 @@ public class Vec2d {
         json.put("y",Util.getRoundedDouble(y,1));
         return json;
     }
+    public BlockPos ofFloor(){
+        return BlockPos.ofFloor(this);
+    }
     public static Vec2d fromJSON(JSONObject json) {
         return new Vec2d(json.getDouble("x"), json.getDouble("y"));
     }

@@ -1,5 +1,6 @@
 package modules.entity.player;
 
+import engine.math.BlockPos;
 import engine.math.Box;
 import engine.math.Vec2d;
 import engine.math.util.AutoRecorder;
@@ -12,6 +13,8 @@ import modules.entity.MobEntity;
 import modules.entity.PolygonEntity;
 import modules.weapon.Gun;
 import modules.weapon.Weapon;
+import modules.world.BlockState;
+import modules.world.Blocks;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +30,9 @@ public class AutoController<T extends Entity&Controllable> {
     public ServerInputManager inputManager;
     private Entity target=null;
     private AutoRecorder<Vec2d> positionRecorder=new AutoRecorder<>(4);
+    public boolean rotationSet=true;
+    public boolean dodge=true;
+    private boolean attack=false;
     public AutoController(T owner,ServerInputManager inputManager){
         this.owner=owner;
         this.inputManager=inputManager;
@@ -46,21 +52,25 @@ public class AutoController<T extends Entity&Controllable> {
         if(positionRecorder.size()<3) return;
         Vec2d velocity=positionRecorder.getLast().subtract(positionRecorder.getFirst()).multiply(1d/(positionRecorder.size()-1));
         Gun gun=owner.getWeapon().getGoingToFire();
-        if(gun==null) return;
+        if(gun==null) {
+            inputManager.shoot=attack;
+            return;
+        }
         Vec2d realAim=target.getPos().add(target.getRealVelocity());
         if(owner.getWeapon().extradata.getBoolean("addVelocity")) {
             realAim = EntityUtils.extrapolate2(target.position, velocity, owner.getPosition(), gun.getBulletSpeed(gun.getBulletType()), owner.getRealVelocity());
             //realAim = EntityUtils.extrapolate2(aimPos, owner.getRealVelocity().multiply(-1), owner.position, gun.getBulletSpeed(), Vec2d.zero());
         }
         inputManager.aimPos=realAim.subtract(owner.getPosition());
-        inputManager.shoot=true;
-        owner.setRotation(inputManager.aimPos.angle());
+        inputManager.shoot=attack;
+        if(rotationSet) owner.setRotation(inputManager.aimPos.angle());
     }
     public void updateMovement(){
         updateFollow();
         /*inputManager.side=0;
         inputManager.forward=0;*/
-        updateDodge();
+        if(dodge)updateDodge();
+        awayFromOthersBase();
     }
     public void updateDodge(){
         List<Entity> willCollide=new ArrayList<>();
@@ -154,6 +164,29 @@ public class AutoController<T extends Entity&Controllable> {
         }
         updateInput(vec);
     }
+    public void awayFromOthersBase(){
+        BlockPos pos=owner.getPos().ofFloor();
+        BlockPos minDistPos=null;
+        double minDist=10000000;
+        for(int x=-3;x<=3;x++){
+            for(int y=-3;y<=3;y++){
+                if(x==0&&y==0) continue;
+                BlockPos p=pos.add(x,y);
+                BlockState state=cs.world.getBlockState(p);
+                if(state.getTeam()!=owner.team&&state.getBlock()== Blocks.BASE_BLOCK){
+                    double dist=p.distanceTo(pos);
+                    if(dist<minDist){
+                        minDist=dist;
+                        minDistPos=p;
+                    }
+                }
+            }
+        }
+        if(minDistPos!=null){
+            Vec2d vec=owner.getPosition().subtract(minDistPos.toCenterPos());
+            updateInput(vec);
+        }
+    }
     private void updateInput(Vec2d want){
         double rot=want.angle();
         double minDiff=23;
@@ -172,8 +205,9 @@ public class AutoController<T extends Entity&Controllable> {
     }
     public void updateTarget(){
         boolean bl=target==null;
-        double minDistance=target==null?followingRange*owner.getFov():target.getPos().distanceTo(owner.getPos())-changeDiff;
-        double minDistanceMob=minDistance;
+        double attackDist=followingRange*owner.getFov();
+        double minDistance=target==null?1000000000:target.getPos().distanceTo(owner.getPos())-changeDiff;
+        double minDistanceMob=attackDist;
         PlayerEntity player=null;
         Entity mob=null;
         for(Entity e:cs.entities.values()){
@@ -204,11 +238,14 @@ public class AutoController<T extends Entity&Controllable> {
         else if(mob!=null){
             target=mob;
         }
-        if(target==null||target.getPos().distanceTo(owner.getPos())>followingRange*owner.getFov()+changeDiff||!target.isAlive||target.killed()){
+        if(target==null||(target instanceof MobEntity&&target.getPos().distanceTo(owner.getPos())>followingRange*owner.getFov()+changeDiff)||!target.isAlive||target.killed()){
             target=null;
         }
         if(target!=null&&bl){
             positionRecorder.clear();
+        }
+        if(target!=null){
+            attack=minDistance<attackDist+2;
         }
     }
 

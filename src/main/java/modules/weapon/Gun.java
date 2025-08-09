@@ -25,6 +25,7 @@ public class Gun extends CanAttack {
     public static double shrinkMultiplier=0.15;
     public Entity owner;
     public double offsetRotation;
+
     public Vec2d offset;
     public BulletType bulletType;
     public double reloadMultiplier;
@@ -38,6 +39,7 @@ public class Gun extends CanAttack {
     private int nextFireTime=0;
     private double sizeMultiplier=1;
     private JSONObject extraData;
+    public Vec2d startPos;
     public Gun(JSONObject data,long id){
         this.offsetRotation = PacketUtil.getDouble(data,"offsetRotation");
         this.offset=Vec2d.fromJSON(PacketUtil.getJSONObject(data,"offset"));
@@ -90,20 +92,27 @@ public class Gun extends CanAttack {
         this.owner=owner;
     }
     public Gun another(double offsetYaw){
-        return new Gun(owner,this.offsetRotation +offsetYaw,offset,bulletType,reloadMultiplier,layer,startDelay,size,id+1,extraData);
+        return new Gun(owner,this.offsetRotation +offsetYaw,offset,bulletType,reloadMultiplier,layer,startDelay,size,id,extraData);
     }
     public Gun another(double offsetYaw,Vec2d offset){
-        return new Gun(owner,this.offsetRotation +offsetYaw,offset,bulletType,reloadMultiplier,layer,startDelay,size,id+1,extraData);
+        return new Gun(owner,this.offsetRotation +offsetYaw,offset,bulletType,reloadMultiplier,layer,startDelay,size,id,extraData);
+    }
+    public double getOffsetRotation(){
+        return offsetRotation;
+    }
+    public Vec2d getOffset(){
+        return offset;
     }
     public double getReload(){
         return reload;
     }
-    public void tick(boolean fire){
-        if(cs.isServer) {
+    public void tick(boolean fire,boolean server){
+        if(server) {
             this.sizeMultiplier=owner.getSizeMultiplier();
             BulletType bulletType=getBulletType();
             //bulletType.multipliers[3]=sizeMultiplier;
             double reloadMultiplier=owner.addReloadMultiplier(this.reloadMultiplier);
+            updateOffsetRotation();
             updateRotation();
             this.reload = Math.max(0, reload - 1);
             if (!lastFire && fire) {
@@ -122,11 +131,13 @@ public class Gun extends CanAttack {
             }
             prevFireTime=fireTime;
             prevRotation=rotation;
+            offsetRotationAll.nextPrev();
         }else{
             prevFireTime=fireTime;
             prevRotation=rotation;
             fireTime=nextFireTime;
             rotation=nextRotation;
+            offsetRotationAll.next();
         }
     }
     public BulletType getBulletType(){
@@ -190,16 +201,18 @@ public class Gun extends CanAttack {
         PacketUtil.put(obj,"rotation",rotation);
         PacketUtil.put(obj,"fireTime",fireTime);
         PacketUtil.put(obj,"size",sizeMultiplier);
+        PacketUtil.put(obj,"offsetRotationAll",offsetRotationAll.get());
         return obj;
     }
     public void update(JSONObject o){
         this.nextRotation=PacketUtil.getDouble(o,"rotation");
         this.nextFireTime=PacketUtil.getInt(o,"fireTime");
         this.sizeMultiplier=PacketUtil.getDouble(o,"size");
+        this.offsetRotationAll.setNow(PacketUtil.getDouble(o,"offsetRotationAll"));
     }
     public void render(Graphics g){
         Vec2d buttonPos=getRenderPosition();
-        double rotation=owner.getRenderRotation()+offsetRotation;
+        double rotation=Util.lerp(prevRotation,this.rotation, Screen.tickDelta);
         Vec2d gunLine=new Vec2d(size[0]*(1-getRenderFireTime()*shrinkMultiplier)*sizeMultiplier,0).rotate(rotation);
         Vec2d buttonLine=new Vec2d(0,size[1]*sizeMultiplier).rotate(rotation);
         Vec2d headLine=new Vec2d(0,size[2]*sizeMultiplier).rotate(rotation);
@@ -217,13 +230,39 @@ public class Gun extends CanAttack {
         return Util.lerp(prevFireTime,fireTime, Screen.tickDelta);
     }
     public void updateRotation(){
-        this.rotation=owner.rotation+ offsetRotation;
+        this.rotation=offsetRotationAll.get();
+        /*if(customRotation){
+
+            this.rotation=customRotationAngle+ offsetRotation;
+        }else {
+            this.rotation = owner.rotation + offsetRotation;
+        }*/
+    }
+    public void updateOffsetRotation(){
+        if(lastNode!=null){
+            offsetRotationAll.setNow(offsetRotation+lastNode.getAimRotation());
+        }
+        else{
+            offsetRotationAll.setNow(offsetRotation+owner.rotation);
+        }
     }
     public Vec2d getBulletPosition(){
-        return owner.position.add(offset.multiply(sizeMultiplier).rotate(owner.rotation+ offsetRotation));
+        return getStartPos().add(offset.multiply(sizeMultiplier).rotate(offsetRotationAll.get()));
     }
     public Vec2d getRenderPosition(){
-        return owner.getRenderPosition().add(offset.multiply(sizeMultiplier).rotate(owner.getRenderRotation()+ offsetRotation));
+        return getRenderStartPos().add(offset.multiply(sizeMultiplier).rotate(getRenderOffsetRotation()));
+    }
+    public double getRenderRotation(){
+        return Util.lerp(prevRotation,rotation, Screen.tickDelta);
+    }
+    public double getRenderOffsetRotation(){
+        return Util.lerp(offsetRotationAll.getPrev(),offsetRotationAll.get(), Screen.tickDelta);
+    }
+    public Vec2d getStartPos(){
+        return lastNode==null?owner.position:lastNode.getPos();
+    }
+    public Vec2d getRenderStartPos(){
+        return lastNode==null?owner.getRenderPosition():lastNode.getRenderPos();
     }
     public double getLayer(){
         return layer;
@@ -240,6 +279,7 @@ public class Gun extends CanAttack {
         PacketUtil.put(o,"size",size);
         PacketUtil.put(o,"id",id);
         PacketUtil.put(o,"extraData",extraData);
+        PacketUtil.put(o,"type","Gun");
         return o;
     }
     public static Gun fromJSON(JSONObject obj){

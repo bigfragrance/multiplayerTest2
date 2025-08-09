@@ -38,7 +38,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     public volatile double zoom=defZoom;
     public volatile double zoom2=0.125;
     private double oldZoom=defZoom;
-    public double lineWidth=2;
+    public double lineWidth=1;
     public int windowWidth=1000;
     public int windowHeight=1000;
     public static int mouseX = 50;
