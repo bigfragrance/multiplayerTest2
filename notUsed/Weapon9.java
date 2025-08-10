@@ -12,7 +12,7 @@ public class Weapon9 extends NormalWeapon{
     public Weapon9(Entity owner) {
         super(owner);
     }
-    public void update(double time){
+    public void update(float time){
         super.update(time);
         shoot();
     }
@@ -22,9 +22,9 @@ public class Weapon9 extends NormalWeapon{
             if(count>=maxCount) return;
             int can=maxCount-count;
             Vec2d pos=owner.getBulletPosition();
-            double size=this.size*1.2;
-            double health=this.health*6;
-            double damage=this.damage*0.4;
+            float size=this.size*1.2;
+            float health=this.health*6;
+            float damage=this.damage*0.4;
             for(int i=0;i<Math.min(can,4);i++){
                 Vec2d input=new Vec2d(Math.cos(i*Math.PI/2)*10,Math.sin(i*Math.PI/2)*10).add(Util.randomVec().limit(0.05));
                 Vec2d velocity=input.limit(speed*2);

@@ -283,7 +283,7 @@
             }
         ]
     },
-    "double":{
+    "float":{
         "data":[
             {
                 "type":"Mirror",

@@ -6,8 +6,8 @@ public class SurroundGun extends GunArray{
             throw new IllegalArgumentException("count must be greater than 0");
         }
         guns=new CanAttack[count];
-        double angle=360d/count;
-        double start=0;
+        float angle=360d/count;
+        float start=0;
         for(int i=0;i<count;i++){
             guns[i]=gun.another(start);
             start+=angle;

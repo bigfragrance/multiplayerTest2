@@ -20,8 +20,8 @@ import static big.engine.math.util.PacketName.*;
 import static big.engine.modules.EngineMain.cs;
 
 public class ServerNetworkHandler {
-    public static double updateRange=10;
-    public static double updateRangeBlocks=10;
+    public static float updateRange=10;
+    public static float updateRangeBlocks=10;
     public ClientHandler clientHandler;
     public boolean deathSent=false;
     public ConcurrentHashMap<Long,Boolean> sentRemove=new ConcurrentHashMap<>();
@@ -67,7 +67,7 @@ public class ServerNetworkHandler {
         }
     }
     public boolean inRange(Entity e){
-        double distance=e.prevPosition.distanceTo(clientHandler.player.position)+e.boundingBox.avgSize()/2;
+        float distance=e.prevPosition.distanceTo(clientHandler.player.position)+e.boundingBox.avgSize()/2;
         distance /=clientHandler.player.getFov();
         return e instanceof ServerPlayerEntity|| (e instanceof BlockEntity?distance<updateRangeBlocks:distance<updateRange);
     }
@@ -174,10 +174,10 @@ public class ServerNetworkHandler {
     /*public void handleBulletShoot(JSONObject o){
         Vec2d pos=Vec2d.fromJSON(o.getJSONObject(PacketUtil.getShortVariableName("position")));
         Vec2d velocity=Vec2d.fromJSON(o.getJSONObject(PacketUtil.getShortVariableName("velocity")));
-        double size=o.getDouble("size");
+        float size=o.getfloat("size");
         Entity e= clientHandler.player;
         if(e!=null&&e.isAlive){
-            BulletEntity b=new BulletEntity(pos,velocity,new Box(pos,size,size),o.getDouble(PacketUtil.getShortVariableName("health")),o.getDouble(PacketUtil.getShortVariableName("damage")),e.team);
+            BulletEntity b=new BulletEntity(pos,velocity,new Box(pos,size,size),o.getfloat(PacketUtil.getShortVariableName("health")),o.getfloat(PacketUtil.getShortVariableName("damage")),e.team);
             b.ownerId=e.id;
             cs.addEntity(b);
         }

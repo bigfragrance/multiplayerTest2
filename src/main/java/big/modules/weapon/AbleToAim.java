@@ -7,7 +7,7 @@ public interface AbleToAim {
     void setFire(boolean fire);
     Vec2d getPos();
     Vec2d getRealVelocity();
-    double getBulletSpeed();
-    double getRotation();
+    float getBulletSpeed();
+    float getRotation();
     int getTeam();
 }

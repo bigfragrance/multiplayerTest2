@@ -10,8 +10,8 @@ import java.awt.*;
 
 public class CanAttack extends Entity {
     public boolean customOffsetRotation=false;
-    public double customOffsetRotationAngle=0;
-    public NNPRecorder<Double> offsetRotationAll=new NNPRecorder<>(0d);
+    public float customOffsetRotationAngle=0;
+    public NNPRecorder<float> offsetRotationAll=new NNPRecorder<>(0d);
     public Node lastNode=null;
     public CanAttack(){
 
@@ -22,22 +22,22 @@ public class CanAttack extends Entity {
     public void render(Graphics g){
 
     }
-    public void setSize(double m){
+    public void setSize(float m){
 
     }
-    public double getLayer() {
+    public float getLayer() {
         return 0;
     }
-    public double getOffsetRotation(){
+    public float getOffsetRotation(){
         return 0;
     }
     public Vec2d getOffset(){
         return new Vec2d(0,0);
     }
-    public CanAttack another(double angle){
+    public CanAttack another(float angle){
         return null;
     }
-    public CanAttack another(double angle, Vec2d offset){
+    public CanAttack another(float angle, Vec2d offset){
         return null;
     }
     public JSONObject toJSON(){

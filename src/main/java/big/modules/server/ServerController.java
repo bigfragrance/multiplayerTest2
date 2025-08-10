@@ -31,15 +31,15 @@ public class ServerController {
     private Timer mazeGenTimer=timers.add(new IntTimer(5));
     public InputManager inputManager;
     public int maxMerge=0;
-    public double blockSize=1;
+    public float blockSize=1;
     public int mazeSize=48;
-    public static double off=0.000001;
+    public static float off=0.000001;
     private Vec2d lastMousePos=null;
     private Timer saveTimer=timers.add(new IntTimer(5));
     private Timer actionTimer=timers.add(new IntTimer(5));
     private boolean showingCurrentBlock=false;
-    private double currentRarity=0.1;
-    private double currentPlaceRadius=1;
+    private float currentRarity=0.1;
+    private float currentPlaceRadius=1;
     public ServerController(){
         inputManager= sc.inputManager;
         //loadWorld();
@@ -69,19 +69,19 @@ public class ServerController {
         }
         if(inputManager.isIncreasingMobRarity()){
             currentRarity+=0.02;
-            sc.renderString="currentRarity: "+Util.getRoundedDouble(currentRarity,3);
+            sc.renderString="currentRarity: "+Util.getRoundedfloat(currentRarity,3);
         }
         if(inputManager.isDecreasingMobRarity()){
             currentRarity-=0.02;
-            sc.renderString="currentRarity: "+Util.getRoundedDouble(currentRarity,3);
+            sc.renderString="currentRarity: "+Util.getRoundedfloat(currentRarity,3);
         }
         if(inputManager.isIncreasingPlaceRadius()){
             currentPlaceRadius+=0.1;
-            sc.renderString="currentRadius: "+Util.getRoundedDouble(currentPlaceRadius,3);
+            sc.renderString="currentRadius: "+Util.getRoundedfloat(currentPlaceRadius,3);
         }
         if(inputManager.isDecreasingPlaceRadius()){
             currentPlaceRadius-=0.1;
-            sc.renderString="currentRadius: "+Util.getRoundedDouble(currentPlaceRadius,3);
+            sc.renderString="currentRadius: "+Util.getRoundedfloat(currentPlaceRadius,3);
         }
 
         Vec2d mousePos=inputManager.getMouseVec().add(cs.getCamPos());
@@ -91,7 +91,7 @@ public class ServerController {
             sc.renderTasks2.add(g->{
                 Blocks.TEST.render(g,null,blockPos.x,blockPos.y);
                 BlockPos last=null;
-                for(double d=0;d<=1;d+=0.01){
+                for(float d=0;d<=1;d+=0.01){
                     Vec2d pos= Util.lerp(lastMousePos,mousePos,d);
                     BlockPos p= BlockPos.ofFloor(pos);
                     if(p.equals(last)) continue;
@@ -166,9 +166,9 @@ public class ServerController {
             e.printStackTrace();
         }
     }
-    public void setBlock(Vec2d start, Vec2d end, Block block,double radius){
+    public void setBlock(Vec2d start, Vec2d end, Block block,float radius){
         int r= (int) Math.ceil(radius);
-        for(double d=0;d<=1;d+=0.1){
+        for(float d=0;d<=1;d+=0.1){
             Vec2d pos= Util.lerp(start,end,d);
             for(int x=-r;x<=r;x++){
                 for(int y=-r;y<=r;y++){
@@ -183,9 +183,9 @@ public class ServerController {
             }
         }
     }
-    public void setBlock(Vec2d start, Vec2d end, BlockState state,double radius){
+    public void setBlock(Vec2d start, Vec2d end, BlockState state,float radius){
         int r= (int) Math.ceil(radius);
-        for(double d=0;d<=1;d+=0.1){
+        for(float d=0;d<=1;d+=0.1){
             Vec2d pos= Util.lerp(start,end,d);
             for(int x=-r;x<=r;x++){
                 for(int y=-r;y<=r;y++){
@@ -201,14 +201,14 @@ public class ServerController {
     public void generateMaze(){
         MazeGenerator2 maze=new MazeGenerator2(mazeSize*2+1,mazeSize*2+1);
 
-        //List<Double> placed=new ArrayList<>();
+        //List<float> placed=new ArrayList<>();
         for(int x=0;x<mazeSize*2+1;x++){
             for(int y=0;y<mazeSize*2+1;y++){
                 cs.world.setBlockState(x-mazeSize,y-mazeSize,new BlockState(isWall(x,y,maze.maze)? Blocks.STONE:Blocks.AIR));
             }
         }
     }
-    public void put(Vec2d center, double radius, AfterCheckTask<BlockState> task) {
+    public void put(Vec2d center, float radius, AfterCheckTask<BlockState> task) {
         int r= (int) Math.ceil(radius);
         for(int x=-r;x<=r;x++){
             for(int y=-r;y<=r;y++){
@@ -221,7 +221,7 @@ public class ServerController {
         }
     }
 
-    /*public BlockEntity get(int x,int y,List<Double> placed){
+    /*public BlockEntity get(int x,int y,List<float> placed){
         for(int r=maxMerge;r>=0;r--){
             for(int i=0;i<=r;i++){
                 int x1=x+i;
@@ -243,7 +243,7 @@ public class ServerController {
         }
         return true;
     }
-    public void putAllPlaced(int fromX,int fromY,int toX,int toY,List<Double> placed){
+    public void putAllPlaced(int fromX,int fromY,int toX,int toY,List<float> placed){
         for(int x=Math.min(fromX,toX);x<=Math.max(fromX,toX);x++){
             for(int y=Math.min(fromY,toY);y<=Math.max(fromY,toY);y++){
                 placed.add((x+off)*(y+off));
@@ -254,13 +254,13 @@ public class ServerController {
         if(x<0||y<0||x>=maze.length||y>=maze[0].length) return false;
         return maze[x][y]==MazeGenerator.WALL;
     }
-    public boolean isWall(double x,double y,int[][] maze){
+    public boolean isWall(float x,float y,int[][] maze){
         int rX=(int) floor(0.5*x/blockSize+0.5)+mazeSize;
         int rY=(int) floor(0.5*y/blockSize+0.5)+mazeSize;
         return isWall(rX,rY,maze);
     }
 
-    public boolean isWall(double minX, double minY) {
+    public boolean isWall(float minX, float minY) {
         return cs.world.getBlockState((int) floor(minX), (int) floor(minY)).getBlock().solid;
     }
 }

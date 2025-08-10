@@ -1,11 +1,11 @@
 package big.engine.math;
 
 public class SegmentY {
-    public double minY;
-    public double maxY;
-    public double x;
+    public float minY;
+    public float maxY;
+    public float x;
 
-    public SegmentY(double minY, double maxY, double x) {
+    public SegmentY(float minY, float maxY, float x) {
         this.minY = Math.min(minY, maxY);
         this.maxY = Math.max(minY, maxY);
         this.x = x;
@@ -17,7 +17,7 @@ public class SegmentY {
     }
 
 
-    public boolean interact(double minY, double maxY) {
+    public boolean interact(float minY, float maxY) {
         return this.minY < maxY && this.maxY > minY;
     }
 }

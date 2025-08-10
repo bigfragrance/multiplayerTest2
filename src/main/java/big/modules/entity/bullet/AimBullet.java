@@ -14,16 +14,16 @@ import big.modules.entity.player.ServerPlayerEntity;
 import static big.engine.modules.EngineMain.cs;
 
 public class AimBullet extends BulletEntity{
-    public static double dragFactorDef=0.85;
-    public static double flyRange=1;
+    public static float dragFactorDef=0.85;
+    public static float flyRange=1;
     public Attackable owner=null;
     public Vec2d aimPos=null;
-    public double speedAdd=2;
+    public float speedAdd=2;
     public boolean infinityLifeTime=false;
     public boolean pathing=false;
-    public double dragFactor=dragFactorDef;
+    public float dragFactor=dragFactorDef;
     private Calculator calculator=null;
-    public double attackDistance=0;
+    public float attackDistance=0;
     public AimBullet(Vec2d position, Vec2d velocity,int team,BulletType type) {
         super(position, velocity,team,type);
     }
@@ -59,7 +59,7 @@ public class AimBullet extends BulletEntity{
                 target= owner.getAimPos();
             }else{
                 Vec2d sub=this.position.subtract(owner.getPosition());
-                double r=sub.angle();
+                float r=sub.angle();
                 target=owner.getPosition().add(new Vec2d(r+30).limit(flyRange));
             }
         }

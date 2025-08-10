@@ -9,18 +9,18 @@ import big.modules.weapon.Node;
 
 public class RotationNode implements Node {
     private Entity owner;
-    private NNPRecorder<Double> rotation;
-    private double rotationSpeed=3;
+    private NNPRecorder<float> rotation;
+    private float rotationSpeed=3;
     public RotationNode(Entity owner){
         this.owner=owner;
         rotation=new NNPRecorder<>(0d);
     }
     public void tick(){
-        double r=rotation.get()+rotationSpeed;
+        float r=rotation.get()+rotationSpeed;
         r=(r+540)%360-180;
         rotation.setNow(r);
     }
-    public void setRotationSpeed(double s){
+    public void setRotationSpeed(float s){
         rotationSpeed=s;
     }
     @Override
@@ -34,12 +34,12 @@ public class RotationNode implements Node {
     }
 
     @Override
-    public double getAimRotation() {
+    public float getAimRotation() {
         return rotation.get();
     }
 
     @Override
-    public double getRenderAimRotation() {
+    public float getRenderAimRotation() {
         return Util.lerp(rotation.getPrev(),rotation.get(), Screen.tickDelta);
     }
 }

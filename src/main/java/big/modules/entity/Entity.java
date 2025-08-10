@@ -29,10 +29,10 @@ import static big.engine.modules.EngineMain.chunkSize;
 import static big.engine.modules.EngineMain.cs;
 
 public abstract class Entity implements NetworkItem {
-    public static double sizeMultiplier=0.02;
-    public static double extraVelocityD=0.1;
+    public static float sizeMultiplier=0.02;
+    public static float extraVelocityD=0.1;
     public static int particleLifeTimeMax=4;
-    public static double particleBoundingBoxExpand=60;
+    public static float particleBoundingBoxExpand=60;
     public Box boundingBox;
     public Box prevBoundingBox;
     public Vec2d position;
@@ -43,23 +43,23 @@ public abstract class Entity implements NetworkItem {
     public boolean isAlive=true;
     public Vec2d nextPosition=null;
     public Box nextBoundingBox=null;
-    public double health;
-    public double prevHealth;
-    public double shield=0;
-    public double prevShield=0;
-    public double damage;
+    public float health;
+    public float prevHealth;
+    public float shield=0;
+    public float prevShield=0;
+    public float damage;
     public int team;
-    public double rotation;
-    public double prevRotation;
-    public double nextRotation=0;
-    public double score=0;
-    private ConcurrentHashMap<Long,Double> scoreAdd=new ConcurrentHashMap<>();
-    public static double collisionVector=0.1;
-    public static double collisionMax=1;
+    public float rotation;
+    public float prevRotation;
+    public float nextRotation=0;
+    public float score=0;
+    private ConcurrentHashMap<Long,float> scoreAdd=new ConcurrentHashMap<>();
+    public static float collisionVector=0.1;
+    public static float collisionMax=1;
     public Map<Long,DamageSource> damageTaken=new ConcurrentHashMap<>();
     public boolean isDamageTick=false;
-    public double mass=400;
-    protected double tickDelta=0;
+    public float mass=400;
+    protected float tickDelta=0;
     public Vec2d targetingPos=null;
     public boolean isParticle=false;
     public boolean checkBorderCollision=true;
@@ -86,19 +86,19 @@ public abstract class Entity implements NetworkItem {
                     this.nextPosition =nextBoundingBox.getCenter();
                     this.velocity=this.nextBoundingBox.getCenter().subtract(last.getCenter());
                 } else if (PacketUtil.getShortVariableName("health").equals(key)) {
-                    this.health  = basic.getDouble(PacketUtil.getShortVariableName("health"));
+                    this.health  = basic.getfloat(PacketUtil.getShortVariableName("health"));
                 } else if (PacketUtil.getShortVariableName("damage").equals(key)) {
-                    this.damage  = basic.getDouble(PacketUtil.getShortVariableName("damage"));
+                    this.damage  = basic.getfloat(PacketUtil.getShortVariableName("damage"));
                 } else if (PacketUtil.getShortVariableName("team").equals(key)) {
                     this.team  = basic.getInt(PacketUtil.getShortVariableName("team"));
                 } else if (PacketUtil.getShortVariableName("isAlive").equals(key)) {
                     this.isAlive  = basic.getBoolean(PacketUtil.getShortVariableName("isAlive"));
                 } else if (PacketUtil.getShortVariableName("rotation").equals(key)) {
-                    this.nextRotation  = basic.getDouble(PacketUtil.getShortVariableName("rotation"));
+                    this.nextRotation  = basic.getfloat(PacketUtil.getShortVariableName("rotation"));
                 }else if(PacketUtil.getShortVariableName("score").equals(key)){
-                    this.score=basic.getDouble(PacketUtil.getShortVariableName("score"));
+                    this.score=basic.getfloat(PacketUtil.getShortVariableName("score"));
                 }else if(PacketUtil.getShortVariableName("shield").equals(key)){
-                    this.shield=basic.getDouble(PacketUtil.getShortVariableName("shield"));
+                    this.shield=basic.getfloat(PacketUtil.getShortVariableName("shield"));
                 }
             });
         }
@@ -111,10 +111,10 @@ public abstract class Entity implements NetworkItem {
         this.isDamageTick=health<prevHealth;
     }
     public void tick(){
-        if(Double.isNaN(this.score)) {
+        if(float.isNaN(this.score)) {
             System.out.println("nan");
         }
-        if(Double.isNaN(this.health)){
+        if(float.isNaN(this.health)){
             this.health=this.prevHealth;
         }
         this.prevPosition.set(this.position);
@@ -177,10 +177,10 @@ public abstract class Entity implements NetworkItem {
     public BulletType addMultipliers(BulletType b){
         return b.copy();
     }
-    public double addReloadMultiplier(double b){
+    public float addReloadMultiplier(float b){
         return b;
     }
-    public double getSizeMultiplier(){
+    public float getSizeMultiplier(){
         return 1;
     }
     public void updateChunk(){
@@ -276,16 +276,16 @@ public abstract class Entity implements NetworkItem {
     public Vec2d getBulletPosition(){
         return Util.lerp(this.prevPosition,this.position,tickDelta+1);
     }
-    public double getRenderHealth(){
+    public float getRenderHealth(){
         return Util.lerp(this.prevHealth,this.health,tickDelta);
     }
-    public double getRenderShield(){
+    public float getRenderShield(){
         return Util.lerp(this.prevShield,this.shield,tickDelta);
     }
-    public double getRenderRotation(){
+    public float getRenderRotation(){
         return Util.lerp(this.prevRotation,this.rotation,tickDelta);
     }
-    public void storeDamage(Entity e,double damage){
+    public void storeDamage(Entity e,float damage){
         List<Long> toRemove=new ArrayList<>();
         for(Long id:damageTaken.keySet()){
             DamageSource ds=damageTaken.get(id);
@@ -302,14 +302,14 @@ public abstract class Entity implements NetworkItem {
         }
         damageTaken.get(e.getDamageSourceID()).increase(damage);
     }
-    public double getRenderAlpha(){
+    public float getRenderAlpha(){
         return isParticle? Math.clamp(0.5* (particleLifeTimeMax - lifeTime+tickDelta) /particleLifeTimeMax,0.01,0.99):1;
     }
-    public double getTickDelta(){
+    public float getTickDelta(){
         return isParticle?Screen.tickDelta:tickDelta;
     }
     public void addScore(){
-        double total=0;
+        float total=0;
         for(DamageSource ds:damageTaken.values()){
             total+=ds.damage;
         }
@@ -323,16 +323,16 @@ public abstract class Entity implements NetworkItem {
     }
     public void addScoreAdd(){
         this.scoreAdd.forEach((k,v)->{
-            if(!Double.isNaN(v)) {
+            if(!float.isNaN(v)) {
                 this.score += v;
             }
         });
         this.scoreAdd.clear();
     }
-    public void addScore(long id,double d){
+    public void addScore(long id,float d){
         this.scoreAdd.put(id,d);
     }
-    public void addDamage(double dmg){
+    public void addDamage(float dmg){
         this.health-=dmg;
     }
     public long getDamageSourceID(){
@@ -344,7 +344,7 @@ public abstract class Entity implements NetworkItem {
     public Vec2d getPos() {
         return this.position;
     }
-    public double getFovMultiplier(){
+    public float getFovMultiplier(){
         return 1;
     }
 }

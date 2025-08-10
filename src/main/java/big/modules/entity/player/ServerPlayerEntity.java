@@ -18,7 +18,7 @@ import static java.lang.Math.floor;
 
 public class ServerPlayerEntity extends PlayerEntity implements Attackable, Controllable {
 
-    public static double drag=0.67;
+    public static float drag=0.67;
     public ServerInputManager inputManager=null;
     public int upgradeTimer=0;
     public int skillPointNow=0;
@@ -116,7 +116,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
         if(weapon==null||!isAlive) return;
         weapon.tick(inputManager.shoot,cs.isServer);
     }
-    public static double getMultiplier(double level,double max){
+    public static float getMultiplier(float level,float max){
         return max*level/8-0.8;
     }
 
@@ -131,7 +131,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
     }
 
     @Override
-    public void setRotation(double rotation) {
+    public void setRotation(float rotation) {
         this.rotation=rotation;
     }
 
@@ -151,7 +151,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
     }
 
     @Override
-    public double getSpeed() {
+    public float getSpeed() {
         return speed;
     }
 }

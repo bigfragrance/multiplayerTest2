@@ -10,13 +10,13 @@ import big.modules.entity.player.PlayerEntity;
 import static big.engine.modules.EngineMain.cs;
 
 public class AutoAim<T extends AbleToAim> {
-    public static double changeDiff=2;
-    public static double defRange=8;
+    public static float changeDiff=2;
+    public static float defRange=8;
     private T owner;
-    private double fov;
+    private float fov;
     private Entity target;
-    public double seeRangeMultiplier=1;
-    public AutoAim(T owner,double fov){
+    public float seeRangeMultiplier=1;
+    public AutoAim(T owner,float fov){
         this.owner=owner;
         this.fov=fov;
     }
@@ -33,8 +33,8 @@ public class AutoAim<T extends AbleToAim> {
         owner.setFire(true);
     }
     public void updateTarget(){
-        double minDistance=target==null?defRange*seeRangeMultiplier:target.getPos().distanceTo(owner.getPos())-changeDiff;
-        double minDistanceMob=minDistance;
+        float minDistance=target==null?defRange*seeRangeMultiplier:target.getPos().distanceTo(owner.getPos())-changeDiff;
+        float minDistanceMob=minDistance;
         PlayerEntity player=null;
         Entity mob=null;
         for(Entity e:cs.entities.values()){
@@ -47,7 +47,7 @@ public class AutoAim<T extends AbleToAim> {
                 if(!inFov(e)){
                     continue;
                 }
-                double distance=owner.getPos().distanceTo(e.getPos());
+                float distance=owner.getPos().distanceTo(e.getPos());
                 if(b?distance<minDistance:distance<minDistanceMob){
                     if(b){
                         minDistance=distance;
@@ -71,8 +71,8 @@ public class AutoAim<T extends AbleToAim> {
         }
     }
     public boolean inFov(Entity target){
-        double a1=target.getPos().subtract(owner.getPos()).angle();
-        double a2=owner.getRotation();
+        float a1=target.getPos().subtract(owner.getPos()).angle();
+        float a2=owner.getRotation();
         if(a1<0) a1+=360;
         if(a2<0) a2+=360;
         return Math.abs(a1-a2)%360<=fov/2;

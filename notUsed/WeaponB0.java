@@ -10,7 +10,7 @@ public class WeaponB0 extends NormalWeapon{
     public WeaponB0(Entity owner) {
         super(owner);
     }
-    public void update(double time){
+    public void update(float time){
         super.update(time);
         shoot();
     }
@@ -19,9 +19,9 @@ public class WeaponB0 extends NormalWeapon{
             Vec2d pos=owner.getBulletPosition();
             Vec2d input=owner.getTargetingPos();
             Vec2d velocity=input.limit(speed*5);
-            double size=this.size*0.3;
-            double health=this.health*0.3;
-            double damage=this.damage*0.4;
+            float size=this.size*0.3;
+            float health=this.health*0.3;
+            float damage=this.damage*0.4;
             shootBullet(pos,velocity,size,health,damage);
             cooldown= reload*0.6;
         }

@@ -38,12 +38,12 @@ public class TriangleIntersectionChecker {
  
 
     private static Vec2d getEdgeNormal(Vec2d p1, Vec2d p2) {
-        double dx = p2.x - p1.x;
-        double dy = p2.y - p1.y;
+        float dx = p2.x - p1.x;
+        float dy = p2.y - p1.y;
         Vec2d rawNormal = new Vec2d(-dy, dx);
         
 
-        double length = Math.sqrt(rawNormal.x  * rawNormal.x + rawNormal.y * rawNormal.y);
+        float length = Math.sqrt(rawNormal.x  * rawNormal.x + rawNormal.y * rawNormal.y);
         return new Vec2d(rawNormal.x / length, rawNormal.y / length);
     }
  
@@ -55,11 +55,11 @@ public class TriangleIntersectionChecker {
     }
 
     private static Projection getProjection(Vec2d[] triangle, Vec2d axis) {
-        double min = Double.POSITIVE_INFINITY;
-        double max = Double.NEGATIVE_INFINITY;
+        float min = float.POSITIVE_INFINITY;
+        float max = float.NEGATIVE_INFINITY;
         
         for (Vec2d point : triangle) {
-            double projection = point.x * axis.x + point.y * axis.y;
+            float projection = point.x * axis.x + point.y * axis.y;
             min = Math.min(min,  projection);
             max = Math.max(max,  projection);
         }
@@ -68,10 +68,10 @@ public class TriangleIntersectionChecker {
  
 
     private static class Projection {
-        final double min;
-        final double max;
+        final float min;
+        final float max;
         
-        Projection(double min, double max) {
+        Projection(float min, float max) {
             this.min  = min;
             this.max  = max;
         }

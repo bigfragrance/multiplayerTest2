@@ -8,10 +8,10 @@ import java.util.Arrays;
 
 public class JsonTest {
     public static void main(String[] args) {
-        double[] doubles={1,2,3,4,5};
+        float[] floats={1,2,3,4,5};
         JSONObject o=new JSONObject();
-        PacketUtil.put(o,"test",doubles);
+        PacketUtil.put(o,"test",floats);
         System.out.println(o.toString());
-        System.out.println(Arrays.toString((double[]) PacketUtil.get(o,"test")));
+        System.out.println(Arrays.toString((float[]) PacketUtil.get(o,"test")));
     }
 }

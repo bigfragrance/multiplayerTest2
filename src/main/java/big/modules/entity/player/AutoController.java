@@ -28,9 +28,9 @@ import static big.engine.modules.EngineMain.cs;
 import static big.engine.render.Screen.sc;
 
 public class AutoController<T extends Entity&Controllable> {
-    public static double followingRange=8;
-    public static double stopFollowDistance=2;
-    public static double changeDiff=0.8;
+    public static float followingRange=8;
+    public static float stopFollowDistance=2;
+    public static float changeDiff=0.8f;
     public static int dodgeCheck=10;
     public T owner;
     public ServerInputManager inputManager;
@@ -58,7 +58,7 @@ public class AutoController<T extends Entity&Controllable> {
         if(target==null) return;
         positionRecorder.add(target.position);
         if(positionRecorder.size()<3) return;
-        Vec2d velocity=positionRecorder.getLast().subtract(positionRecorder.getFirst()).multiply(1d/(positionRecorder.size()-1));
+        Vec2d velocity=positionRecorder.getLast().subtract(positionRecorder.getFirst()).multiply(1f/(positionRecorder.size()-1));
         Gun gun=owner.getWeapon().getGoingToFire();
         if(gun==null) {
             inputManager.shoot=attack;
@@ -85,7 +85,7 @@ public class AutoController<T extends Entity&Controllable> {
         for(Entity e:cs.entities.values()){
             if(e.team==owner.team) continue;
             if(e instanceof PolygonEntity&&e.damage<10) continue;
-            if(e.damage>0&&willCollide(owner.boundingBox,e.boundingBox.expand(0.05),owner.velocity,e.velocity,dodgeCheck)){
+            if(e.damage>0&&willCollide(owner.boundingBox,e.boundingBox.expand(0.05f),owner.velocity,e.velocity,dodgeCheck)){
                 willCollide.add(e);
             }
         }
@@ -94,9 +94,9 @@ public class AutoController<T extends Entity&Controllable> {
         int[][] movements=new int[][]{{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0}};//idk use [9][2] or [2][9]
         Vec2d[] velocities=create(owner.velocity);
         Box[] boxes=create(owner.boundingBox);
-        double[] damageTaken=create(0.0);
+        float[] damageTaken=create(0.0f);
 
-        double minDamage=10000000;
+        float minDamage=10000000;
         for(int i=0;i<dodgeCheck;i++){
             int index=0;
             for(int x=-1;x<=1;x++){
@@ -108,7 +108,7 @@ public class AutoController<T extends Entity&Controllable> {
                     velocities[index].offset(velocityAdd);
                     boxes[index].offset1(velocities[index]);
                     for(Entity e:willCollide){
-                        if(willCollide(boxes[index],e.boundingBox.expand(0.05).offset(e.velocity.multiply(i)),velocities[index],e.velocity,1)){
+                        if(willCollide(boxes[index],e.boundingBox.expand(0.05f).offset(e.velocity.multiply(i)),velocities[index],e.velocity,1)){
                             damageTaken[index]+=e.damage;
                         }
                     }
@@ -140,15 +140,15 @@ public class AutoController<T extends Entity&Controllable> {
         }
         return boxes;
     }
-    private double[] create(double d){
-        double[] ds=new double[10];
+    private float[] create(float d){
+        float[] ds=new float[10];
         for(int i=0;i<9;i++){
             ds[i]=d;
         }
         return ds;
     }
     private boolean willCollide(Box self,Box box,Vec2d selfVel,Vec2d vel,int times){
-        for(double i=0;i<times;i+=0.2){
+        for(float i=0;i<times;i+=0.2){
             Box after=box.offset(vel.multiply(i));
             Box selfAfter=self.offset(selfVel.multiply(i));
             if(selfAfter.intersects(after)){
@@ -175,15 +175,15 @@ public class AutoController<T extends Entity&Controllable> {
     }
     private Vec2d getPathPos(Vec2d target){
         if(calculator==null) calculator=new Calculator(owner);
-        Path p=calculator.getPath(BlockPos.ofFloor(owner.position.multiply(2)).toCenterPos().multiply(0.5),target);
+        Path p=calculator.getPath(BlockPos.ofFloor(owner.position.multiply(2)).toCenterPos().multiply(0.5f),target);
         if(p==null) return null;
         if(lastPath!=null&&lastPath.isStillValid()){
             Vec2d lastEnd=lastPath.getLast();
             Vec2d newEnd=p.getLast();
             Path new2=calculator.getPath(newEnd,target);
             Path last2=calculator.getPath(lastEnd,target);
-            double lastScore=last2==null?1000000000:last2.getLast().distanceTo(target);
-            double newScore=new2==null?1000000000:new2.getLast().distanceTo(target);
+            float lastScore=last2==null?1000000000:last2.getLast().distanceTo(target);
+            float newScore=new2==null?1000000000:new2.getLast().distanceTo(target);
             if(newScore>lastScore){
                 p=lastPath;
             }
@@ -206,14 +206,14 @@ public class AutoController<T extends Entity&Controllable> {
     public void awayFromOthersBase(){
         BlockPos pos=owner.getPos().ofFloor();
         BlockPos minDistPos=null;
-        double minDist=10000000;
+        float minDist=10000000;
         for(int x=-3;x<=3;x++){
             for(int y=-3;y<=3;y++){
                 if(x==0&&y==0) continue;
                 BlockPos p=pos.add(x,y);
                 BlockState state=cs.world.getBlockState(p);
                 if(state.getTeam()!=owner.team&&state.getBlock()== Blocks.BASE_BLOCK){
-                    double dist=p.distanceTo(pos);
+                    float dist=p.distanceTo(pos);
                     if(dist<minDist){
                         minDist=dist;
                         minDistPos=p;
@@ -227,13 +227,13 @@ public class AutoController<T extends Entity&Controllable> {
         }
     }
     private void updateInput(Vec2d want){
-        double rot=want.angle();
-        double minDiff=25;
+        float rot=want.angle();
+        float minDiff=25;
         for(int x=-1;x<=1;x++){
             for(int y=-1;y<=1;y++){
                 if(x==0&&y==0) continue;
                 Vec2d v=new Vec2d(x,y);
-                double diff=v.angle()-rot;
+                float diff=v.angle()-rot;
                 if(Math.abs(diff)<minDiff){
                     minDiff=diff;
                     inputManager.side=x;
@@ -244,9 +244,9 @@ public class AutoController<T extends Entity&Controllable> {
     }
     public void updateTarget(){
         boolean bl=target==null;
-        double attackDist=followingRange*owner.getFov();
-        double minDistance=target==null?1000000000:target.getPos().distanceTo(owner.getPos())-changeDiff;
-        double minDistanceMob=attackDist;
+        float attackDist=followingRange*owner.getFov();
+        float minDistance=target==null?1000000000:target.getPos().distanceTo(owner.getPos())-changeDiff;
+        float minDistanceMob=attackDist;
         PlayerEntity player=null;
         Entity mob=null;
         for(Entity e:cs.entities.values()){
@@ -256,7 +256,7 @@ public class AutoController<T extends Entity&Controllable> {
                 if(b){
                     if(((PlayerEntity) e).name.equals("God")) continue;
                 }
-                double distance=owner.getPos().distanceTo(e.getPos());
+                float distance=owner.getPos().distanceTo(e.getPos());
                 if(b?distance<minDistance:distance<minDistanceMob){
                     if(b){
                         minDistance=distance;

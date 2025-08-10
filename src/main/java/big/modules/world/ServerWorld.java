@@ -93,10 +93,10 @@ public class ServerWorld extends World{
         for(Entity e:cs.entities.values()){
             if(e instanceof PolygonEntity){
                 Vec2d sub=e.position.subtract(visitorSpawningPosition);
-                double l=sub.length();
+                float l=sub.length();
                 if(l>60) continue;
                 if(l<2) tokill.add(e);
-                double a=Util.lerp(0,90,Math.pow(1-l/60,10));
+                float a=Util.lerp(0,90,Math.pow(1-l/60,10));
                 Vec2d vel=sub.limit(1).multiply(-0.5/l).limitOnlyOver(0.5).rotate(a);
                 e.velocity.offset(vel);
             }
@@ -150,8 +150,8 @@ public class ServerWorld extends World{
             BlockPos blockPos= BlockPos.ofFloor(pos);
             BlockState blockState=cs.world.getBlockState(blockPos);
             if(blockState.getBlock().solid) continue;
-            double s = blockState.getSpawnMobRarity()*7+Math.random()*1.6-0.8;
-            double t = Math.pow(Math.random(),4)*2.5;
+            float s = blockState.getSpawnMobRarity()*7+Math.random()*1.6-0.8;
+            float t = Math.pow(Math.random(),4)*2.5;
             int sides = (round(s) + 3);
             int type = round(t);
             if(Math.random()<blockState.getSpawnMobRarity()){

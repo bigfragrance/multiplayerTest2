@@ -1,10 +1,10 @@
 package big.engine.math;
 
 public class SegmentX {
-    public double minX;
-    public double maxX;
-    public double y;
-    public SegmentX(double minX,double maxX,double y){
+    public float minX;
+    public float maxX;
+    public float y;
+    public SegmentX(float minX,float maxX,float y){
         this.minX=Math.min(minX,maxX);
         this.maxX=Math.max(minX,maxX);
         this.y=y;
@@ -12,7 +12,7 @@ public class SegmentX {
     public boolean interact(SegmentX other){
         return this.y==other.y&&interact(other.minX,other.maxX);
     }
-    public boolean interact(double minX,double maxX){
+    public boolean interact(float minX,float maxX){
         return this.minX<maxX&&this.maxX>minX;
     }
 }

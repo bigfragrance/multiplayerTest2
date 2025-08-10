@@ -32,11 +32,11 @@ public class RegularPolygon extends JFrame {
                         int[] xPoints = new int[n];
             int[] yPoints = new int[n];
             
-            double angleStep = 2 * Math.PI / n;
-            double initialAngle = -Math.PI/2;
+            float angleStep = 2 * Math.PI / n;
+            float initialAngle = -Math.PI/2;
             
             for (int i = 0; i < n; i++) {
-                double angle = initialAngle + i * angleStep;
+                float angle = initialAngle + i * angleStep;
                 xPoints[i] = (int) (centerX + size * Math.cos(angle)); 
                 yPoints[i] = (int) (centerY + size * Math.sin(angle)); 
             }

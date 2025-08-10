@@ -41,10 +41,10 @@ public class MazeGenerator2 {
         createRoom((width-1)/2-4,(height-1)/2-4,9,9);
     }
 
-    private void placeRandomWalls(double density) {
+    private void placeRandomWalls(float density) {
         for (int y = 1; y < height - 1; y++) {
             for (int x = 1; x < width - 1; x++) {
-                if (random.nextDouble() < density) {
+                if (random.nextfloat() < density) {
                     maze[x][y] = WALL;
                 }
             }
@@ -94,7 +94,7 @@ public class MazeGenerator2 {
                     boolean isHorizontal = maze[x-1][y] == FLOOR && maze[x+1][y] == FLOOR;
                     boolean isVertical = maze[x][y-1] == FLOOR && maze[x][y+1] == FLOOR;
 
-                    if ((isHorizontal || isVertical) && random.nextDouble() < 0.3) {
+                    if ((isHorizontal || isVertical) && random.nextfloat() < 0.3) {
                         maze[x][y] = FLOOR;
                     }
                 }

@@ -31,13 +31,13 @@ import static big.engine.modules.EngineMain.cs;
 public class Screen extends JPanel implements Runnable,ActionListener, KeyListener{
     public static Screen sc;
     public static JFrame frame;
-    public volatile double camX=0;
-    public volatile double camY=0;
-    public static double defZoom=12.8/0.02;
-    public volatile double zoom=defZoom;
-    public volatile double zoom2=0.125;
-    private double oldZoom=defZoom;
-    public double lineWidth=1;
+    public volatile float camX=0;
+    public volatile float camY=0;
+    public static float defZoom=12.8/0.02;
+    public volatile float zoom=defZoom;
+    public volatile float zoom2=0.125;
+    private float oldZoom=defZoom;
+    public float lineWidth=1;
     public int windowWidth=1000;
     public int windowHeight=1000;
     public static int mouseX = 50;
@@ -46,8 +46,8 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     public static volatile  ConcurrentHashMap<Character,Boolean> keyPressed=new  ConcurrentHashMap<>();
     public static volatile ConcurrentHashMap<Character,Boolean> lastKeyPressed=new  ConcurrentHashMap<>();
     public static char MOUSECHAR=(char)60000;
-    public static double tickDeltaAdd=0;
-    public static double tickDelta=0;
+    public static float tickDeltaAdd=0;
+    public static float tickDelta=0;
     public long lastRender=0;
     public InputManager inputManager=null;
     public static Box SCREEN_BOX=new Box(0, 800,0,800);
@@ -104,7 +104,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 if(cs.isServer) {
-                    double[] d = Util.zoom(-e.getPreciseWheelRotation() * getRealZoom() / 10, mousePos.switchToGame());
+                    float[] d = Util.zoom(-e.getPreciseWheelRotation() * getRealZoom() / 10, mousePos.switchToGame());
                     if (d != null) {
                         cs.camPos=new Vec2d(d[0],d[1]);
                         cs.prevCamPos=cs.camPos;
@@ -203,7 +203,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
             g2d.scale(zoom2,zoom2);
             g2d.translate(-centerX, -centerY);
 
-            for(double i=0;i<40;i++){
+            for(float i=0;i<40;i++){
                 Box b=cs.borderBox.expand(i*i,i*i);
                 g.setColor(Color.GRAY);
                 Util.renderCubeLine(g,b.switchToJFrame());
@@ -250,7 +250,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
                 );
 
                 g2d.setPaint(paint);
-                g2d.fill(new Rectangle2D.Double(0, 0, getWidth(), getHeight()));
+                g2d.fill(new Rectangle2D.float(0, 0, getWidth(), getHeight()));
                 g2d.dispose();
             }*/
             for(int i=renderTasks.size()-1;i>=0;i--){
@@ -285,7 +285,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
             for(Entity particle:bulletParticles){
                 particle.render(g);
             }
-            for(double i=0;i<40;i++){
+            for(float i=0;i<40;i++){
                 Box b=cs.borderBox.expand(i*i,i*i);
                 g.setColor(Color.GRAY);
                 Util.renderCubeLine(g,b.switchToJFrame());
@@ -302,20 +302,20 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     public void renderAtLast(AfterCheckTask<Graphics> task){
         renderTasks.add(task);
     }
-    public double getRealZoom(){
+    public float getRealZoom(){
         return zoom*zoom2;
     }
-    public void setRealZoom(double zoom){
+    public void setRealZoom(float zoom){
         this.zoom=zoom/zoom2;
     }
-    public double getZoom(){
+    public float getZoom(){
         return zoom;
     }
-    public double getZoom2(){
+    public float getZoom2(){
         return zoom2;
     }
     public Vec2d getMiddle(){
-        return new Vec2d((double) windowWidth /2, (double) windowHeight /2);
+        return new Vec2d((float) windowWidth /2, (float) windowHeight /2);
     }
     public void tick(){
         if(currentScreen!=null)currentScreen.tick();

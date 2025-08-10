@@ -20,12 +20,12 @@ public class TankChooseScreen extends GUI {
     public static TankChooseScreen INSTANCE=new TankChooseScreen();
     public static long staticID=1234561451;
     public static Vec2d start=new Vec2d(-5,4);
-    public static double distance=1.5;
+    public static float distance=1.5;
     public static int tankPerPage=9;
     public static JSONObject tanksList=new JSONObject();
     public int currentIndex=0;
     public ArrayList<PlayerEntity> toShow=new ArrayList<>();
-    public double sizeMultiplier=1;
+    public float sizeMultiplier=1;
     public TankChooseScreen(){
     }
     public void tick(){

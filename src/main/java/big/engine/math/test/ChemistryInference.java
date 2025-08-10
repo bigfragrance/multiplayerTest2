@@ -220,7 +220,7 @@ class GraphPanel extends JPanel {
         private void drawArrow(Graphics2D g, Point from, Point to) {
             g.drawLine(from.x, from.y, to.x, to.y);
             
-            double angle = Math.atan2(to.y - from.y, to.x - from.x);
+            float angle = Math.atan2(to.y - from.y, to.x - from.x);
             int arrowSize = 10;
             Point arrow1 = new Point(
                 (int) (to.x - arrowSize * Math.cos(angle - Math.PI/6)),
@@ -237,7 +237,7 @@ class GraphPanel extends JPanel {
 
         boolean isNear(Point p) {
             int tolerance = 5;
-            double distance = Line2D.ptSegDist(
+            float distance = Line2D.ptSegDist(
                 start.position.x, start.position.y,
                 end.position.x, end.position.y,
                 p.x, p.y

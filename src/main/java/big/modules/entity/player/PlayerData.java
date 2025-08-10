@@ -1,9 +1,9 @@
 package big.modules.entity.player;
 
 public class PlayerData {
-    public double score;
-    public double[] skillPoints;
-    public double[] skillPointLevels;
+    public float score;
+    public float[] skillPoints;
+    public float[] skillPointLevels;
     public int skillPointUsed;
     public PlayerData(ServerPlayerEntity player){
         this.score=player.score;

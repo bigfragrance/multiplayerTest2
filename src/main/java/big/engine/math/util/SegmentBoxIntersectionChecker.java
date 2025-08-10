@@ -31,10 +31,10 @@ public class SegmentBoxIntersectionChecker {
         Vec2d aDir = a2.subtract(a1);
         Vec2d bDir = b2.subtract(b1);
 
-        double cross1 = crossProduct(aDir, b1.subtract(a1));
-        double cross2 = crossProduct(aDir, b2.subtract(a1));
-        double cross3 = crossProduct(bDir, a1.subtract(b1));
-        double cross4 = crossProduct(bDir, a2.subtract(b1));
+        float cross1 = crossProduct(aDir, b1.subtract(a1));
+        float cross2 = crossProduct(aDir, b2.subtract(a1));
+        float cross3 = crossProduct(bDir, a1.subtract(b1));
+        float cross4 = crossProduct(bDir, a2.subtract(b1));
 
 
         if (cross1 * cross2 > 1e-8) return false;
@@ -53,7 +53,7 @@ public class SegmentBoxIntersectionChecker {
     }
 
 
-    private static double crossProduct(Vec2d v1, Vec2d v2) {
+    private static float crossProduct(Vec2d v1, Vec2d v2) {
         return v1.x * v2.y - v1.y * v2.x;
     }
 
@@ -65,16 +65,16 @@ public class SegmentBoxIntersectionChecker {
 
 
     private static boolean checkCollinearOverlap(Vec2d a1, Vec2d a2, Vec2d b1, Vec2d b2) {
-        double aMinX = Math.min(a1.x, a2.x);
-        double aMaxX = Math.max(a1.x, a2.x);
-        double bMinX = Math.min(b1.x, b2.x);
-        double bMaxX = Math.max(b1.x, b2.x);
+        float aMinX = Math.min(a1.x, a2.x);
+        float aMaxX = Math.max(a1.x, a2.x);
+        float bMinX = Math.min(b1.x, b2.x);
+        float bMaxX = Math.max(b1.x, b2.x);
         if (aMaxX < bMinX - 1e-8 || bMaxX < aMinX - 1e-8) return false;
 
-        double aMinY = Math.min(a1.y, a2.y);
-        double aMaxY = Math.max(a1.y, a2.y);
-        double bMinY = Math.min(b1.y, b2.y);
-        double bMaxY = Math.max(b1.y, b2.y);
+        float aMinY = Math.min(a1.y, a2.y);
+        float aMaxY = Math.max(a1.y, a2.y);
+        float bMinY = Math.min(b1.y, b2.y);
+        float bMaxY = Math.max(b1.y, b2.y);
         if (aMaxY < bMinY - 1e-8 || bMaxY < aMinY - 1e-8) return false;
 
         return true;
