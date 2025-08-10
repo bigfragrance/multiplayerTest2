@@ -7,12 +7,12 @@ import org.json.JSONObject;
 import java.util.Arrays;
 
 public class BulletType {
-    public static float[] baseMultipliers={1,1,1,1,1,1,1,1};
+    public static double[] baseMultipliers={1,1,1,1,1,1,1,1};
     public int type;
     public boolean sharp;
-    public float sharpFactor;
-    public float[] multipliers;
-    public BulletType(int type,boolean sharp,float sharpFactor,float[] multipliers){
+    public double sharpFactor;
+    public double[] multipliers;
+    public BulletType(int type,boolean sharp,double sharpFactor,double[] multipliers){
         this.type=type;
         this.sharp=sharp;
         this.sharpFactor=sharpFactor;
@@ -21,17 +21,17 @@ public class BulletType {
     public BulletType(JSONObject object){
         this.type=PacketUtil.getInt(object,"type");
         this.sharp=PacketUtil.getBoolean(object,"sharp");
-        this.sharpFactor=PacketUtil.getfloat(object,"sharpFactor");
+        this.sharpFactor=PacketUtil.getDouble(object,"sharpFactor");
         try {
-            this.multipliers = Util.getfloats(PacketUtil.getJSONArray(object, "multipliers"));
+            this.multipliers = Util.getDoubles(PacketUtil.getJSONArray(object, "multipliers"));
         }catch (Exception e){
             e.printStackTrace();
         }
     }
-    public BulletType(int type,float[] multipliers){
+    public BulletType(int type,double[] multipliers){
         this(type,false,1,multipliers);
     }
-    public BulletType(float[] multipliers){
+    public BulletType(double[] multipliers){
         this(0,false,1,multipliers);
     }
     public boolean isSame(BulletType other){
@@ -44,7 +44,7 @@ public class BulletType {
         }
         return true;
     }
-    public float getMultiplier(int index){
+    public double getMultiplier(int index){
         if(index>=multipliers.length)return baseMultipliers[index];
         return multipliers[index];
     }
@@ -62,5 +62,5 @@ public class BulletType {
         PacketUtil.put(o,"multipliers",multipliers);
         return o;
     }
-    public static BulletType KILLER=new BulletType(0,false,1,Util.multiply(baseMultipliers,new float[]{2,1,100,1,0.2,1,1,1}));
+    public static BulletType KILLER=new BulletType(0,false,1,Util.multiply(baseMultipliers,new double[]{2,1,100,1,0.2,1,1,1}));
 }

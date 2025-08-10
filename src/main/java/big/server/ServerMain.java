@@ -13,10 +13,10 @@ public class ServerMain {
     private static final int PORT = 8088;
     private static final int MAX_THREADS = 50;
     private static final CanvasManager canvas = new CanvasManager();
-    private static Queue<float> connectionTimes = new java.util.LinkedList<>();
+    private static Queue<Double> connectionTimes = new java.util.LinkedList<>();
     public static ConcurrentHashMap<Integer,Boolean> connectedPlayers = new ConcurrentHashMap<>();
     private static long lastConnectionTime = 0;
-    private static float minAvgDelay=100;
+    private static double minAvgDelay=100;
     public static ConcurrentHashMap<Integer, PlayerData> connectedPlayersEntity = new ConcurrentHashMap<>();
     public static void main(String[] args) throws Exception {
         ExecutorService pool = Executors.newFixedThreadPool(MAX_THREADS); 
@@ -31,13 +31,13 @@ public class ServerMain {
                     continue;
                 }*/
                 /*int count=0;
-                float delay=0;
-                for(float d:connectionTimes){
+                double delay=0;
+                for(double d:connectionTimes){
                     count++;
                     delay+=d;
                 }
                 if(count>0){
-                    float avg=delay/count;
+                    double avg=delay/count;
                     if(avg<minAvgDelay){
                         client.close();
                         continue;
@@ -46,7 +46,7 @@ public class ServerMain {
 
                 pool.execute(new  ClientHandler(client));
                 connectedPlayers.put(client.getInetAddress().hashCode(),true);
-                connectionTimes.offer((float) (System.currentTimeMillis()-lastConnectionTime));
+                connectionTimes.offer((double) (System.currentTimeMillis()-lastConnectionTime));
                 if(connectionTimes.size()>10){
                     connectionTimes.poll();
                 }

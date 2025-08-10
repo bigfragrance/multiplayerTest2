@@ -12,21 +12,21 @@ import static big.engine.modules.EngineMain.cs;
 import static big.modules.entity.Entity.sizeMultiplier;
 
 public class Weapon{
-    public static float damageBase=10;
-    public static float speedBase=5*sizeMultiplier;
-    public static float healthBase=1;
+    public static double damageBase=10;
+    public static double speedBase=5*sizeMultiplier;
+    public static double healthBase=1;
     public static int reloadBase=10;
-    public static float sizeBase=5*sizeMultiplier;
-    public static float autoTargetDistanceMax=300;
-    public static float extrapolateBase=1.5;
-    public static float extrapolateCheckMax=10;
-    public static float extrapolateCheckStep=0.5;
+    public static double sizeBase=5*sizeMultiplier;
+    public static double autoTargetDistanceMax=300;
+    public static double extrapolateBase=1.5;
+    public static double extrapolateCheckMax=10;
+    public static double extrapolateCheckStep=0.5;
     public Entity owner;
-    public float damage;
-    public float speed;
-    public float health;
-    public float reload;
-    public float size;
+    public double damage;
+    public double speed;
+    public double health;
+    public double reload;
+    public double size;
     public Weapon(Entity owner){
         this.owner=owner;
         this.damage=damageBase;
@@ -35,14 +35,14 @@ public class Weapon{
         this.reload=reloadBase;
         this.size=sizeBase;
     }
-    public void setMultiplier(float[] multiplier){
+    public void setMultiplier(double[] multiplier){
         this.damage=damageBase*multiplier[0];
         this.speed=speedBase*multiplier[1];
         this.health=healthBase*multiplier[2];
         this.size=sizeBase*multiplier[3];
         this.reload= (reloadBase/multiplier[4]);
     }
-    public void update(float time){
+    public void update(double time){
 
     }
     public void shoot(){
@@ -62,20 +62,20 @@ public class Weapon{
         }
         return null;
     }
-    /*public BulletEntity shootBullet(Vec2d pos,Vec2d velocity,float size,float health,float damage){
+    /*public BulletEntity shootBullet(Vec2d pos,Vec2d velocity,double size,double health,double damage){
         BulletEntity b=new BulletEntity(pos,velocity,new Box(pos,size,size),health,damage,owner.team);
         b.ownerId=owner.getOwnerID();
         cs.addEntity(b);
         return b;
     }
-    public BulletEntity shootBullet(Vec2d pos,Vec2d velocity,float size,float health,float damage,int lifeTime){
+    public BulletEntity shootBullet(Vec2d pos,Vec2d velocity,double size,double health,double damage,int lifeTime){
         BulletEntity b=new BulletEntity(pos,velocity,new Box(pos,size,size),health,damage,owner.team);
         b.ownerId=owner.getOwnerID();
         b.maxLifeTime=lifeTime;
         cs.addEntity(b);
         return b;
     }
-    public AimBullet shootAimBullet(Vec2d pos,Vec2d velocity,float size,float health,float damage){
+    public AimBullet shootAimBullet(Vec2d pos,Vec2d velocity,double size,double health,double damage){
         AimBullet b=new AimBullet(pos,velocity,new Box(pos,size,size),health,damage,owner.team);
         b.ownerId=owner.getOwnerID();
         cs.addEntity(b);
@@ -84,23 +84,23 @@ public class Weapon{
     public Entity getTarget(Vec2d targeting){
         Entity bestPlayer=null;
         Entity bestOther=null;
-        float best1=10000;
-        float best2=10000;
-        float rot=targeting.angle();
+        double best1=10000;
+        double best2=10000;
+        double rot=targeting.angle();
         for(Entity e:cs.entities.values()){
             if(e.team==this.owner.team) continue;
             if(e instanceof BulletEntity) continue;
             if(e.position.distanceTo(owner.position)>autoTargetDistanceMax) continue;
             if(e instanceof MobEntity m){
-                float d=e.position.distanceTo(owner.position);
+                double d=e.position.distanceTo(owner.position);
                 if(d<best2){
                     best2=d;
                     bestOther=e;
                 }
             }
             if(e instanceof PlayerEntity p){
-                float rot2=targeting.angle();
-                float abs=Math.abs(rot-rot2);
+                double rot2=targeting.angle();
+                double abs=Math.abs(rot-rot2);
                 if(abs<best1){
                     best1=abs;
                     bestPlayer=e;
@@ -119,17 +119,17 @@ public class Weapon{
         }
         return count;
     }
-    public Vec2d extrapolate(Entity e,float tick){
+    public Vec2d extrapolate(Entity e,double tick){
         return e.position.add(e.velocity.multiply(tick));
     }
-    public Vec2d extrapolate(Entity e,Vec2d shootPos, float bulletSpeed){
-        float distance=e.position.distanceTo(shootPos);
-        float speed=e.velocity.length();
+    public Vec2d extrapolate(Entity e,Vec2d shootPos, double bulletSpeed){
+        double distance=e.position.distanceTo(shootPos);
+        double speed=e.velocity.length();
         Vec2d first=extrapolate(e,distance/speed);
         Vec2d sub=first.subtract(shootPos);
         Vec2d bVel=sub.limit(bulletSpeed);
-        float speedD=bVel.add(e.velocity).length();
-        float times=distance/speedD;
+        double speedD=bVel.add(e.velocity).length();
+        double times=distance/speedD;
         first=extrapolate(e,times+extrapolateBase);
 
         sub=first.subtract(shootPos);
@@ -145,13 +145,13 @@ public class Weapon{
         first=extrapolate(e,times+extrapolateBase);
         return first;
     }
-    public Vec2d extrapolate2(Entity e,Vec2d shootPos, float bulletSpeed){
+    public Vec2d extrapolate2(Entity e,Vec2d shootPos, double bulletSpeed){
         Vec2d bestPos=null;
-        float minDiff=1000;
-        for(float i=0;i<extrapolateCheckMax;i+=extrapolateCheckStep){
+        double minDiff=1000;
+        for(double i=0;i<extrapolateCheckMax;i+=extrapolateCheckStep){
             Vec2d pos=extrapolate(e,i);
-            float dist=pos.subtract(shootPos).length();
-            float diff=Math.abs(i-dist/bulletSpeed);
+            double dist=pos.subtract(shootPos).length();
+            double diff=Math.abs(i-dist/bulletSpeed);
             if(diff<minDiff){
                 minDiff=diff;
                 bestPos=pos;

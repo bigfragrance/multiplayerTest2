@@ -10,7 +10,7 @@ import java.awt.*;
 import static big.engine.render.Screen.SCREEN_BOX;
 
 public class GroundParticle extends Particle{
-    public static float size=0.1;
+    public static double size=0.1;
     long startTime;
     public GroundParticle(Vec2d position) {
         super(position,new Vec2d(0,0),new Box(position,size,size));

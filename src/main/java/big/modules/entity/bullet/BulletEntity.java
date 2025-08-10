@@ -14,12 +14,12 @@ import java.awt.*;
 import static big.engine.modules.EngineMain.cs;
 
 public class BulletEntity extends Entity {
-    public static float[] baseValues={10,0.1,4,0.1,100,20,0.003,0.05};//damage speed health size lifeTime kbFactor randomVelocity selfKB
+    public static double[] baseValues={10,0.1,4,0.1,100,20,0.003,0.05};//damage speed health size lifeTime kbFactor randomVelocity selfKB
     public long ownerId;
     private boolean invisibleTick=false;
     public BulletType type;
     public int maxLifeTime=100;
-    public float knockBackFactor=20;
+    public double knockBackFactor=20;
     public BulletEntity(Vec2d position, Vec2d velocity,int team,BulletType type){
         super();
         this.position=position;
@@ -137,7 +137,7 @@ public class BulletEntity extends Entity {
         p.rotation=this.rotation;
         return p;
     }*/
-    public static float getMultipliedValue(int index,BulletType type){
+    public static double getMultipliedValue(int index,BulletType type){
         return baseValues[index]*type.getMultiplier(index);
     }
     public long getOwnerID(){

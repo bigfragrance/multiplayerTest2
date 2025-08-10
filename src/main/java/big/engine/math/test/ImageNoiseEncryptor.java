@@ -7,7 +7,7 @@ import java.util.Random;
 
 public class ImageNoiseEncryptor {
 
-    public static BufferedImage addNoise(BufferedImage image, long seed, float strength) {
+    public static BufferedImage addNoise(BufferedImage image, long seed, double strength) {
         int width = image.getWidth();
         int height = image.getHeight();
         BufferedImage noisyImage = new BufferedImage(width, height, image.getType());
@@ -23,9 +23,9 @@ public class ImageNoiseEncryptor {
                 int b = rgb & 0xFF;
                 
 
-                float noiseR = (rand.nextfloat() * 2 - 1) * strength;
-                float noiseG = (rand.nextfloat() * 2 - 1) * strength;
-                float noiseB = (rand.nextfloat() * 2 - 1) * strength;
+                double noiseR = (rand.nextDouble() * 2 - 1) * strength;
+                double noiseG = (rand.nextDouble() * 2 - 1) * strength;
+                double noiseB = (rand.nextDouble() * 2 - 1) * strength;
                 
 
                 r = clamp(r + (int) noiseR/*+(strength>0?-50:50)*/);
@@ -40,7 +40,7 @@ public class ImageNoiseEncryptor {
     }
 
 
-    public static BufferedImage removeNoise(BufferedImage noisyImage, long seed, float strength) {
+    public static BufferedImage removeNoise(BufferedImage noisyImage, long seed, double strength) {
 
         return addNoise(noisyImage, seed, -strength);
     }
@@ -53,7 +53,7 @@ public class ImageNoiseEncryptor {
     public static void main(String[] args) throws Exception {
 
         long seed = 12345L;
-        float strength = 100;
+        double strength = 100;
         String inputPath = "E:\\sd-webui-aki\\sd-webui-aki-v4.11.1-cu128\\outputs\\txt2img-images\\2025-07-16\\00114-986655363.png";
         String encryptedPath = "encrypted.png";
         String decryptedPath = "decrypted.png";

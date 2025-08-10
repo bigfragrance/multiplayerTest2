@@ -31,12 +31,12 @@ public class GunList {
     }
     public void render(Graphics g){
         ArrayList<CanAttack> list=new ArrayList<>(this.list.values());
-        list.sort(Comparator.comparingfloat(CanAttack::getLayer));
+        list.sort(Comparator.comparingDouble(CanAttack::getLayer));
         for(CanAttack canAttack:list){
             canAttack.render(g);
         }
     }
-    public void setSize(float m){
+    public void setSize(double m){
         for(CanAttack canAttack:list.values()){
             canAttack.setSize(m);
         }
@@ -78,7 +78,7 @@ public class GunList {
     }
     public Gun getGoingToFire(){
         Gun bestGun=null;
-        float minTime=1000;
+        double minTime=1000;
         for(CanAttack ttgun:list.values()){
             if(ttgun instanceof Gun gun) {
                 if (gun.getReload() < minTime) {
@@ -122,10 +122,10 @@ public class GunList {
         }
         return gunList;
     }
-    public float getStopFollowDistance(){
-        float d= AutoController.stopFollowDistance;
+    public double getStopFollowDistance(){
+        double d= AutoController.stopFollowDistance;
         try{
-            float d2=this.extradata.getfloat("stopFollow");
+            double d2=this.extradata.getDouble("stopFollow");
             d=d2;
         }catch (Exception e){
             return d;

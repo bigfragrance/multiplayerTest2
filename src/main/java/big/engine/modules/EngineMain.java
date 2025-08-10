@@ -49,8 +49,8 @@ public class EngineMain implements Runnable{
     public ArrayList<Entity> entityParticles =new ArrayList<>();
     public ArrayList<Entity> entityParticlesAdd =new ArrayList<>();
     public volatile AtomicLong lastEntityID=new AtomicLong(0);
-    public static float TPS=20;
-    public static float chunkSize=3;
+    public static double TPS=20;
+    public static double chunkSize=3;
     public boolean isServer=true;
     public ClientNetworkHandler networkHandler;
     public MultiClientHandler multiClientHandler=null;
@@ -128,10 +128,10 @@ public class EngineMain implements Runnable{
             }
         }
     }
-    public static float getTickDelta(){
-        return  Math.max(0,Math.min(TPS*((float)(System.currentTimeMillis() - lastTick)) / 1000d,1));
+    public static double getTickDelta(){
+        return  Math.max(0,Math.min(TPS*((double)(System.currentTimeMillis() - lastTick)) / 1000d,1));
     }
-    public void clientUpdate(float time){
+    public void clientUpdate(double time){
         if(player!=null){
             //player.updateBullet(time);
         }
@@ -227,11 +227,11 @@ public class EngineMain implements Runnable{
         particles.forEach(Particle::update);
         particles.removeIf(p->!p.isAlive);
         PlayerEntity player=this.player==null?new PlayerEntity(new Vec2d(0,0)):this.player;
-        float zoomPlus=32;//Screen.INSTANCE.zoom*Screen.INSTANCE.zoom;
+        double zoomPlus=32;//Screen.INSTANCE.zoom*Screen.INSTANCE.zoom;
         if(full){
             for(int i=0;i<40*zoomPlus;i++){
-                Vec2d vec=new Vec2d(Util.random((float) -sc.windowWidth /2-100, (float) sc.windowWidth /2+100),Util.random((float) -sc.windowHeight /2-100, (float) sc.windowHeight /2+100));
-                float size=Util.random(15,25);
+                Vec2d vec=new Vec2d(Util.random((double) -sc.windowWidth /2-100, (double) sc.windowWidth /2+100),Util.random((double) -sc.windowHeight /2-100, (double) sc.windowHeight /2+100));
+                double size=Util.random(15,25);
                 vec=vec.add(sc.camX, sc.camY);
                 GroundParticle ground=new GroundParticle(vec);
                 groundParticles.add(ground);
@@ -241,8 +241,8 @@ public class EngineMain implements Runnable{
         else{
             if(groundParticles.size()>=200*zoomPlus||System.currentTimeMillis()-lastGenerateGround<16*(10/player.velocity.length())) return;
             for(int i=1;i<2*zoomPlus;i++){
-                Vec2d vec=new Vec2d(Util.random((float) -sc.windowWidth /2-100, (float) sc.windowWidth /2+100),Util.random((float) -sc.windowHeight /2-100, (float) sc.windowHeight /2+100));
-                float size=Util.random(15,25);
+                Vec2d vec=new Vec2d(Util.random((double) -sc.windowWidth /2-100, (double) sc.windowWidth /2+100),Util.random((double) -sc.windowHeight /2-100, (double) sc.windowHeight /2+100));
+                double size=Util.random(15,25);
                 vec=vec.add(sc.camX, sc.camY).add(player.velocity.multiply(3));
                 GroundParticle ground=new GroundParticle(vec);
                 if(!ground.shouldKill(true)) continue;
@@ -306,7 +306,7 @@ public class EngineMain implements Runnable{
             entity.updateChunk();
         }
     }
-    /*public void fastUpdate(float time){
+    /*public void fastUpdate(double time){
         time=Math.min(time,1);
         for(Entity entity:entities.values()){
             if(entity instanceof ServerPlayerEntity player){

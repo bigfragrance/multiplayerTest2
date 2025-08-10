@@ -27,13 +27,13 @@ public class ColorUtils {
 
         return new Color(red, green, blue, alpha);
     }
-    public static Color darker(Color c,float factor) {
+    public static Color darker(Color c,double factor) {
         return new Color(Math.min((int)(c.getRed()  *factor), 255),
                 Math.min((int)(c.getGreen()*factor), 255),
                 Math.min((int)(c.getBlue() *factor), 255),
                 c.getAlpha());
     }
-    public static Color brighter(Color c,float factor) {
+    public static Color brighter(Color c,double factor) {
         return opposite(darker(opposite(c),factor));
     }
     public static Color opposite(Color c){
@@ -42,14 +42,14 @@ public class ColorUtils {
     public static Color setAlpha(Color c,int alpha){
         return new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha);
     }
-    public static Color setAlpha(Color c,float alpha){
+    public static Color setAlpha(Color c,double alpha){
         alpha=Math.clamp(alpha,0,1);
         return new Color(c.getRed(),c.getGreen(),c.getBlue(),(int)(alpha*255));
     }
-    public static Color getRainbowColor(float value) {
+    public static Color getRainbowColor(double value) {
         if (value < 0) value = 0;
         if (value > 1) value = 1;
-        float hue = value * 360;
+        double hue = value * 360;
 
         if (hue < 60) {
             return new Color(255, (int)(255 * hue/60), 0);

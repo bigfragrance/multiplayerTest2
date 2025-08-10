@@ -20,7 +20,7 @@ public class WordHelperScreen extends GUI {
     public static WordHelperScreen INSTANCE=new WordHelperScreen();
     public static long staticID=1234561451;
     public static Vec2d start=new Vec2d(-5,4);
-    public static float distance=1.8;
+    public static double distance=1.8;
     public static JSONObject wordsList=new JSONObject();
     public static ArrayList<String> wordsKeyList=new ArrayList<>();
     public ArrayList<String> needCheckAgain=new ArrayList<>();

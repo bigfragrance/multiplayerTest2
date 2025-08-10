@@ -2,9 +2,9 @@ package big.modules.entity;
 
 public class DamageSource {
     public Long id;
-    public float damage;
+    public double damage;
     public long time;
-    public DamageSource(Long id, float damage) {
+    public DamageSource(Long id, double damage) {
         this.id = id;
         this.damage = damage;
         this.time = System.currentTimeMillis();
@@ -12,7 +12,7 @@ public class DamageSource {
     public boolean isExpired() {
         return System.currentTimeMillis() - time > 5000;
     }
-    public void increase(float dmg){
+    public void increase(double dmg){
         this.damage+=dmg;
         this.time=System.currentTimeMillis();
     }

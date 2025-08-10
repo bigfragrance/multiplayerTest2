@@ -30,23 +30,23 @@ public class PolygonEntity extends MobEntity{
             new Color(100, 255, 100),
             new Color(255, 100, 255),
     };
-    public static float[] healths={100,20,200,300,500,600,700,800,900,1000};
-    public static float[] healthMultipliers={0.5,2,4,7,10,14,18,23,28,35};
-    public static float[] sizeMultipliers={0.7,1,1.5,2.2,2.9,3.8,4.5,5,5.4,5.6};
-    public static float[] sizeMultipliers2={0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.6,1.7};
-    public static float[] damageMultipliers={1,0.5,2,2.5,3,3.5,4,4.5,5,5.5};
-    public static float[] damageMultipliers2={0.5,0.7,1,1.2,1.3,1.4,1.45,1.5,1.55,1.6};
-    public static float[] spawnAreas={1,1,0.4,0.4,0.4,0.3,0.3,0.3,0.3,0.3};
-    public static float sizeBase=12*sizeMultiplier;
-    public static float damageBase=3;
-    public static float speed=0.15*sizeMultiplier;
-    public static float attackSpeed=1*sizeMultiplier;
+    public static double[] healths={100,20,200,300,500,600,700,800,900,1000};
+    public static double[] healthMultipliers={0.5,2,4,7,10,14,18,23,28,35};
+    public static double[] sizeMultipliers={0.7,1,1.5,2.2,2.9,3.8,4.5,5,5.4,5.6};
+    public static double[] sizeMultipliers2={0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.6,1.7};
+    public static double[] damageMultipliers={1,0.5,2,2.5,3,3.5,4,4.5,5,5.5};
+    public static double[] damageMultipliers2={0.5,0.7,1,1.2,1.3,1.4,1.45,1.5,1.55,1.6};
+    public static double[] spawnAreas={1,1,0.4,0.4,0.4,0.3,0.3,0.3,0.3,0.3};
+    public static double sizeBase=12*sizeMultiplier;
+    public static double damageBase=3;
+    public static double speed=0.15*sizeMultiplier;
+    public static double attackSpeed=1*sizeMultiplier;
     public Vec2d addVelocity=new Vec2d(0,0);
     public int velChangeTimer=0;
     public int sides;
     public int type;
-    public float size;
-    public float scoreBase=1;
+    public double size;
+    public double scoreBase=1;
 
     public PolygonEntity(Vec2d position,int sides,int type){
         super();
@@ -106,7 +106,7 @@ public class PolygonEntity extends MobEntity{
     public void update(JSONObject o){
         super.update(o);
     }
-    public void storeDamage(Entity e,float damage){
+    public void storeDamage(Entity e,double damage){
         super.storeDamage(e,damage);
         if(!attackPlayer) return;
         Entity attacker=cs.entities.get(e.getDamageSourceID());
@@ -126,14 +126,14 @@ public class PolygonEntity extends MobEntity{
             team=ColorUtils.brighter(team,0.5);
         }
 
-        float rotation=Util.lerp(this.prevRotation,this.rotation,getTickDelta());
+        double rotation=Util.lerp(this.prevRotation,this.rotation,getTickDelta());
         g.setColor(team);
         Util.renderPolygon(g,Util.lerp(prevBoundingBox,boundingBox,getTickDelta()).getCenter(),sides,size,rotation,true,true);
 
         g.setColor(ColorUtils.darker(team,0.6));
-        float smaller=size;
-        float rotAdd=0;
-        float m=getSizeSmallerMultiplier(sides);
+        double smaller=size;
+        double rotAdd=0;
+        double m=getSizeSmallerMultiplier(sides);
         Util.renderPolygon(g,Util.lerp(prevBoundingBox,boundingBox,getTickDelta()).getCenter(),sides,smaller,rotation+rotAdd,true,false);
         for(int i=0;i<type;i++){
             smaller*=m;
@@ -180,13 +180,13 @@ public class PolygonEntity extends MobEntity{
         super.addMediumJSON(o);
         return o;
     }
-    public static float getHealthMax(int sides,int type){
+    public static double getHealthMax(int sides,int type){
         return healths[sides-3]*healthMultipliers[type];
     }
-    private static float getSizeSmallerMultiplier(int sides){
+    private static double getSizeSmallerMultiplier(int sides){
         return Math.sqrt(0.25+0.25-0.5*(Util.cos(180-(360d/sides))));
     }
-    public static float getSpawnArea(int sides){
+    public static double getSpawnArea(int sides){
         if(sides<3||sides>12) {
             sides=3;
         }

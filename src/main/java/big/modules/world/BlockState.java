@@ -38,10 +38,10 @@ public class BlockState {
         }catch (Exception e){}
         return b;
     }
-    public float getSpawnMobRarity(){
-        return PacketUtil.getfloat(data,"spawnMobRarity");
+    public double getSpawnMobRarity(){
+        return PacketUtil.getDouble(data,"spawnMobRarity");
     }
-    public void setSpawnMobRarity(float rarity){
+    public void setSpawnMobRarity(double rarity){
         PacketUtil.put(data,"spawnMobRarity",rarity);
     }
     public int getTeam(){

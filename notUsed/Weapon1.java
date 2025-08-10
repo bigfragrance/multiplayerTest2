@@ -18,9 +18,9 @@ public class Weapon1 extends NormalWeapon{
             if (input==null) return;
             Vec2d pos=owner.getBulletPosition();
             Vec2d velocity=input.limit(speed*6).add(Util.randomVec().limit(0.005));
-            float size=this.size;
-            float health=this.health;
-            float damage=this.damage*0.4;
+            double size=this.size;
+            double health=this.health;
+            double damage=this.damage*0.4;
             shootBullet(pos,velocity,size,health,damage);
             cooldown=(reload*0.1);
         }

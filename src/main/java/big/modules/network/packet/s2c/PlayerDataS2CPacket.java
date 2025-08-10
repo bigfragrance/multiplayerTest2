@@ -10,14 +10,14 @@ import org.json.JSONObject;
 import static big.engine.modules.EngineMain.cs;
 
 public class PlayerDataS2CPacket implements Packet<ClientNetworkHandler> {
-    public float[] skillPoints;
+    public double[] skillPoints;
     public int skillPointCount;
-    public PlayerDataS2CPacket(float[] skillPoints, int skillPointCount) {
+    public PlayerDataS2CPacket(double[] skillPoints, int skillPointCount) {
         this.skillPoints = skillPoints;
         this.skillPointCount = skillPointCount;
     }
     public PlayerDataS2CPacket(JSONObject o) {
-        this(Util.getfloats(PacketUtil.getJSONArray(o, "skillPoints")),PacketUtil.getInt(o,"skillPointCount"));
+        this(Util.getDoubles(PacketUtil.getJSONArray(o, "skillPoints")),PacketUtil.getInt(o,"skillPointCount"));
     }
     @Override
     public JSONObject toJSON() {

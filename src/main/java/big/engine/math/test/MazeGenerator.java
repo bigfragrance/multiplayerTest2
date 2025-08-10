@@ -44,11 +44,11 @@ public class MazeGenerator {
         }
     }
 
-    private void addExtraPaths(float density) {
+    private void addExtraPaths(double density) {
         for (int y = 1; y < height - 1; y++) {
             for (int x = 1; x < width - 1; x++) {
                 if (maze[x][y] == WALL && isWallWithTwoPaths(x, y)) {
-                    if (random.nextfloat() < density) {
+                    if (random.nextDouble() < density) {
                         maze[x][y] = PATH;
                     }
                 }

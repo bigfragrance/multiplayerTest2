@@ -11,7 +11,7 @@ import java.util.concurrent.*;
 import static big.engine.modules.EngineMain.cs;
 
 public class Path {
-    public static float REMOVENODEDISTANCE = 0.3;
+    public static double REMOVENODEDISTANCE = 0.3;
     //public static PathNode SPACE = new PathNode(new Vec2d(0, 114514, 0), 114514, 114514, null);
     public volatile ArrayList<PathNode> path;
     public volatile ArrayList<PathNode> path1;
@@ -59,8 +59,8 @@ public class Path {
         for (int i = 0; i < path.size(); i++) {
             Vec2d v = path.get(i).pos;
             Vec2d p = owner.getPos();
-            float dx = v.x - p.x;
-            float dy = v.y - p.y;
+            double dx = v.x - p.x;
+            double dy = v.y - p.y;
             if ((dx * dx + dy * dy <= REMOVENODEDISTANCE)) index = i;
         }
         if (index >= 0) {
@@ -74,8 +74,8 @@ public class Path {
             for (int i = 0; i < path1.size(); i++) {
                 Vec2d v = path1.get(i).pos;
                 Vec2d p = owner.getPos();
-                float dx = v.x - p.x;
-                float dy = v.y - p.y;
+                double dx = v.x - p.x;
+                double dy = v.y - p.y;
                 if ((dx * dx + dy * dy <= REMOVENODEDISTANCE)) index = i;
                 //if (calculator.isNeighbour(center(p), v)) index = i - 1;
             }
@@ -185,8 +185,8 @@ public class Path {
         return true;
     }
 
-    public float getLength() {
-        float length = 0;
+    public double getLength() {
+        double length = 0;
         PathNode last = null;
         for (PathNode pathNode : path) {
             if (last != null) length += last.pos.distanceTo(pathNode.pos);
@@ -195,8 +195,8 @@ public class Path {
         return length;
     }
 
-    public float getLengthTotal() {
-        float length = 0;
+    public double getLengthTotal() {
+        double length = 0;
         PathNode last = null;
         Path p = this;
         for (PathNode pathNode : this.path) {

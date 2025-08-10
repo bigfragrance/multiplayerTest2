@@ -200,7 +200,7 @@ public class PacketUtil {
         }
         return null;
     }
-    public static void put(JSONObject o,String name,float value){
+    public static void put(JSONObject o,String name,double value){
         o.put(getShortVariableName(name),value);
     }
     public static void put(JSONObject o,String name,int value){
@@ -236,11 +236,11 @@ public class PacketUtil {
         }
         return o.get(getShortVariableName(name));
     }
-    public static float getfloat(JSONObject o,String name){
+    public static double getDouble(JSONObject o,String name){
         if(o.has(name)){
-            return o.getfloat(name);
+            return o.getDouble(name);
         }
-        return o.getfloat(getShortVariableName(name));
+        return o.getDouble(getShortVariableName(name));
     }
     public static int getInt(JSONObject o,String name){
         if(o.has(name)){

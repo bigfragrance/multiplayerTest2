@@ -6,14 +6,14 @@ import big.engine.render.Screen;
 import org.json.JSONObject;
 
 public class Vec2d {
-    public float x;
-    public float y;
+    public double x;
+    public double y;
 
-    public Vec2d(float x, float y) {
+    public Vec2d(double x, double y) {
         this.x = x;
         this.y = y;
     }
-    public Vec2d(float rotation){
+    public Vec2d(double rotation){
         this(Util.cos(rotation),Util.sin(rotation));
     }
 
@@ -21,7 +21,7 @@ public class Vec2d {
         return new Vec2d(0, 0);
     }
 
-    public Vec2d add(float x, float y) {
+    public Vec2d add(double x, double y) {
         return new Vec2d(this.x + x, this.y + y);
     }
 
@@ -29,19 +29,19 @@ public class Vec2d {
         return add(v.x, v.y);
     }
 
-    public float length() {
+    public double length() {
         return Math.sqrt(x * x + y * y);
     }
 
-    public Vec2d subtract(float x, float y) {
+    public Vec2d subtract(double x, double y) {
         return this.add(-x, -y);
     }
 
-    public Vec2d multiply(float a) {
+    public Vec2d multiply(double a) {
         return new Vec2d(x * a, y * a);
     }
 
-    public void multiply1(float a) {
+    public void multiply1(double a) {
         set(x * a, y * a);
     }
 
@@ -49,12 +49,12 @@ public class Vec2d {
         return subtract(pos.x, pos.y);
     }
 
-    public void set(float x, float y) {
+    public void set(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    public void offset(float x, float y) {
+    public void offset(double x, double y) {
         this.x += x;
         this.y += y;
     }
@@ -79,42 +79,42 @@ public class Vec2d {
     public Vec2d switchToJFrame() {
         return new Vec2d(Util.switchXToJFrame(x), Util.switchYToJFrame(y));
     }
-    public Vec2d switchToJFrame(float zoom) {
+    public Vec2d switchToJFrame(double zoom) {
         return new Vec2d(Util.switchXToJFrame(x,zoom), Util.switchYToJFrame(y,zoom));
     }
-    public Vec2d switchToJFrameOld(float zoom) {
+    public Vec2d switchToJFrameOld(double zoom) {
         return new Vec2d(Util.switchXToJFrameOld(x,zoom), Util.switchYToJFrameOld(y,zoom));
     }
     public Vec2d switchToGame() {
         return new Vec2d(Util.switchXToGame(x), Util.switchYToGame(y));
     }
-    public Vec2d switchToGame(float zoom) {
+    public Vec2d switchToGame(double zoom) {
         return new Vec2d(Util.switchXToGame(x,zoom), Util.switchYToGame(y,zoom));
     }
     public Vec2d switchToGame1() {
-        return new Vec2d((x - (float) Screen.sc.windowWidth / 2)/Screen.sc.getRealZoom(), (-y + (float) Screen.sc.windowHeight / 2)/Screen.sc.getRealZoom());
+        return new Vec2d((x - (double) Screen.sc.windowWidth / 2)/Screen.sc.getRealZoom(), (-y + (double) Screen.sc.windowHeight / 2)/Screen.sc.getRealZoom());
     }
 
-    public Vec2d limit(float l) {
+    public Vec2d limit(double l) {
         if (this.length() <= 0.0001) return this;
-        float e = l / length();
+        double e = l / length();
         return this.multiply(e);
     }
-    public Vec2d limitOnlyOver(float l){
+    public Vec2d limitOnlyOver(double l){
         if (this.length() <= l) return this.copy();
         return this.limit(l);
     }
-    public float dot(Vec2d pos) {
+    public double dot(Vec2d pos) {
         return x * pos.x + y * pos.y;
     }
-    public float cross(Vec2d pos) {
+    public double cross(Vec2d pos) {
         return x * pos.y - y * pos.x;
     }
-    public float angle(){
+    public double angle(){
         if(this.length()<=0.00000001) return 0;
         return Math.toDegrees(Math.atan2(y, x));
     }
-    public float distanceTo(Vec2d pos) {
+    public double distanceTo(Vec2d pos) {
         return this.subtract(pos).length();
     }
 
@@ -130,21 +130,21 @@ public class Vec2d {
         }
         return false;
     }
-    public Vec2d rotate(float angle) {
-        float cos = Util.cos(angle);
-        float sin = Util.sin(angle);
+    public Vec2d rotate(double angle) {
+        double cos = Util.cos(angle);
+        double sin = Util.sin(angle);
         return new Vec2d(x * cos - y * sin, x * sin + y * cos);
     }
     public JSONObject toJSON() {
         JSONObject json = new JSONObject();
-        json.put("x",Util.getRoundedfloat(x,1));
-        json.put("y",Util.getRoundedfloat(y,1));
+        json.put("x",Util.getRoundedDouble(x,1));
+        json.put("y",Util.getRoundedDouble(y,1));
         return json;
     }
     public BlockPos ofFloor(){
         return BlockPos.ofFloor(this);
     }
     public static Vec2d fromJSON(JSONObject json) {
-        return new Vec2d(json.getfloat("x"), json.getfloat("y"));
+        return new Vec2d(json.getDouble("x"), json.getDouble("y"));
     }
 }

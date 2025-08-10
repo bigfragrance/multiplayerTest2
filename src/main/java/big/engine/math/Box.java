@@ -5,11 +5,11 @@ import big.engine.math.util.Util;
 import org.json.JSONObject;
 
 public class Box {
-    public float minX;
-    public float maxX;
-    public float minY;
-    public float maxY;
-    public Box(float maxX, float minX, float maxY, float minY){
+    public double minX;
+    public double maxX;
+    public double minY;
+    public double maxY;
+    public Box(double maxX, double minX, double maxY, double minY){
         this.minX=Math.min(minX,maxX);
         this.maxX=Math.max(minX,maxX);
         this.minY=Math.min(minY,maxY);
@@ -24,31 +24,31 @@ public class Box {
     public Box(Vec2d v1,Vec2d v2){
         this(v1.x,v2.x,v1.y,v2.y);
     }
-    public Box(Vec2d center, float dx, float dy){
+    public Box(Vec2d center, double dx, double dy){
         this(center.x-dx, center.x+dx, center.y -dy,center.y+dy);
     }
-    public Box(Vec2d center, float d){
+    public Box(Vec2d center, double d){
         this(center,d,d);
     }
     public boolean intersects(Box box) {
         return this.intersects(box.minX, box.minY, box.maxX, box.maxY);
     }
     public boolean intersectsCircle(Box box){
-        float d=box.getCenter().distanceTo(this.getCenter());
+        double d=box.getCenter().distanceTo(this.getCenter());
         return d*2<=Math.max(box.xSize(),box.ySize())+Math.max(this.xSize(),this.ySize());
     }
-    public Box expand(float x,float y){
+    public Box expand(double x,double y){
         return new Box(maxX+x,minX-x,maxY+y,minY-y);
 
     }
-    public Box expand(float d){
+    public Box expand(double d){
         return expand(d,d);
     }
-    public Box stretch(float x, float y) {
-        float d = this.minX;
-        float e = this.minY;
-        float g = this.maxX;
-        float h = this.maxY;
+    public Box stretch(double x, double y) {
+        double d = this.minX;
+        double e = this.minY;
+        double g = this.maxX;
+        double h = this.maxY;
         if (x < 0.0) {
             d += x;
         } else if (x > 0.0) {
@@ -82,7 +82,7 @@ public class Box {
     /**
      * Checks if this box intersects the box of the given coordinates.
      */
-    public boolean intersects(float minX, float minY, float maxX, float maxY) {
+    public boolean intersects(double minX, double minY, double maxX, double maxY) {
         return this.minX < maxX && this.maxX > minX && this.minY < maxY && this.maxY > minY;
     }
 
@@ -103,10 +103,10 @@ public class Box {
     /**
      * Checks if the given position is in this box.
      */
-    public boolean contains(float x, float y) {
+    public boolean contains(double x, double y) {
         return x >= this.minX && x < this.maxX && y >= this.minY && y < this.maxY;
     }
-    public void offset1(float x,float y){
+    public void offset1(double x,double y){
         this.minX+=x;
         this.maxX+=x;
         this.minY+=y;
@@ -115,19 +115,19 @@ public class Box {
     public void offset1(Vec2d vec){
         offset1(vec.x,vec.y);
     }
-    public Box offset(float x,float y){
+    public Box offset(double x,double y){
         return new Box(minX+x,maxX+x,minY+y,maxY+y);
     }
     public Box offset(Vec2d vec){
         return offset(vec.x,vec.y);
     }
-    public float xSize(){
+    public double xSize(){
         return this.maxX-this.minX;
     }
-    public float ySize(){
+    public double ySize(){
         return this.maxY-this.minY;
     }
-    public float avgSize(){
+    public double avgSize(){
         return (xSize()+ySize())/2;
     }
     public Box switchToJFrame(){
@@ -158,24 +158,24 @@ public class Box {
         }
 
 
-        float minX = float.parsefloat(parts[0]);
-        float maxX = float.parsefloat(parts[1]);
-        float minY = float.parsefloat(parts[2]);
-        float maxY = float.parsefloat(parts[3]);
+        double minX = Double.parseDouble(parts[0]);
+        double maxX = Double.parseDouble(parts[1]);
+        double minY = Double.parseDouble(parts[2]);
+        double maxY = Double.parseDouble(parts[3]);
 
 
         return new Box(minX, maxX, minY, maxY);
     }
     public JSONObject toJSON(){
         JSONObject json=new JSONObject();
-        json.put("a",Util.getRoundedfloat(minX,1));
-        json.put("b",Util.getRoundedfloat(maxX,1));
-        json.put("c",Util.getRoundedfloat(minY,1));
-        json.put("d",Util.getRoundedfloat(maxY,1));
+        json.put("a",Util.getRoundedDouble(minX,1));
+        json.put("b",Util.getRoundedDouble(maxX,1));
+        json.put("c",Util.getRoundedDouble(minY,1));
+        json.put("d",Util.getRoundedDouble(maxY,1));
         return json;
     }
     public static Box fromJSON(JSONObject json){
-        return new Box(json.getfloat("a"),json.getfloat("b"),json.getfloat("c"),json.getfloat("d"));
+        return new Box(json.getDouble("a"),json.getDouble("b"),json.getDouble("c"),json.getDouble("d"));
     }
 
     public Vec2d getMinPos(){

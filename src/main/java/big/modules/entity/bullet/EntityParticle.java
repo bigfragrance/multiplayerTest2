@@ -8,7 +8,7 @@ import big.modules.entity.Entity;
 import java.awt.*;
 
 public class EntityParticle extends Entity {
-    public static float expandFactor=0.3;
+    public static double expandFactor=0.3;
     public static int MAX_LIFETIME=6;
     private int maxLifeTime;
     private int lifeTime;
@@ -25,6 +25,6 @@ public class EntityParticle extends Entity {
         this.boundingBox=b.expand(b.xSize()*expandFactor,b.ySize()*expandFactor);
     }
     public void render(Graphics g){
-        //EntityUtils.renderBullet(g,this,(maxLifeTime-lifeTime)/(float)maxLifeTime);
+        //EntityUtils.renderBullet(g,this,(maxLifeTime-lifeTime)/(double)maxLifeTime);
     }
 }

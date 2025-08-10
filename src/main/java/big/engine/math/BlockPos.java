@@ -24,7 +24,7 @@ public class BlockPos {
     public Box toBox(){
         return new Box(this);
     }
-    public static BlockPos ofFloor(float x, float y){
+    public static BlockPos ofFloor(double x, double y){
         return new BlockPos((int) Math.floor(x), (int) Math.floor(y));
     }
     public static BlockPos ofFloor(Vec2d vec){
@@ -45,7 +45,7 @@ public class BlockPos {
         }
     }
 
-    public float distanceTo(BlockPos pos) {
+    public double distanceTo(BlockPos pos) {
         return Math.sqrt((x-pos.x)*(x-pos.x)+(y-pos.y)*(y-pos.y));
     }
 }

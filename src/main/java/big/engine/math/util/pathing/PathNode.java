@@ -7,8 +7,8 @@ import java.util.ArrayList;
 
 public class PathNode {
     public Vec2d pos;
-    float g;
-    float f;
+    double g;
+    double f;
     PathNode parent;
     public boolean startJump = false;
     public boolean jumping = false;
@@ -16,7 +16,7 @@ public class PathNode {
     public boolean onGround = true;
     public Calculator calculator;
 
-    public PathNode(Vec2d pos, float g, float f, PathNode parent, Calculator calculator) {
+    public PathNode(Vec2d pos, double g, double f, PathNode parent, Calculator calculator) {
         this.pos = pos;
         this.g = g;
         this.f = f;
@@ -40,11 +40,11 @@ public class PathNode {
         return this.getTotal() < pathNode.getTotal();
     }
 
-    public static float xyDistance(Vec2d v1, Vec2d v2) {
+    public static double xyDistance(Vec2d v1, Vec2d v2) {
         return Math.sqrt(Math.pow(v1.x - v2.x, 2) + Math.pow(v1.y - v2.y, 2));
     }
 
-    public float getTotal() {
+    public double getTotal() {
         return f + g;
     }
 

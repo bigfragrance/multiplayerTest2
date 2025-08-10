@@ -15,7 +15,7 @@ public class ImageNoiseProcessor {
             String inputPath = "noisy.jpg";//"E:\\sd-webui-aki\\sd-webui-aki-v4.11.1-cu128\\outputs\\txt2img-images\\2025-07-16\\00114-986655363.png";
             String noisyOutputPath = "noisy1.jpg";
             String denoisedOutputPath = "denoised.jpg";
-            float noiseIntensity = 0.1;
+            double noiseIntensity = 0.1;
             boolean addNoise = false;
 
             // 读取原始图片
@@ -37,7 +37,7 @@ public class ImageNoiseProcessor {
     }
 
     // 添加椒盐噪声方法
-    private static BufferedImage addSaltPepperNoise(BufferedImage image, float noiseIntensity) {
+    private static BufferedImage addSaltPepperNoise(BufferedImage image, double noiseIntensity) {
         int width = image.getWidth();
         int height = image.getHeight();
         BufferedImage noisyImage = new BufferedImage(width, height, image.getType());
@@ -47,7 +47,7 @@ public class ImageNoiseProcessor {
                 int rgb = image.getRGB(x, y);
                 
                 // 按概率添加噪声
-                if (random.nextfloat() < noiseIntensity) {
+                if (random.nextDouble() < noiseIntensity) {
                     // 随机选择盐噪声(白色)或胡椒噪声(黑色)
                     rgb = random.nextBoolean() ? 0xFFFFFFFF : 0xFF000000;
                 }

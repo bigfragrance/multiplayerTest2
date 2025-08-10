@@ -16,10 +16,10 @@ import static big.engine.modules.EngineMain.cs;
 public class Calculator {
     public Vec2d from;
     public Vec2d to;
-    public float STEP = 0.5;
+    public double STEP = 0.5;
     public long TIMEOUT = 1;
     public long start = 0;
-    public float VALIDDISTANCE = 0.8;
+    public double VALIDDISTANCE = 0.8;
     public boolean CENTER = false;
     public Entity owner;
     public Calculator(Entity owner) {
@@ -110,7 +110,7 @@ public class Calculator {
         log(String.valueOf(System.currentTimeMillis()-start));
         return found ? new Path(pathNodes) : null;
     }*/
-    public Path getPath(Vec2d f, Vec2d t, float validDistance, boolean closest, long timeout) {
+    public Path getPath(Vec2d f, Vec2d t, double validDistance, boolean closest, long timeout) {
         if (f == null || t == null) return null;
         start = System.currentTimeMillis();
         from = f;
@@ -152,7 +152,7 @@ public class Calculator {
         }
         if (closest) {
             PathNode best = null;
-            float bestDistance = float.MAX_VALUE;
+            double bestDistance = Double.MAX_VALUE;
             for (PathNode p : pathNodes) {
                 if (p.pos.distanceTo(to) <= bestDistance) {
                     best = p;
@@ -199,20 +199,20 @@ public class Calculator {
         return null;
     }
 
-    public float getVFrom(Vec2d pos) {
+    public double getVFrom(Vec2d pos) {
         return pos.distanceTo(from);
     }
 
-    public float getV(Vec2d p1, Vec2d p2) {
+    public double getV(Vec2d p1, Vec2d p2) {
         return p1.distanceTo(p2);
     }
 
-    public float getVTo(Vec2d pos) {
+    public double getVTo(Vec2d pos) {
         //return Math.abs(pos.x - to.x) + Math.abs(pos.y - to.y) + Math.abs(pos.z - to.z);
         return pos.distanceTo(to);
     }
 
-    public float getVTotal(Vec2d pos) {
+    public double getVTotal(Vec2d pos) {
         return getVTo(pos) + getVFrom(pos);
     }
 
@@ -234,7 +234,7 @@ public class Calculator {
     }
 
 
-    public Vec2d offset(Vec2d vec, int type, float s) {
+    public Vec2d offset(Vec2d vec, int type, double s) {
         switch (type) {
             /*case(0)->{
                 return vec.add(0,s);
@@ -285,7 +285,7 @@ public class Calculator {
         return getPath(v1, v2, VALIDDISTANCE, true, TIMEOUT);
     }
 
-    public Path getPath(Vec2d v1, Vec2d v2, float validDistance) {
+    public Path getPath(Vec2d v1, Vec2d v2, double validDistance) {
         return getPath(v1, v2, validDistance, false, TIMEOUT);
     }
 
@@ -293,7 +293,7 @@ public class Calculator {
         return getPath(v1, v2, VALIDDISTANCE, closest, TIMEOUT);
     }
 
-    public Path getPath(Vec2d v1, Vec2d to, float validDistance, boolean closest) {
+    public Path getPath(Vec2d v1, Vec2d to, double validDistance, boolean closest) {
         return getPath(v1, to, validDistance, closest, TIMEOUT);
     }
 }

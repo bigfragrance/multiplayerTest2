@@ -20,9 +20,9 @@ public class Weapon8 extends NormalWeapon{
                 input=target.subtract(pos);
             }
             Vec2d velocity=input.limit(speed*4).add(Util.randomVec().limit(0.003));
-            float size=this.size*1.5;
-            float health=this.health*2;
-            float damage=this.damage*1.6;
+            double size=this.size*1.5;
+            double health=this.health*2;
+            double damage=this.damage*1.6;
             shootBullet(pos,velocity,size,health,damage).type=new BulletType(1);
             //shootBullet(pos,velocity,size,health,damage);
             cooldown= reload*0.6;

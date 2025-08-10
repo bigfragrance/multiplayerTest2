@@ -143,9 +143,9 @@ public class ClientGUI extends JFrame {
         canvasPanel.addMouseMotionListener(new  MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
                 if(lastMousePos!=null){
-                    for(float d=0;d<=1;d+=0.1){
-                        int x=(int)(lastMousePos.x+((float)e.getX()/CELL_SIZE-lastMousePos.x)*d);
-                        int y=(int)(lastMousePos.y+((float)e.getY()/CELL_SIZE-lastMousePos.y)*d);
+                    for(double d=0;d<=1;d+=0.1){
+                        int x=(int)(lastMousePos.x+((double)e.getX()/CELL_SIZE-lastMousePos.x)*d);
+                        int y=(int)(lastMousePos.y+((double)e.getY()/CELL_SIZE-lastMousePos.y)*d);
                         if(x>=0&&x<64&&y>=0&&y<64){
                             network.sendPixelUpdate(x,y,selectedColor);
                         }
@@ -157,15 +157,15 @@ public class ClientGUI extends JFrame {
                     network.sendPixelUpdate(x,  y, selectedColor);
                 }
                 lastMousePos = new Vec2d(
-                        (float) e.getX() / CELL_SIZE,
-                        (float) e.getY() / CELL_SIZE
+                        (double) e.getX() / CELL_SIZE,
+                        (double) e.getY() / CELL_SIZE
                 );
             }
             
             public void mouseMoved(MouseEvent e) {
                 lastMousePos = new Vec2d(
-                    (float) e.getX() / CELL_SIZE,
-                    (float) e.getY() / CELL_SIZE
+                    (double) e.getX() / CELL_SIZE,
+                    (double) e.getY() / CELL_SIZE
                 );
                 canvasPanel.repaint();
             }

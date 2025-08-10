@@ -33,15 +33,15 @@ public class EntityUtils {
     public static Color ShieldBarColor=new Color(100, 255, 255,255);
     public static int nameSize=10;
     public static int scoreSize=7;
-    public static float intersectCheckStep=0.5;
-    public static float extrapolateBase=1.5;
-    public static float extrapolateCheckMax=10;
-    public static float extrapolateCheckStep=0.5;
+    public static double intersectCheckStep=0.5;
+    public static double extrapolateBase=1.5;
+    public static double extrapolateCheckMax=10;
+    public static double extrapolateCheckStep=0.5;
     public static boolean intersects(Box pb1,Box b1,Box pb2,Box b2) {
         if(pb1==null) pb1=b1;
         if(pb2==null) pb2=b2;
         if(b1==null||b2==null) return false;
-        for(float d=intersectCheckStep;d<=1;d+=intersectCheckStep){
+        for(double d=intersectCheckStep;d<=1;d+=intersectCheckStep){
             if(Util.lerp(pb1,b1,d).intersects(Util.lerp(pb2,b2,d))){
                 return true;
             }
@@ -60,10 +60,10 @@ public class EntityUtils {
     public static Vec2d getPushVector(Entity e,Entity checking){
 
         Vec2d sub=e.position.subtract(checking.position);
-        float subLength=sub.length();
+        double subLength=sub.length();
         if(subLength<0.0000001) return new Vec2d(0,0);
-        float length=Math.max(e.boundingBox.xSize(),e.boundingBox.ySize())+Math.max(checking.boundingBox.xSize(),checking.boundingBox.ySize());
-        float mul=Entity.collisionVector*(length-subLength)/e.mass*checking.mass;
+        double length=Math.max(e.boundingBox.xSize(),e.boundingBox.ySize())+Math.max(checking.boundingBox.xSize(),checking.boundingBox.ySize());
+        double mul=Entity.collisionVector*(length-subLength)/e.mass*checking.mass;
         if(mul<=0) return new Vec2d(0,0);
         return sub.limit(mul).limitOnlyOver(collisionMax);
     }
@@ -105,11 +105,11 @@ public class EntityUtils {
         }
     }
     public static Box smaller(Box box){
-        float e=Math.min(0.05,(box.xSize()+box.ySize())/4*0.1);
+        double e=Math.min(0.05,(box.xSize()+box.ySize())/4*0.1);
         return box.expand(-e,-e);
     }
     public static Box smallerBullet(Box box){
-        float e=Math.min(0.05,(box.xSize()+box.ySize())/4*0.4);
+        double e=Math.min(0.05,(box.xSize()+box.ySize())/4*0.4);
         return box.expand(-e,-e);
     }
     public static void render(Graphics g,Box box,Color team){
@@ -118,7 +118,7 @@ public class EntityUtils {
         g.setColor(team);
         Util.render(g,box.switchToJFrame());
     }
-    public static void renderBullet(Graphics g, BulletEntity e,float bright){
+    public static void renderBullet(Graphics g, BulletEntity e,double bright){
         Color team=ColorUtils.setAlpha(getTeamcolor(e.team), bright);
         if(e.isDamageTick){
             team=ColorUtils.brighter(team,0.5);
@@ -141,30 +141,30 @@ public class EntityUtils {
     public static void renderBullet(Graphics g, BulletEntity e){
         renderBullet(g,e,e.getRenderAlpha());
     }
-    public static void renderHealthBar(Graphics g,Entity e,float maxHealth){
+    public static void renderHealthBar(Graphics g,Entity e,double maxHealth){
         if(e.health/maxHealth>0.95||e.health<=0) return;
-        float d=sizeMultiplier*e.getSizeMultiplier();
+        double d=sizeMultiplier*e.getSizeMultiplier();
         Box healthBar=new Box(e.getRenderBoundingBox().getCenter().add(0,-15*d),15*d,3*d);
 
         g.setColor(HealthBarColor);
         Vec2d a=healthBar.getMinPos();
         Vec2d b=healthBar.getMaxPos();
-        float xDelta=b.x-a.x;
+        double xDelta=b.x-a.x;
         Box healthBarPercentage=new Box(a,b.add(-xDelta*(1-e.getRenderHealth()/maxHealth),0));
         Util.renderCube(g,healthBarPercentage.switchToJFrame());
 
         g.setColor(Color.BLACK);
         Util.renderCubeLine(g,healthBar.switchToJFrame());
     }
-    public static void renderShieldBar(Graphics g,Entity e,float shieldMax){
+    public static void renderShieldBar(Graphics g,Entity e,double shieldMax){
         if(e.shield/shieldMax>0.95||e.shield<=0) return;
-        float d=sizeMultiplier*e.getSizeMultiplier();
+        double d=sizeMultiplier*e.getSizeMultiplier();
         Box healthBar=new Box(e.getRenderBoundingBox().getCenter().add(0,-23*d),15*d,3*d);
 
         g.setColor(ShieldBarColor);
         Vec2d a=healthBar.getMinPos();
         Vec2d b=healthBar.getMaxPos();
-        float xDelta=b.x-a.x;
+        double xDelta=b.x-a.x;
         Box shieldBarPercentage=new Box(a,b.add(-xDelta*(1-e.getRenderShield()/shieldMax),0));
         Util.renderCube(g,shieldBarPercentage.switchToJFrame());
 
@@ -181,7 +181,7 @@ public class EntityUtils {
         Vec2d renderPos=e.getRenderPosition().add(0,40*sizeMultiplier*e.getSizeMultiplier());
         Util.renderString(g, String.valueOf(round(e.score)),renderPos.switchToJFrame(),round(scoreSize* sc.zoom*sizeMultiplier*e.getSizeMultiplier()));
     }
-    public static void renderSkillPoints(Vec2d pos,float[] skillPoints,int left){
+    public static void renderSkillPoints(Vec2d pos,double[] skillPoints,int left){
         sc.renderAtLast(g->{
             sc.storeAndSetDef();
             g.setColor(Color.DARK_GRAY);
@@ -189,14 +189,14 @@ public class EntityUtils {
             Util.renderString(g,("Skill Points: "+left),pos,round(scoreSize* sc.zoom*sizeMultiplier));
             pos.offset(0,-15/sc.zoom2);
             for(int i=0;i<skillPoints.length;i++){
-                Util.renderString(g,PlayerEntity.skillNames[i]+": "+Util.formatfloat(skillPoints[i]),pos,round(scoreSize* sc.zoom*sizeMultiplier));
+                Util.renderString(g,PlayerEntity.skillNames[i]+": "+Util.formatDouble(skillPoints[i]),pos,round(scoreSize* sc.zoom*sizeMultiplier));
                 pos.offset(0,-15/sc.zoom2);
             }
             sc.restoreZoom();
         });
         //Util.renderString(g,getSkillPointsString(skillPoints,left),pos,round(scoreSize*Screen.INSTANCE.zoom));
     }
-    public static String getSkillPointsString(float[] skillPoints,int left){
+    public static String getSkillPointsString(double[] skillPoints,int left){
         StringBuilder sb=new StringBuilder();
         sb.append("Skill Points: "+left+"\n");
         for(int i=0;i<skillPoints.length;i++){
@@ -206,7 +206,7 @@ public class EntityUtils {
     }
     public static Vec2d getRandomSpawnPosition(int team){
         Vec2d farthest=Util.randomInBox(cs.borderBox);
-        float farthestDistance=0;
+        double farthestDistance=0;
         for(int i=0;i<500;i++){
             Vec2d pos=Util.randomInBox(cs.borderBox);
             if(cs.world.getBlockState(BlockPos.ofFloor(pos)).getTeam()==team){
@@ -215,7 +215,7 @@ public class EntityUtils {
             if(EntityUtils.isInsideWall(new Box(pos,0.19,0.19))){
                 continue;
             }
-            float distance=pos.length();
+            double distance=pos.length();
             if(distance>farthestDistance){
                 farthest=pos;
                 farthestDistance=distance;
@@ -226,7 +226,7 @@ public class EntityUtils {
     }
     public static Vec2d getVisitorSpawnPosition(){
         Vec2d closest=Util.randomInBox(cs.borderBox);
-        float closestDistance=100000;
+        double closestDistance=100000;
         for(int i=0;i<700;i++){
             Vec2d pos=Util.randomInBox(cs.borderBox);
             if(EntityUtils.isInsideWall(new Box(pos,1.5,1.5))){
@@ -245,7 +245,7 @@ public class EntityUtils {
             if(EntityUtils.isInsideWall(new Box(pos,1.5,1.5))){
                 continue;
             }
-            float distance=pos.length();
+            double distance=pos.length();
             if(distance<closestDistance){
                 closest=pos;
                 closestDistance=distance;
@@ -254,14 +254,14 @@ public class EntityUtils {
 
         return closest;
     }
-    public static float[] getBetterDamage(float thisHealth,float thisDamage,float othersHealth,float othersDamage){
+    public static double[] getBetterDamage(double thisHealth,double thisDamage,double othersHealth,double othersDamage){
         //[0] to enemy, [1] to self
-        float d1=Math.clamp(othersHealth/thisDamage,0,0.5);
-        float d2=Math.clamp(thisHealth/othersDamage,0,0.5);
-        return new float[]{d2*thisDamage,d1*othersDamage};
+        double d1=Math.clamp(othersHealth/thisDamage,0,0.5);
+        double d2=Math.clamp(thisHealth/othersDamage,0,0.5);
+        return new double[]{d2*thisDamage,d1*othersDamage};
     }
     public static void takeDamage(Entity e1,Entity e2){
-        float[] d=getBetterDamage(e1.health,e1.damage,e2.health,e2.damage);
+        double[] d=getBetterDamage(e1.health,e1.damage,e2.health,e2.damage);
         e2.addDamage(d[0]);
         e2.storeDamage(e1,d[0]);
         e1.addDamage(d[1]);
@@ -286,10 +286,10 @@ public class EntityUtils {
             }
         }
     }
-    public static Vec2d getKnockBackVector(Entity self,Entity other,float f){
+    public static Vec2d getKnockBackVector(Entity self,Entity other,double f){
         f=Math.min(f,1);
-        float d=self.velocity.dot(other.velocity.limit(1));
-        float d2=other.velocity.multiply(f).length();
+        double d=self.velocity.dot(other.velocity.limit(1));
+        double d2=other.velocity.multiply(f).length();
         if(d>d2) return new Vec2d(0,0);
         return other.velocity.limit(d2-d);
     }
@@ -343,8 +343,8 @@ public class EntityUtils {
         }*/
 
 
-        float maxX = velocity.x;
-        float maxY = velocity.y;
+        double maxX = velocity.x;
+        double maxY = velocity.y;
 
 
         if (velocity.x != 0) {
@@ -421,8 +421,8 @@ public class EntityUtils {
                                    boolean checkLeft, boolean checkRight,
                                    boolean checkTop, boolean checkBottom){
         if(!box.offset(velocity).intersects(checking)) return velocity;
-        float x=velocity.x;
-        float y=velocity.y;
+        double x=velocity.x;
+        double y=velocity.y;
 
         Box xOnly=box.offset(x,0);
         Box yOnly=box.offset(0,y);
@@ -474,8 +474,8 @@ public class EntityUtils {
         }*/
         //return new Vec2d(x,y);
     }
-    public static float getMaxMoveY(SegmentX moving,SegmentX checking,Vec2d velocity){
-        float diff=checking.y-moving.y;
+    public static double getMaxMoveY(SegmentX moving,SegmentX checking,Vec2d velocity){
+        double diff=checking.y-moving.y;
         if((diff<velocity.y&&velocity.y>0)||(diff>velocity.y&&velocity.y<0)) {
             if (moving.interact(checking.minX,checking.maxX)) {
                 return diff;
@@ -483,8 +483,8 @@ public class EntityUtils {
         }
         return velocity.y;
     }
-    public static float getMaxMoveX(SegmentY moving, SegmentY checking, Vec2d velocity){
-        float diff=checking.x-moving.x;
+    public static double getMaxMoveX(SegmentY moving, SegmentY checking, Vec2d velocity){
+        double diff=checking.x-moving.x;
         if((diff<velocity.x&&velocity.x>0)||(diff>velocity.x&&velocity.x<0)) {
             if (moving.interact(checking.minY, checking.maxY)) {
                 return diff;
@@ -498,8 +498,8 @@ public class EntityUtils {
         if(!isInsideWall(box.expand(0.001,0.001))) return o;
         Box x=box.offset(o.x,0);
         Box y=box.offset(0,o.y);
-        float newX=o.x;
-        float newY=o.y;
+        double newX=o.x;
+        double newY=o.y;
         if(isInsideWall(x)){
             newX=-newX;
         }
@@ -511,17 +511,17 @@ public class EntityUtils {
     public static boolean isInsideWall(Box box){
         return cs.serverController.isWall(box.minX,box.minY)||cs.serverController.isWall(box.maxX,box.minY)||cs.serverController.isWall(box.minX,box.maxY)||cs.serverController.isWall(box.maxX,box.maxY);
     }
-    public static Vec2d extrapolate(Vec2d targetPos,Vec2d targetVel,float tick,Vec2d addVel){
+    public static Vec2d extrapolate(Vec2d targetPos,Vec2d targetVel,double tick,Vec2d addVel){
         return targetPos.add(targetVel.add(addVel).multiply(tick));
     }
-    /*public Vec2d extrapolate(Entity e,Vec2d shootPos, float bulletSpeed){
-        float distance=e.position.distanceTo(shootPos);
-        float speed=e.velocity.length();
+    /*public Vec2d extrapolate(Entity e,Vec2d shootPos, double bulletSpeed){
+        double distance=e.position.distanceTo(shootPos);
+        double speed=e.velocity.length();
         Vec2d first=extrapolate(e,distance/speed);
         Vec2d sub=first.subtract(shootPos);
         Vec2d bVel=sub.limit(bulletSpeed);
-        float speedD=bVel.add(e.velocity).length();
-        float times=distance/speedD;
+        double speedD=bVel.add(e.velocity).length();
+        double times=distance/speedD;
         first=extrapolate(e,times+extrapolateBase);
 
         sub=first.subtract(shootPos);
@@ -537,14 +537,14 @@ public class EntityUtils {
         first=extrapolate(e,times+extrapolateBase);
         return first;
     }*/
-    public static Vec2d extrapolate2(Vec2d targetPos,Vec2d targetVel,Vec2d shootPos, float bulletSpeed,Vec2d addVel){
+    public static Vec2d extrapolate2(Vec2d targetPos,Vec2d targetVel,Vec2d shootPos, double bulletSpeed,Vec2d addVel){
         Vec2d bestPos=null;
-        float minDiff=1000;
+        double minDiff=1000;
         addVel=addVel.multiply(-1);
-        for(float i=0;i<extrapolateCheckMax;i+=extrapolateCheckStep){
+        for(double i=0;i<extrapolateCheckMax;i+=extrapolateCheckStep){
             Vec2d pos=extrapolate(targetPos,targetVel,i,addVel);
-            float dist=pos.subtract(shootPos).length();
-            float diff=Math.abs(i-dist/bulletSpeed);
+            double dist=pos.subtract(shootPos).length();
+            double diff=Math.abs(i-dist/bulletSpeed);
             if(diff<minDiff){
                 minDiff=diff;
                 bestPos=pos;

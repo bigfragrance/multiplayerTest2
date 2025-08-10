@@ -26,17 +26,17 @@ import static big.modules.weapon.Gun.color;
 public class AutoGunList extends CanAttack implements AbleToAim,Node {
     private AtomicInteger lastID=new AtomicInteger(0);
     public Entity owner;
-    public float offsetRotation;
+    public double offsetRotation;
     public Vec2d offset;
-    public float fov;
-    public float rotation=0;
-    public float layer;
-    public float size;
+    public double fov;
+    public double rotation=0;
+    public double layer;
+    public double size;
     public ConcurrentHashMap<Long,CanAttack> guns;
     public AutoAim<AutoGunList> autoAim;
     private boolean fire=false;
-    private float sizeMultiplier=1;
-    public AutoGunList(Entity owner, float offsetRotation, Vec2d offset,float size, float fov,float layer,ConcurrentHashMap<Long,CanAttack> guns) {
+    private double sizeMultiplier=1;
+    public AutoGunList(Entity owner, double offsetRotation, Vec2d offset,double size, double fov,double layer,ConcurrentHashMap<Long,CanAttack> guns) {
         this.owner = owner;
         this.offsetRotation = offsetRotation;
         this.offset = offset;
@@ -46,11 +46,11 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
         this.size=size;
         autoAim=new AutoAim<>(this,fov);
     }
-    public AutoGunList another(float offsetRotation){
+    public AutoGunList another(double offsetRotation){
         AutoGunList gun=new AutoGunList(owner,this.offsetRotation+offsetRotation,offset,size,fov,layer,getCloneGuns());
         return gun;
     }
-    public AutoGunList another(float offsetRotation,Vec2d offset){
+    public AutoGunList another(double offsetRotation,Vec2d offset){
         return new AutoGunList(owner,this.offsetRotation+offsetRotation,offset,size,fov,layer,getCloneGuns());
     }
     public void tick(boolean fire,boolean server){
@@ -74,7 +74,7 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
     public Vec2d getOffset(){
         return offset;
     }
-    public float getOffsetRotation(){
+    public double getOffsetRotation(){
         return offsetRotationAll.get();
     }
 
@@ -109,7 +109,7 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
     }
     public void render(Graphics g){
         ArrayList<CanAttack> list=new ArrayList<>(this.guns.values());
-        list.sort(Comparator.comparingfloat(CanAttack::getLayer));
+        list.sort(Comparator.comparingDouble(CanAttack::getLayer));
         for(CanAttack canAttack:list){
             canAttack.render(g);
         }
@@ -125,12 +125,12 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
     }
 
     @Override
-    public float getAimRotation() {
+    public double getAimRotation() {
         return rotation;
     }
 
     @Override
-    public float getRenderAimRotation() {
+    public double getRenderAimRotation() {
         return Util.lerp(prevRotation,rotation, Screen.tickDelta);
     }
 
@@ -164,9 +164,9 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
         return obj;
     }
     public void update(JSONObject obj){
-        rotation=PacketUtil.getfloat(obj,"rotation");
-        sizeMultiplier=PacketUtil.getfloat(obj,"size");
-        offsetRotationAll.setNext(PacketUtil.getfloat(obj,"offsetRotationAll"));
+        rotation=PacketUtil.getDouble(obj,"rotation");
+        sizeMultiplier=PacketUtil.getDouble(obj,"size");
+        offsetRotationAll.setNext(PacketUtil.getDouble(obj,"offsetRotationAll"));
         JSONArray array=PacketUtil.getJSONArray(obj,"data");
         for(int i=0;i<array.length();i++){
             JSONObject gunObj=array.getJSONObject(i);
@@ -178,7 +178,7 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
             JSONObject info = obj.getJSONObject("info");
             JSONArray array = obj.getJSONArray("data");
             Entity owner = cs.entities.get(PacketUtil.getLong(obj, "owner"));
-            AutoGunList gunList = new AutoGunList(owner, info.getfloat("offsetRotation"), Vec2d.fromJSON(info.getJSONObject("offset")), info.getfloat("size"), info.getfloat("fov"), info.getfloat("layer"), new ConcurrentHashMap<>());
+            AutoGunList gunList = new AutoGunList(owner, info.getDouble("offsetRotation"), Vec2d.fromJSON(info.getJSONObject("offset")), info.getDouble("size"), info.getDouble("fov"), info.getDouble("layer"), new ConcurrentHashMap<>());
             for (int i = 0; i < array.length(); i++) {
                 JSONObject gunObj = array.getJSONObject(i);
                 PacketUtil.put(gunObj, "owner", owner.id);
@@ -198,7 +198,7 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
             JSONObject info = PacketUtil.getJSONObject(obj,"info");
             JSONArray array = PacketUtil.getJSONArray(obj,"data");
             Entity owner = cs.entities.get(PacketUtil.getLong(obj, "owner"));
-            AutoGunList gunList = new AutoGunList(owner, PacketUtil.getfloat(info,"offsetRotation"), Vec2d.fromJSON(PacketUtil.getJSONObject(info,"offset")), PacketUtil.getfloat(info,"size"),PacketUtil.getfloat(info,"fov"),PacketUtil.getfloat(info,"layer"), new ConcurrentHashMap<>());
+            AutoGunList gunList = new AutoGunList(owner, PacketUtil.getDouble(info,"offsetRotation"), Vec2d.fromJSON(PacketUtil.getJSONObject(info,"offset")), PacketUtil.getDouble(info,"size"),PacketUtil.getDouble(info,"fov"),PacketUtil.getDouble(info,"layer"), new ConcurrentHashMap<>());
             for (int i = 0; i < array.length(); i++) {
                 JSONObject gunObj = array.getJSONObject(i);
                 //PacketUtil.put(gunObj, "owner", owner.id);
@@ -236,10 +236,10 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
         return obj;
     }
     @Override
-    public float getLayer() {
+    public double getLayer() {
         return layer;
     }
-    public void setSize(float m){
+    public void setSize(double m){
         sizeMultiplier=m;
     }
 
@@ -254,13 +254,13 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
     }
 
     @Override
-    public float getBulletSpeed() {
+    public double getBulletSpeed() {
         Gun g=getGoingToFire();
         return g==null?1:g.getBulletSpeed(g.getBulletType());
     }
     public Gun getGoingToFire(){
         Gun bestGun=null;
-        float minTime=1000;
+        double minTime=1000;
         for(CanAttack ttgun:guns.values()){
             if(ttgun instanceof Gun gun) {
                 if (gun.getReload() < minTime) {
@@ -272,7 +272,7 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
         return bestGun;
     }
     @Override
-    public float getRotation() {
+    public double getRotation() {
         return offsetRotationAll.get();
     }
 

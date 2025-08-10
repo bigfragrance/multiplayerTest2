@@ -10,36 +10,36 @@ public class ThickLineIntersectionNoCaps {
         Vec2d p4=new Vec2d(0,1);
         System.out.println(isThickLineIntersect(p1,p2,0,p3,p4,0));
     }
-    public static boolean isThickLineIntersect(Vec2d p1,Vec2d p2,float w1,Vec2d p3,Vec2d p4,float w2){
+    public static boolean isThickLineIntersect(Vec2d p1,Vec2d p2,double w1,Vec2d p3,Vec2d p4,double w2){
         return thickLineIntersect(p1.x,p1.y,p2.x,p2.y,w1,p3.x,p3.y,p4.x,p4.y,w2);
     }
     public static boolean thickLineIntersect(
-            float x1, float y1, float x2, float y2, float w1,
-            float x3, float y3, float x4, float y4, float w2) {
+            double x1, double y1, double x2, double y2, double w1,
+            double x3, double y3, double x4, double y4, double w2) {
 
-        float dist = segmentToSegmentDistance(x1, y1, x2, y2, x3, y3, x4, y4);
+        double dist = segmentToSegmentDistance(x1, y1, x2, y2, x3, y3, x4, y4);
         return dist <= (w1 + w2);
     }
 
 
-    private static float segmentToSegmentDistance(
-            float x1, float y1, float x2, float y2,
-            float x3, float y3, float x4, float y4) {
+    private static double segmentToSegmentDistance(
+            double x1, double y1, double x2, double y2,
+            double x3, double y3, double x4, double y4) {
 
 
-        float ux = x2 - x1, uy = y2 - y1;
-        float vx = x4 - x3, vy = y4 - y3;
-        float wx = x1 - x3, wy = y1 - y3;
+        double ux = x2 - x1, uy = y2 - y1;
+        double vx = x4 - x3, vy = y4 - y3;
+        double wx = x1 - x3, wy = y1 - y3;
 
-        float a = ux * ux + uy * uy; // u·u
-        float b = ux * vx + uy * vy; // u·v
-        float c = vx * vx + vy * vy; // v·v
-        float d = ux * wx + uy * wy; // u·w
-        float e = vx * wx + vy * wy; // v·w
+        double a = ux * ux + uy * uy; // u·u
+        double b = ux * vx + uy * vy; // u·v
+        double c = vx * vx + vy * vy; // v·v
+        double d = ux * wx + uy * wy; // u·w
+        double e = vx * wx + vy * wy; // v·w
 
-        float denom = a * c - b * b;
-        float sc, sN, sD = denom;
-        float tc, tN, tD = denom;
+        double denom = a * c - b * b;
+        double sc, sN, sD = denom;
+        double tc, tN, tD = denom;
 
         if (denom < 1e-12) {
             sN = 0.0;
@@ -68,8 +68,8 @@ public class ThickLineIntersectionNoCaps {
         sc = (Math.abs(sN) < 1e-12 ? 0 : sN / sD);
         tc = (Math.abs(tN) < 1e-12 ? 0 : tN / tD);
 
-        float dx = wx + sc * ux - tc * vx;
-        float dy = wy + sc * uy - tc * vy;
+        double dx = wx + sc * ux - tc * vx;
+        double dy = wy + sc * uy - tc * vy;
 
         return Math.hypot(dx, dy);
     }

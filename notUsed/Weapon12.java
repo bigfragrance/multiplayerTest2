@@ -9,7 +9,7 @@ public class Weapon12 extends NormalWeapon{
     public Weapon12(Entity owner) {
         super(owner);
     }
-    public void update(float time){
+    public void update(double time){
         super.update(time);
     }
     public void shoot(){
@@ -22,9 +22,9 @@ public class Weapon12 extends NormalWeapon{
                 input=target.subtract(pos);
             }
             if (input==null) return;
-            float size=this.size*1.8;
-            float health=this.health*20;
-            float damage=this.damage*0.6;
+            double size=this.size*1.8;
+            double health=this.health*20;
+            double damage=this.damage*0.6;
             Vec2d velocity=input.limit(speed*4);
             AimBullet b= shootAimBullet(pos.add(velocity),velocity,size,health,damage);
             b.type=new BulletType(2,true,0.75);

@@ -23,26 +23,26 @@ import static big.engine.render.Screen.sc;
 
 public class PlayerEntity extends Entity {
     public static String defName="Player"+(char)65501;
-    public static float healthMax=400;
-    public static float healthRegen=0.15;
-    public static float shieldRegen=0.7;
+    public static double healthMax=400;
+    public static double healthRegen=0.15;
+    public static double shieldRegen=0.7;
     public static int shieldRespawn=400;
-    public static float shieldMax=80;
-    public static float scoreMultiplier=0.001;
+    public static double shieldMax=80;
+    public static double scoreMultiplier=0.001;
     public static int maxSkillPoints=50;
     //                                     0           1          2           3          4            5               6                7                 8
     public static String[] skillNames=              {"Damage[z]","Speed[x]","Health[c]","Size[v]","Reload[b]","MoveSpeed[n]","DamageAbsorb[m]","ShieldRegen[,]","HealthRegen[.]","Fov[/]"};
-    public static float[] skillPointMultipliersMax={0.8        ,1         ,0.8        ,1      ,1          ,1             ,1                ,1               ,0.8               ,0.7};
-    public static float SPEED=1*sizeMultiplier;
-    public static float SIZE=10*sizeMultiplier;
+    public static double[] skillPointMultipliersMax={0.8        ,1         ,0.8        ,1      ,1          ,1             ,1                ,1               ,0.8               ,0.7};
+    public static double SPEED=1*sizeMultiplier;
+    public static double SIZE=10*sizeMultiplier;
     public static String noEnemyID="God";
     public String name=defName;
-    public float[] skillPoints= Util.createfloats(0.2,10);
-    public float[] skillPointLevels=Util.createfloats(0,10);
+    public double[] skillPoints= Util.createDoubles(0.2,10);
+    public double[] skillPointLevels=Util.createDoubles(0,10);
     public int noEnemyTimer=0;
-    public float speed=SPEED;
+    public double speed=SPEED;
     public boolean havingShield=false;
-    protected float size;
+    protected double size;
     public PlayerEntity(Vec2d position) {
         super();
         this.size=SIZE;
@@ -97,13 +97,13 @@ public class PlayerEntity extends Entity {
         }
         return bb;
     }
-    public float addReloadMultiplier(float d){
+    public double addReloadMultiplier(double d){
         return d*skillPoints[4];
     }
-    public float getSizeMultiplier(){
+    public double getSizeMultiplier(){
         return this instanceof ServerPlayerEntity? skillPoints[3]:this.boundingBox.avgSize()*0.5/SIZE;
     }
-    public void addDamage(float d){
+    public void addDamage(double d){
         d=d/skillPoints[6];
         if(havingShield){
             if(shield>=d){
@@ -128,8 +128,8 @@ public class PlayerEntity extends Entity {
         }*/
     }
     public void regenShieldAndHealth(){
-        float healthRegen=PlayerEntity.healthRegen*skillPoints[8];
-        float shieldRegen=PlayerEntity.shieldRegen*skillPoints[7];
+        double healthRegen=PlayerEntity.healthRegen*skillPoints[8];
+        double shieldRegen=PlayerEntity.shieldRegen*skillPoints[7];
         this.health=Math.min(healthMax,this.health+healthRegen);
         if(havingShield){
             this.shield=Math.min(shieldMax+1,this.shield+shieldRegen);
@@ -143,7 +143,7 @@ public class PlayerEntity extends Entity {
             }
         }
     }
-    public float getFov(){
+    public double getFov(){
         return skillPoints[9];
     }
     public void updateStatus(JSONObject o){
@@ -215,7 +215,7 @@ public class PlayerEntity extends Entity {
     public BlockPos getBlockPos() {
         return BlockPos.ofFloor(this.position);
     }
-    public float getFovMultiplier(){
+    public double getFovMultiplier(){
         return getFov();
     }
 
