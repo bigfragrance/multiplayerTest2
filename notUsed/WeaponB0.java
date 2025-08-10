@@ -1,10 +1,10 @@
-package modules.weapon;
+package big.modules.weapon;
 
-import engine.math.Vec2d;
-import modules.entity.Entity;
-import modules.entity.bullet.AimBullet;
-import modules.entity.bullet.BulletType;
-import modules.entity.player.ServerPlayerEntity;
+import big.engine.math.Vec2d;
+import big.modules.entity.Entity;
+import big.modules.entity.bullet.AimBullet;
+import big.modules.entity.bullet.BulletType;
+import big.modules.entity.player.ServerPlayerEntity;
 
 public class WeaponB0 extends NormalWeapon{
     public WeaponB0(Entity owner) {

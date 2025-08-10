@@ -261,8 +261,8 @@ roast /rəʊst/ vt. & vi. 烘，烤，焙（肉等） (31)
 be caught up in 被卷入，陷入 (31)
 annual /Iænjuəl/ adj. 每年的，年度的；
 一年的 (33)
-engine /Iendʒɪn/ n. 发动机，引擎 (33)
-fire engine 消防车 (33)
+big.engine /Iendʒɪn/ n. 发动机，引擎 (33)
+fire big.engine 消防车 (33)
 acid /Iæsɪd/ n. 酸
 adj. 酸性的；酸味的 (33)
 stuff /stʌf/ n. 东西，物品；活儿，话

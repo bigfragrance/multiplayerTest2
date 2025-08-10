@@ -22,12 +22,12 @@ dependencies {
 }
 
 application {
-    mainClass = 'modules.client.ClientMain'
+    mainClass = 'big.modules.client.ClientMain'
 }
 
 jar {
     manifest {
-        attributes 'Main-Class': 'modules.client.ClientMain'
+        attributes 'Main-Class': 'big.modules.client.ClientMain'
     }
     from {
         configurations.runtimeClasspath.collect  {

@@ -1,11 +1,11 @@
-package modules.weapon;
+package big.modules.weapon;
 
-import engine.math.Vec2d;
-import engine.math.util.Util;
-import engine.render.Screen;
-import modules.entity.Entity;
+import big.engine.math.Vec2d;
+import big.engine.math.util.Util;
+import big.engine.render.Screen;
+import big.modules.entity.Entity;
 
-import static engine.modules.EngineMain.cs;
+import static big.engine.modules.EngineMain.cs;
 
 public class Weapon2 extends NormalWeapon{
 

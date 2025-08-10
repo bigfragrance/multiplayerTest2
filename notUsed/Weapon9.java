@@ -1,11 +1,11 @@
-package modules.weapon;
+package big.modules.weapon;
 
-import engine.math.Vec2d;
-import engine.math.util.Util;
-import modules.entity.Entity;
-import modules.entity.bullet.AimBullet;
-import modules.entity.bullet.BulletType;
-import modules.entity.player.ServerPlayerEntity;
+import big.engine.math.Vec2d;
+import big.engine.math.util.Util;
+import big.modules.entity.Entity;
+import big.modules.entity.bullet.AimBullet;
+import big.modules.entity.bullet.BulletType;
+import big.modules.entity.player.ServerPlayerEntity;
 
 public class Weapon9 extends NormalWeapon{
     public static int maxCount=12;

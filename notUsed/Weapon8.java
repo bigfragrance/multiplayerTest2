@@ -1,9 +1,9 @@
-package modules.weapon;
+package big.modules.weapon;
 
-import engine.math.Vec2d;
-import engine.math.util.Util;
-import modules.entity.Entity;
-import modules.entity.bullet.BulletType;
+import big.engine.math.Vec2d;
+import big.engine.math.util.Util;
+import big.modules.entity.Entity;
+import big.modules.entity.bullet.BulletType;
 
 public class Weapon8 extends NormalWeapon{
     public Weapon8(Entity owner) {
