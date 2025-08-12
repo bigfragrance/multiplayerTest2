@@ -12,8 +12,11 @@ import big.engine.math.util.timer.Timer;
 import big.engine.math.util.timer.TimerList;
 import big.engine.modules.EngineMain;
 import big.modules.ctrl.InputManager;
+import big.modules.entity.Entity;
 import big.modules.entity.bullet.BulletEntity;
 import big.modules.entity.bullet.BulletType;
+import big.modules.entity.player.PlayerEntity;
+import big.modules.weapon.GunList;
 import big.modules.world.blocks.Block;
 import big.modules.world.BlockState;
 import big.modules.world.Blocks;
@@ -47,9 +50,15 @@ public class ServerController {
     public void update(){
         timers.update();
         if(inputManager.isTickSpeeding()){
-            EngineMain.TPS =10000;
+            EngineMain.TPS =10000000;
         }else{
             EngineMain.TPS =20;
+        }
+        if(inputManager.isReloading()){
+            GunList.init();
+            for(Entity e:cs.world.getEntities()){
+                e.kill();
+            }
         }
         if(inputManager.isGeneratingMaze()&&mazeGenTimer.passed()){
             mazeGenTimer.reset();

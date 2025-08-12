@@ -97,6 +97,9 @@ public class Gun extends CanAttack {
     public Gun another(double offsetYaw,Vec2d offset){
         return new Gun(owner,this.offsetRotation +offsetYaw,offset,bulletType,reloadMultiplier,layer,startDelay,size,id,extraData);
     }
+    public Gun another(double offsetYaw,Vec2d offset,double startDelay){
+        return new Gun(owner,this.offsetRotation +offsetYaw,offset,bulletType,reloadMultiplier,layer,startDelay,size,id,extraData);
+    }
     public double getOffsetRotation(){
         return offsetRotation;
     }
@@ -257,6 +260,9 @@ public class Gun extends CanAttack {
     }
     public double getRenderOffsetRotation(){
         return Util.lerp(offsetRotationAll.getPrev(),offsetRotationAll.get(), Screen.tickDelta);
+    }
+    public double getStartDelay(){
+        return startDelay;
     }
     public Vec2d getStartPos(){
         return lastNode==null?owner.position:lastNode.getPos();

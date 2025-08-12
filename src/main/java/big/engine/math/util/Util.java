@@ -6,11 +6,17 @@ import big.engine.math.BlockPos;
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
 import big.engine.modules.EngineMain;
+import com.formdev.flatlaf.util.SystemInfo;
 import org.json.JSONArray;
 
 import java.awt.*;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.management.ManagementFactory;
+import java.lang.management.MemoryMXBean;
+import java.lang.management.MemoryUsage;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
@@ -300,5 +306,37 @@ public class Util {
 
     public static int floor(double d) {
         return (int) Math.floor(d);
+    }
+    public static int ceil(double d) {
+        return (int) Math.ceil(d);
+    }
+    public static void memory() {
+
+        MemoryMXBean memoryMXBean = ManagementFactory.getMemoryMXBean();
+
+
+        MemoryUsage heapUsage = memoryMXBean.getHeapMemoryUsage();
+
+        MemoryUsage nonHeapUsage = memoryMXBean.getNonHeapMemoryUsage();
+
+        System.out.println(":");
+        printMemoryUsage(heapUsage);
+
+        System.out.println(":");
+        printMemoryUsage(nonHeapUsage);
+    }
+
+
+    private static void printMemoryUsage(MemoryUsage usage) {
+        System.out.printf("start size: %d bytes (%.2f MB)%n", usage.getInit(), bytesToMB(usage.getInit()));
+        System.out.printf("current used: %d bytes (%.2f MB)%n", usage.getUsed(), bytesToMB(usage.getUsed()));
+        System.out.printf("current committed: %d bytes (%.2f MB)%n", usage.getCommitted(), bytesToMB(usage.getCommitted()));
+        System.out.printf("max size: %s%n",
+                usage.getMax() == Long.MAX_VALUE ? "unlimited" : String.format("%d bytes (%.2f MB)", usage.getMax(), bytesToMB(usage.getMax())));
+    }
+
+    // 辅助方法：字节转 MB（保留两位小数）
+    private static double bytesToMB(long bytes) {
+        return bytes / (1024.0 * 1024.0);
     }
 }

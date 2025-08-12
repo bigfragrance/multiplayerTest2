@@ -19,4 +19,5 @@ public class PacketName {
     public static String weapon_update="p";
     public static String tanks_data="q";
     public static String message="r";
+    public static String tick="s";
 }

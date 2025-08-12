@@ -12,11 +12,13 @@ public class BulletType {
     public boolean sharp;
     public double sharpFactor;
     public double[] multipliers;
+    public JSONObject weapon;
     public BulletType(int type,boolean sharp,double sharpFactor,double[] multipliers){
         this.type=type;
         this.sharp=sharp;
         this.sharpFactor=sharpFactor;
         this.multipliers=multipliers;
+
     }
     public BulletType(JSONObject object){
         this.type=PacketUtil.getInt(object,"type");
@@ -27,6 +29,7 @@ public class BulletType {
         }catch (Exception e){
             e.printStackTrace();
         }
+
     }
     public BulletType(int type,double[] multipliers){
         this(type,false,1,multipliers);

@@ -1,6 +1,7 @@
 package big.server;
 
 import big.engine.math.util.EntityUtils;
+import big.engine.math.util.PercentEncoder;
 import big.modules.entity.player.PlayerData;
 import big.modules.entity.player.PlayerEntity;
 import big.modules.entity.player.ServerPlayerEntity;
@@ -11,8 +12,9 @@ import big.modules.weapon.GunList;
 import org.json.JSONObject;
 
 import java.io.*;
-import java.net.Socket; 
-import java.util.concurrent.BlockingQueue; 
+import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
 import static big.engine.modules.EngineMain.cs;
@@ -33,7 +35,7 @@ public class ClientHandler implements Runnable {
         this.clientSocket  = socket;
         lastReceive=System.currentTimeMillis();
         connectionStartTime=System.currentTimeMillis();
-        spawnPlayer();
+
     }
     public void spawnPlayer(){
         this.player=new ServerPlayerEntity(EntityUtils.getRandomSpawnPosition(cs.getTeam()));
@@ -52,7 +54,7 @@ public class ClientHandler implements Runnable {
              new InputStreamReader(clientSocket.getInputStream())))  {
              
             writer = new PrintWriter(
-                new OutputStreamWriter(clientSocket.getOutputStream(),  "UTF-8"), false);
+                new OutputStreamWriter(clientSocket.getOutputStream(), StandardCharsets.UTF_8), false);
  
             // Send initial snapshot 
             /*JSONObject initMsg = new JSONObject();
@@ -72,12 +74,13 @@ public class ClientHandler implements Runnable {
                     handshaked=true;
                     //spawnPlayer();
                     lastReceive=System.currentTimeMillis();
+                    spawnPlayer();
                     continue;
                 }else if(!handshaked){
                     disconnect();
                     return;
                 }
-                JSONObject msg = new JSONObject(inputLine);
+                JSONObject msg = new JSONObject(PercentEncoder.decodeChinese(inputLine));
                 serverNetworkHandler.apply(msg);
                 lastReceive=System.currentTimeMillis();
             }
@@ -105,6 +108,7 @@ public class ClientHandler implements Runnable {
             cs.removeEntity(player.id);
             clientSocket.close();
             ServerMain.connectedPlayers.remove(clientSocket.getInetAddress().hashCode());
+            cs.multiClientHandler.removeClient(this);
         } catch (IOException e) {
             System.err.println("Error closing client socket: " + e.getMessage());
         }
@@ -122,7 +126,7 @@ public class ClientHandler implements Runnable {
         try {
             while (!Thread.interrupted())  {
                 String msg = broadcastQueue.take(); 
-                writer.println(msg);
+                writer.println(PercentEncoder.encodeChinese(msg));
                 sent++;
                 if(broadcastQueue.isEmpty()||sent>50){
                     writer.flush();

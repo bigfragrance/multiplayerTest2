@@ -28,7 +28,7 @@ public class AutoAim<T extends AbleToAim> {
         owner.setFire(false);
         owner.setTarget(new Vec2d(owner.getRotation()).multiply(2).add(owner.getPos()));
         if(target==null) return;
-        Vec2d realAim = EntityUtils.extrapolate2(target.position,target.getRealVelocity(), owner.getPos(),owner.getBulletSpeed(), owner.getRealVelocity());
+        Vec2d realAim = EntityUtils.extrapolate2(target.position,target.getRealVelocity().subtract(owner.getRealVelocity()), owner.getPos(),owner.getBulletSpeed(),null);
         owner.setTarget(realAim);
         owner.setFire(true);
     }

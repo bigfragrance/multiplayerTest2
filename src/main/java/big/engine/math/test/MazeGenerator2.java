@@ -27,7 +27,7 @@ public class MazeGenerator2 {
         }
 
 
-        placeRandomWalls(0.5);
+        placeRandomWalls(0.3);
 
 
         //createRooms(100, 1, 20);

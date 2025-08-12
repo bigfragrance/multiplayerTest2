@@ -81,7 +81,7 @@ public class BulletEntity extends Entity {
         });
         //this.velocity.set(EntityUtils.getReboundVelocity(velocity,this.boundingBox));
 
-        if(EntityUtils.isInsideWall(this.boundingBox.expand(0.0000001,0.0000001))){
+        if(EntityUtils.isInsideWall(this.boundingBox.expand(0.01,0.01))){
             this.health=-1;
         }
     }

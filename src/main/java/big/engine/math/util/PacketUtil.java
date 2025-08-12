@@ -136,6 +136,9 @@ public class PacketUtil {
             case("message")->{
                 return new MessageS2CPacket(o);
             }
+            case("tick")->{
+                return new TickS2CPacket(o);
+            }
 
         }
         return null;

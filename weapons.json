@@ -30,7 +30,7 @@
                     "x":0,
                     "y":0
                 },
-                "reloadMultiplier":2.5,
+                "reloadMultiplier":0.5,
                 "layer":1,
                 "startDelay":0,
                 "size":[0.5,0.05,0.05],
@@ -38,7 +38,7 @@
                     "type":0,
                     "sharp":false,
                     "sharpFactor":1,
-                    "multipliers":[4,100,0.5,1]
+                    "multipliers":[2,0.5,20,1]
                 }
             }
         ]
@@ -971,6 +971,33 @@
             "addVelocity":false
         }
     },
+    "mini-mothership":{
+        "data":[
+            {
+                "type":"GunArray",
+                "count":12,
+                "startDelays":[0,5,11,16],
+                "offsetRotation":0,
+                "offset":{
+                    "x":0.18,
+                    "y":0
+                },
+                "reloadMultiplier":0.3,
+                "layer":1,
+                "startDelay":0,
+                "size":[0.08,0.05,0.03],
+                "bulletType":{
+                    "type":1,
+                    "sharp":false,
+                    "sharpFactor":1,
+                    "multipliers":[0.5,2,1,0.5,10]
+                }
+            }
+        ],
+        "extradata":{
+            "addVelocity":false
+        }
+    },
     "auto-8":{
         "data":[
             {
@@ -988,22 +1015,41 @@
                 },
                 "data":[
                     {
-                        "type":"Mirror",
+                        "type":"Gun",
                         "mode": 0,
                         "offsetRotation":0,
                         "offset":{
                             "x":0.1,
-                            "y":0.08
+                            "y":0.03
                         },
                         "reloadMultiplier":2,
                         "layer":1,
                         "startDelay":0,
-                        "size":[0.4,0.05,0.05],
+                        "size":[0.2,0.025,0.025],
                         "bulletType":{
                             "type":0,
                             "sharp":false,
                             "sharpFactor":1,
-                            "multipliers":[1,4.5,1.5,0.9]
+                            "multipliers":[1,4.5,1.5,0.4]
+                        }
+                    },
+                    {
+                        "type":"Gun",
+                        "mode": 0,
+                        "offsetRotation":0,
+                        "offset":{
+                            "x":0.1,
+                            "y":-0.03
+                        },
+                        "reloadMultiplier":2,
+                        "layer":1,
+                        "startDelay":2,
+                        "size":[0.2,0.025,0.025],
+                        "bulletType":{
+                            "type":0,
+                            "sharp":false,
+                            "sharpFactor":1,
+                            "multipliers":[1,4.5,1.5,0.4]
                         }
                     }
                 ]

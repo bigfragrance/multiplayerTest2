@@ -87,6 +87,7 @@ public class ClientPlayerEntity extends PlayerEntity {
                     }
                 });
                 thread.start();
+                inputManager.unFocus();
             }
         }
     }

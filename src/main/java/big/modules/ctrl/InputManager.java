@@ -34,7 +34,7 @@ public class InputManager {
         return Screen.isKeyPressed('g');
     }
     public boolean isOpeningSendMsg(){
-        return Screen.isKeyPressed('t');
+        return Screen.isKeyClicked('t');
     }
     public Vec2d getMouseVec(){
         return Screen.mousePos.switchToGame1();
@@ -125,6 +125,14 @@ public class InputManager {
     }
     public boolean isSpawningBullet(){
         return Screen.isKeyPressed('r');
+    }
+    public boolean isReloading(){
+        return Screen.isKeyPressed('z')&&Screen.isKeyClicked('/');
+    }
+    public void unFocus(){
+        for(char c:Screen.keyPressed.keySet()){
+            Screen.keyPressed.put(c,false);
+        }
     }
     /*private final ConcurrentHashMap<Integer, Boolean> keyStates = new ConcurrentHashMap<>();
     private final JPanel targetPanel;

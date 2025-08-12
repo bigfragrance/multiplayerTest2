@@ -10,6 +10,8 @@ import big.modules.weapon.GunList;
 import big.modules.weapon.Weapon;
 import org.json.JSONObject;
 
+import static big.engine.modules.EngineMain.cs;
+
 public class UpdateWeaponC2SPacket implements Packet<ServerNetworkHandler> {
     public String id;
     public UpdateWeaponC2SPacket(String id) {
@@ -31,7 +33,7 @@ public class UpdateWeaponC2SPacket implements Packet<ServerNetworkHandler> {
         ServerPlayerEntity player=serverNetworkHandler.clientHandler.player;
         if(player!=null&&!player.weaponID.equals(id)){
             player.weapon= GunList.fromID(player,id);
-            serverNetworkHandler.send(new PlayerWeaponUpdateS2CPacket(player.id,player.weapon.toJSON()).toJSON());
+            cs.multiClientHandler.sendToAll(new PlayerWeaponUpdateS2CPacket(player.id,player.weapon.toJSON()).toJSON());
             //System.out.println("input:"+forward+","+side+","+aimPos+","+shoot+","+upgradingSkill);
         }
     }

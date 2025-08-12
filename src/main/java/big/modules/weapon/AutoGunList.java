@@ -53,6 +53,9 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
     public AutoGunList another(double offsetRotation,Vec2d offset){
         return new AutoGunList(owner,this.offsetRotation+offsetRotation,offset,size,fov,layer,getCloneGuns());
     }
+    public AutoGunList another(double offsetRotation,Vec2d offset,double startDelay){
+        return new AutoGunList(owner,this.offsetRotation+offsetRotation,offset,size,fov,layer,getCloneGuns());
+    }
     public void tick(boolean fire,boolean server){
         if(server) {
             this.sizeMultiplier=owner.getSizeMultiplier();

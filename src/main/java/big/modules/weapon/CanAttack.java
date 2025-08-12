@@ -3,6 +3,7 @@ package big.modules.weapon;
 import big.engine.math.Vec2d;
 import big.engine.math.util.NNPRecorder;
 import big.engine.math.util.PacketUtil;
+import big.engine.math.util.Util;
 import big.modules.entity.Entity;
 import org.json.JSONObject;
 
@@ -40,6 +41,9 @@ public class CanAttack extends Entity {
     public CanAttack another(double angle, Vec2d offset){
         return null;
     }
+    public CanAttack another(double offsetYaw,Vec2d offset,double startDelay){
+        return null;
+    }
     public JSONObject toJSON(){
         return null;
     }
@@ -48,15 +52,15 @@ public class CanAttack extends Entity {
             case "Gun":
                 return new Gun(json,0);
             case "GunArray":
-                return new SurroundGun(new Gun(json,0),PacketUtil.getInt(json,"count"));
+                return new SurroundGun(new Gun(json,0),PacketUtil.getInt(json,"count"),PacketUtil.contains(json,"startDelays")? Util.getDoubles(PacketUtil.getJSONArray(json, "startDelays")):null);
             case "Mirror":
-                return new MirrorGun(new Gun(json,0),PacketUtil.getInt(json,"mode"));
+                return new MirrorGun(new Gun(json,0),PacketUtil.getInt(json,"mode"),PacketUtil.contains(json,"startDelays")? Util.getDoubles(PacketUtil.getJSONArray(json, "startDelays")):null);
             case "AutoGunList":
                 return AutoGunList.fromJSONServer(json);
             case "AutoGunArray":
-                return new SurroundGun(AutoGunList.fromJSONServer(json),PacketUtil.getInt(json,"count"));
+                return new SurroundGun(AutoGunList.fromJSONServer(json),PacketUtil.getInt(json,"count"),PacketUtil.contains(json,"startDelays")? Util.getDoubles(PacketUtil.getJSONArray(json, "startDelays")):null);
             case "AutoMirror":
-                return new MirrorGun(AutoGunList.fromJSONServer(json),PacketUtil.getInt(json,"mode"));
+                return new MirrorGun(AutoGunList.fromJSONServer(json),PacketUtil.getInt(json,"mode"),PacketUtil.contains(json,"startDelays")? Util.getDoubles(PacketUtil.getJSONArray(json, "startDelays")):null);
             default:
                 return null;
         }
@@ -78,5 +82,9 @@ public class CanAttack extends Entity {
             default:
                 return null;
         }
+    }
+
+    protected double getStartDelay() {
+        return 0;
     }
 }

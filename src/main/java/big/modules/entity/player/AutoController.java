@@ -66,7 +66,7 @@ public class AutoController<T extends Entity&Controllable> {
         }
         Vec2d realAim=target.getPos().add(target.getRealVelocity());
         if(owner.getWeapon().extradata.getBoolean("addVelocity")) {
-            realAim = EntityUtils.extrapolate2(target.position, velocity, owner.getPosition(), gun.getBulletSpeed(gun.getBulletType()), owner.getRealVelocity());
+            realAim = EntityUtils.extrapolate2(target.position, velocity.subtract(owner.getRealVelocity()), owner.getPosition(), gun.getBulletSpeed(gun.getBulletType()),null);
             //realAim = EntityUtils.extrapolate2(aimPos, owner.getRealVelocity().multiply(-1), owner.position, gun.getBulletSpeed(), Vec2d.zero());
         }
         inputManager.aimPos=realAim.subtract(owner.getPosition());

@@ -55,7 +55,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
         this.noEnemyTimer=Math.max(0,this.noEnemyTimer-1);
         if(name.equals(noEnemyID)){
             this.health=healthMax;
-            this.speed=SPEED*3;
+            this.speed=SPEED*5;
         }else{
             this.speed=SPEED*skillPoints[5];
         }
@@ -96,7 +96,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
                     break;
                 }
                 skillPointLevels[i]+=1;
-                skillPoints[i]=1+getMultiplier(skillPointLevels[i],skillPointMultipliersMax[i]);
+                skillPoints[i]=skillPointDefault+ getMultiplier(skillPointLevels[i],skillPointMultipliersMax[i]);
                 upgradeTimer=2;
                 //instantRegen();
                 skillPointUsed++;
@@ -117,7 +117,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
         weapon.tick(inputManager.shoot,cs.isServer);
     }
     public static double getMultiplier(double level,double max){
-        return max*level/8-0.8;
+        return max*level/8;
     }
 
     @Override

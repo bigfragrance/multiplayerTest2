@@ -6,7 +6,10 @@ import big.engine.math.Vec2d;
 import big.engine.math.util.Setting;
 import big.engine.math.util.Util;
 import big.engine.render.Screen;
+import big.events.TickEvent;
 import big.modules.network.packet.s2c.MessageS2CPacket;
+import big.modules.network.packet.s2c.TickS2CPacket;
+import big.modules.screen.DebugScreen;
 import meteordevelopment.orbit.EventBus;
 import meteordevelopment.orbit.IEventBus;
 import big.modules.ChunkMap;
@@ -41,6 +44,7 @@ import static big.engine.render.Screen.sc;
 public class EngineMain implements Runnable{
     public static String SETTING_PATH="setting.json";
     public static volatile EngineMain cs;
+    private long lastGc=System.currentTimeMillis();
     public Map<Long, Entity> entities=new ConcurrentHashMap<>();
     public Map<Long,Entity> addingEntities=new ConcurrentHashMap<>();
     public ArrayList<BlockEntity> groundBlocks=new ArrayList<>();
@@ -50,7 +54,7 @@ public class EngineMain implements Runnable{
     public ArrayList<Entity> entityParticlesAdd =new ArrayList<>();
     public volatile AtomicLong lastEntityID=new AtomicLong(0);
     public static double TPS=20;
-    public static double chunkSize=3;
+    public static double chunkSize=8;
     public boolean isServer=true;
     public ClientNetworkHandler networkHandler;
     public MultiClientHandler multiClientHandler=null;
@@ -66,11 +70,14 @@ public class EngineMain implements Runnable{
     public Setting setting=null;
     public World world;
     public IEventBus EVENT_BUS=new EventBus();
+    public double currentTPS=TPS;
+    public long mspt=0;
     public EngineMain(String ip,int port,boolean isServer){
         cs=this;
         this.isServer=isServer;
         initEventBus();
         ChatMessageScreen.init();
+        DebugScreen.init();
         if(isServer){
             GunList.init();
             world=new ServerWorld();
@@ -111,14 +118,21 @@ public class EngineMain implements Runnable{
                 sc.renderTasks2.update(50);
                 ticking = true;
                 update();
+                EVENT_BUS.post(TickEvent.INSTANCE);
                 ticking = false;
                 lastTick = System.currentTimeMillis();
                 if (System.currentTimeMillis() - sc.lastRender >= 200) {
                     sc.renderTasks.clear();
                 }
+                if(System.currentTimeMillis()-lastGc>10000){
+                    System.gc();
+                    lastGc=System.currentTimeMillis();
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
+            mspt=System.currentTimeMillis() - start;
+            currentTPS=Math.min(TPS,1000d/mspt);
             ticking = false;
             try {
                 long s = (long) (-(System.currentTimeMillis() - start) + 1000 / TPS);
@@ -191,6 +205,7 @@ public class EngineMain implements Runnable{
             sendEntitiesUpdate();
             multiClientHandler.clients.forEach(c->c.serverNetworkHandler.checkDeath());
             multiClientHandler.clients.forEach(c->c.serverNetworkHandler.clientHandler.checkConnecting());
+            multiClientHandler.clients.forEach(c->c.send(new TickS2CPacket(System.currentTimeMillis())));
         }else{
             updateEntityChunk();
             for(Entity entity:entities.values()){

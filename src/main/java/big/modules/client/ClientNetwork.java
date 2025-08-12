@@ -1,6 +1,7 @@
 package big.modules.client;
 
 import big.engine.math.util.PacketUtil;
+import big.engine.math.util.PercentEncoder;
 import big.modules.network.ClientNetworkHandler;
 import org.json.JSONArray;
 import org.json.JSONObject; 
@@ -43,8 +44,7 @@ public class ClientNetwork {
                     String message = in.readLine();
                     if (message == null) throw new IOException("Connection closed");
 
-                    // 统一处理消息类型
-                    JSONObject msgObj = new JSONObject(message);
+                    JSONObject msgObj = new JSONObject(PercentEncoder.decodeChinese(message));
                     try {
                         cs.networkHandler.apply(msgObj);
                     }catch (Exception e){
@@ -127,9 +127,9 @@ public class ClientNetwork {
             return;
         }
         while(!toSend.isEmpty()){
-            out.println(toSend.poll());
+            out.println(PercentEncoder.encodeChinese(toSend.poll()));
         }
-        out.println(json.toString());
+        out.println(PercentEncoder.encodeChinese(json.toString()));
     }
  
     public Color getPixel(int x, int y) {

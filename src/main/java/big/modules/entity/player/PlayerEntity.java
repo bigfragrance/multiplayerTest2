@@ -32,12 +32,13 @@ public class PlayerEntity extends Entity {
     public static int maxSkillPoints=50;
     //                                     0           1          2           3          4            5               6                7                 8
     public static String[] skillNames=              {"Damage[z]","Speed[x]","Health[c]","Size[v]","Reload[b]","MoveSpeed[n]","DamageAbsorb[m]","ShieldRegen[,]","HealthRegen[.]","Fov[/]"};
-    public static double[] skillPointMultipliersMax={0.8        ,1         ,0.8        ,1      ,1          ,1             ,1                ,1               ,0.8               ,0.7};
+    public static double[] skillPointMultipliersMax={0.4        ,0.6         ,0.4        ,0.75      ,0.5          ,0.5             ,0.5                ,0.7               ,0.7               ,0.5};
     public static double SPEED=1*sizeMultiplier;
     public static double SIZE=10*sizeMultiplier;
     public static String noEnemyID="God";
     public String name=defName;
-    public double[] skillPoints= Util.createDoubles(0.2,10);
+    public static double skillPointDefault=0.5;
+    public double[] skillPoints= Util.createDoubles(skillPointDefault,10);
     public double[] skillPointLevels=Util.createDoubles(0,10);
     public int noEnemyTimer=0;
     public double speed=SPEED;
@@ -86,7 +87,7 @@ public class PlayerEntity extends Entity {
             BlockEntity block=(BlockEntity)e;
             vec.set(EntityUtils.getMaxMove(this.boundingBox,vec,e.boundingBox,block.leftCheck,block.rightCheck,block.topCheck,block.buttonCheck));
         });*/
-        vec.set(insideWall?vec: EntityUtils.getMaxMove(this.boundingBox,vec));
+        vec.set(insideWall?vec: EntityUtils.getMaxMoveNoStuck(this.boundingBox,vec));
         this.position.offset(vec);
         this.boundingBox=this.boundingBox.offset(vec);
     }

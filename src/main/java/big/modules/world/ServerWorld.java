@@ -42,8 +42,8 @@ public class ServerWorld extends World{
     }
     public void tick(){
         spawnMobs();
-        spawnBot();
-        updateVisitorSpawn();
+        //spawnBot();
+        //updateVisitorSpawn();
         randomTicks();
     }
     public void randomTicks(){
@@ -144,7 +144,7 @@ public class ServerWorld extends World{
         for(Entity e:cs.entities.values()){
             if(e instanceof MobEntity) count++;
         }
-        if(count>=600) return;
+        if(count>=300) return;
         for(int i=0;i<500;i++){
             Vec2d pos= Util.randomInBox(cs.borderBox);
             BlockPos blockPos= BlockPos.ofFloor(pos);

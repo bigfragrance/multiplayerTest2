@@ -26,6 +26,7 @@ public class Vec2d {
     }
 
     public Vec2d add(Vec2d v) {
+        if(v==null) return this;
         return add(v.x, v.y);
     }
 
@@ -146,5 +147,9 @@ public class Vec2d {
     }
     public static Vec2d fromJSON(JSONObject json) {
         return new Vec2d(json.getDouble("x"), json.getDouble("y"));
+    }
+
+    public Vec2d opposite() {
+        return new Vec2d(-x,-y);
     }
 }
