@@ -25,7 +25,6 @@ import static big.modules.weapon.Gun.color;
 
 public class AutoGunList extends CanAttack implements AbleToAim,Node {
     private AtomicInteger lastID=new AtomicInteger(0);
-    public Entity owner;
     public double offsetRotation;
     public Vec2d offset;
     public double fov;

@@ -109,7 +109,7 @@ public class EntityUtils {
         return box.expand(-e,-e);
     }
     public static Box smallerBullet(Box box){
-        double e=Math.min(0.05,(box.xSize()+box.ySize())/4*0.4);
+        double e=Math.min(0.05,(box.xSize()+box.ySize())/4*0.15);
         return box.expand(-e,-e);
     }
     public static void render(Graphics g,Box box,Color team){

@@ -76,6 +76,9 @@ public class World {
     public Collection<Entity> getEntities(Box section){
         return getEntities().stream().filter(p->section.intersects(p.boundingBox)).collect(Collectors.toList());
     }
+    public Entity getEntity(long id){
+        return Util.secondIfNull(cs.entities.get(id),cs.addingEntities.get(id));
+    }
     public boolean raycast(Vec2d start,Vec2d end){
         Box b=new Box(start,end);
         for(int x = Util.floor(b.minX);x<=Util.floor(b.maxX);x++){

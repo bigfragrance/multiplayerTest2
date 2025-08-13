@@ -59,9 +59,7 @@ public class PlayerEntity extends Entity {
     }
     public void tick() {
         super.tick();
-        if(!cs.isServer){
-            if(weapon!=null) weapon.tick(false,cs.isServer);
-        }
+
     }
 
     protected void updateCollision(){

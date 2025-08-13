@@ -5,8 +5,13 @@ import big.engine.math.Vec2d;
 import big.engine.math.util.EntityUtils;
 import big.engine.math.util.PacketUtil;
 import big.engine.math.util.Util;
+import big.engine.render.Screen;
 import big.modules.entity.BlockEntity;
 import big.modules.entity.Entity;
+import big.modules.network.packet.c2s.WantWeaponC2SPacket;
+import big.modules.weapon.CanAttack;
+import big.modules.weapon.GunList;
+import big.modules.weapon.Node;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -16,10 +21,13 @@ import static big.engine.modules.EngineMain.cs;
 public class BulletEntity extends Entity {
     public static double[] baseValues={10,0.1,4,0.1,100,20,0.003,0.05};//damage speed health size lifeTime kbFactor randomVelocity selfKB
     public long ownerId;
+    public Entity owner=null;
     private boolean invisibleTick=false;
     public BulletType type;
     public int maxLifeTime=100;
     public double knockBackFactor=20;
+    private Node weaponNode=null;
+    private boolean inited=false;
     public BulletEntity(Vec2d position, Vec2d velocity,int team,BulletType type){
         super();
         this.position=position;
@@ -39,16 +47,23 @@ public class BulletEntity extends Entity {
         this.checkBorderCollision=false;
     }
     public void tick(){
-        super.tick();
-        if(!cs.isServer) return;
-        //Entity e=cs.entities.get(ownerId);
-        if(lifeTime>maxLifeTime||health<=0/*||e==null||!e.isAlive*/){
+        try {
+            super.tick();
+            if (!cs.isServer) return;
+            //Entity e=cs.entities.get(ownerId);
+            if (lifeTime > maxLifeTime || health <= 0/*||e==null||!e.isAlive*/) {
+                kill();
+            }
+            updateRotation();
+            invisibleTick = false;
+            updateCollision();
+            lifeTime++;
+            if (!inited) {
+                initWeapon();
+            }
+        }catch (Exception e){
             kill();
         }
-        updateRotation();
-        invisibleTick=false;
-        updateCollision();
-        lifeTime++;
     }
     private void updateRotation(){
         if(this.velocity.length()>0.0000001){
@@ -56,6 +71,20 @@ public class BulletEntity extends Entity {
         }
         //this.rotation+=10;
     }
+    public void initWeapon(){
+        this.weapon=type.weapon==null?null:cs.isServer? GunList.fromJSONServer(this,type.weapon):GunList.fromJSONClient(type.weapon);
+        if(weapon==null||!cs.isServer) return;
+        this.owner=cs.world.getEntity(ownerId);
+        if(owner==null) return;
+        for(CanAttack ca:weapon.list.values()){
+            if(ca.lastNode==null){
+                ca.lastNode=getWeaponNode();
+            }
+            ca.owner=this;
+        }
+        inited=true;
+    }
+
     public void move(Vec2d vec){
         //Box b=this.boundingBox.stretch(this.velocity.x,this.velocity.y);
         /*EntityUtils.updateCollision(this,e->e.id==this.id||!e.isAlive||!(e instanceof BlockEntity),e->e.boundingBox.intersects(b),(e)->{
@@ -91,6 +120,13 @@ public class BulletEntity extends Entity {
     public void update(JSONObject o){
         super.update(o);
         //this.type=BulletType.fromJSON(PacketUtil.getJSONObject(o,"bType"));
+        if(PacketUtil.contains(o,"weapon")){
+            if(weapon==null){
+                cs.networkHandler.sendPacket(new WantWeaponC2SPacket(this.id));
+            }else {
+                this.weapon.update(PacketUtil.getJSONArray(o, "weapon"));
+            }
+        }
         this.invisibleTick=false;
     }
     public void kill(){
@@ -106,7 +142,7 @@ public class BulletEntity extends Entity {
     public JSONObject toJSON() {
         JSONObject o=new JSONObject();
         o.put(PacketUtil.getShortVariableName("type"),"bullet");
-        PacketUtil.put(o,"bType",this.type.toJSON());
+        PacketUtil.put(o,"bType",this.type.toJSON2(null));
         super.addJSON(o);
         return o;
     }
@@ -125,6 +161,7 @@ public class BulletEntity extends Entity {
         JSONObject o=new JSONObject();
         PacketUtil.putPacketType(o,"entity_update");
         //PacketUtil.put(o,"bType",this.type.toJSON());
+        if(weapon!=null) PacketUtil.put(o,"weapon",weapon.getUpdate());
         super.addSmallJSON(o);
         return o;
     }
@@ -145,5 +182,42 @@ public class BulletEntity extends Entity {
     }
     public long getDamageSourceID(){
         return this.ownerId;
+    }
+    public Node getWeaponNode(){
+        if(weaponNode!=null) return weaponNode;
+        weaponNode=new Node() {
+            @Override
+            public Vec2d getPos() {
+                return position;
+            }
+
+            @Override
+            public Vec2d getRenderPos() {
+                return Util.lerp(prevPosition,position, Screen.tickDelta);
+            }
+
+            @Override
+            public double getAimRotation() {
+                return rotation;
+            }
+
+            @Override
+            public double getRenderAimRotation() {
+                return Util.lerp(prevRotation,rotation, Screen.tickDelta);
+            }
+        };
+        return weaponNode;
+    }
+    public BulletType addMultipliers(BulletType b){
+        return owner.addMultipliers(b);
+    }
+    public double addReloadMultiplier(double b){
+        return owner.addReloadMultiplier(b);
+    }
+    public double getSizeMultiplier(){
+        return owner.getSizeMultiplier();
+    }
+    public double getFovMultiplier(){
+        return owner.getFovMultiplier();
     }
 }

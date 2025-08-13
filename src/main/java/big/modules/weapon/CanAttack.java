@@ -14,6 +14,7 @@ public class CanAttack extends Entity {
     public double customOffsetRotationAngle=0;
     public NNPRecorder<Double> offsetRotationAll=new NNPRecorder<>(0d);
     public Node lastNode=null;
+    public Entity owner;
     public CanAttack(){
 
     }

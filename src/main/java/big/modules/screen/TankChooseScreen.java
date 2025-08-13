@@ -3,6 +3,7 @@ package big.modules.screen;
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
 import big.engine.math.util.PacketVariable;
+import big.engine.math.util.Util;
 import big.engine.render.Screen;
 import big.modules.entity.player.PlayerEntity;
 import big.modules.network.packet.c2s.UpdateWeaponC2SPacket;
@@ -56,7 +57,7 @@ public class TankChooseScreen extends GUI {
                     }
                     if(player.name.equals("PageNext")){
                         currentIndex++;
-                        if(currentIndex>=toShow.size()/tankPerPage) currentIndex=toShow.size()/tankPerPage-1;
+                        if(currentIndex>toShow.size()/tankPerPage) currentIndex= Util.ceil((double) toShow.size() / tankPerPage);
                         break;
                     }
                     if(player.name.equals("Close")){

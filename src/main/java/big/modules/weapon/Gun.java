@@ -23,7 +23,7 @@ import static big.modules.entity.bullet.BulletEntity.baseValues;
 public class Gun extends CanAttack {
     public static Color color=new Color(150,150,150,255);
     public static double shrinkMultiplier=0.15;
-    public Entity owner;
+
     public double offsetRotation;
 
     public Vec2d offset;

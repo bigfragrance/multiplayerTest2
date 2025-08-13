@@ -28,6 +28,9 @@ public class TanksDataS2CPacket implements Packet<ClientNetworkHandler> {
             if(s.contains("visitor")){
                 keys.add(s);
             }
+            if(s.contains("test")){
+                keys.add(s);
+            }
         }
         for(String s:keys){
             tankData.remove(s);

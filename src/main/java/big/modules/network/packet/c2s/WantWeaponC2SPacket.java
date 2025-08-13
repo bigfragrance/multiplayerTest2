@@ -29,7 +29,7 @@ public class WantWeaponC2SPacket implements Packet<ServerNetworkHandler> {
     @Override
     public void apply(ServerNetworkHandler serverNetworkHandler) {
         Entity e=cs.entities.get(id);
-        if(e!=null){
+        if(e!=null&&e.weapon!=null){
             serverNetworkHandler.send(new PlayerWeaponUpdateS2CPacket(e.id,e.weapon.toJSON()).toJSON());
             if(e instanceof PlayerEntity player) {
                 serverNetworkHandler.sendPlayerData(player);

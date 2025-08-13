@@ -6,6 +6,7 @@ import big.engine.math.BlockPos;
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
 import big.engine.modules.EngineMain;
+import big.modules.entity.Entity;
 import com.formdev.flatlaf.util.SystemInfo;
 import org.json.JSONArray;
 
@@ -29,6 +30,7 @@ import static big.engine.render.Screen.sc;
 
 public class Util {
     public static Random random=new Random(System.nanoTime());
+
     public static double sin(double d){
         return Math.sin(Math.toRadians(d));
     }
@@ -219,6 +221,9 @@ public class Util {
     }
     public static Box lerp(Box b1,Box b2,double t){
         return new Box(lerp(b1.getMinPos(),b2.getMinPos(),t),lerp(b1.getMaxPos(),b2.getMaxPos(),t));
+    }
+    public static <T> T secondIfNull(T t,T t2){
+        return t==null?t2:t;
     }
     public static BlockPos getChunkPos(Vec2d vec){
         return new BlockPos((int) Math.floor(vec.x/ EngineMain.chunkSize), (int) Math.floor(vec.y/EngineMain.chunkSize));

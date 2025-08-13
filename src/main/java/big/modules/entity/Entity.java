@@ -140,12 +140,12 @@ public abstract class Entity implements NetworkItem {
             }
             this.move(this.velocity.add(extraVelocity));
             this.extraVelocity.multiply1(extraVelocityD);
-            if(this.weapon!=null&&!(this instanceof PlayerEntity)&&!(this instanceof VisitorEntity)){
+            if(this.weapon!=null&&!(this instanceof PlayerEntity)){
                 this.weapon.tick(true,cs.isServer);
             }
             if(EntityUtils.isInsideWall(boundingBox.expand(-0.01,-0.01))){
                 this.insideWall=true;
-                this.health-=this.health*0.02+5;
+                this.health-=this.health*0.05+5;
             }else{
                 this.insideWall=false;
             }
@@ -168,6 +168,7 @@ public abstract class Entity implements NetworkItem {
                     rotation+=360;
                 }
             }
+            if(weapon!=null) weapon.tick(false,cs.isServer);
         }
     }
     public void move(Vec2d v){
