@@ -170,8 +170,10 @@ public class PlayerEntity extends Entity {
         });
         //EntityUtils.renderHealthBar(g,this,);
         //System.out.println(this.name);
+        super.renderAfter(g);
         EntityUtils.renderPlayerName(g,this);
         EntityUtils.renderScore(g,this);
+
     }
     public JSONObject toJSON() {
         JSONObject o=new JSONObject();

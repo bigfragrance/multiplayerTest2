@@ -177,10 +177,10 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
     }
     public static AutoGunList fromJSONServer(JSONObject obj){
         try {
-            JSONObject info = obj.getJSONObject("info");
-            JSONArray array = obj.getJSONArray("data");
+            JSONObject info = PacketUtil.getJSONObject(obj,"info");
+            JSONArray array = PacketUtil.getJSONArray(obj,"data");
             Entity owner = cs.entities.get(PacketUtil.getLong(obj, "owner"));
-            AutoGunList gunList = new AutoGunList(owner, info.getDouble("offsetRotation"), Vec2d.fromJSON(info.getJSONObject("offset")), info.getDouble("size"), info.getDouble("fov"), info.getDouble("layer"), new ConcurrentHashMap<>());
+            AutoGunList gunList = new AutoGunList(owner, PacketUtil.getDouble(info,"offsetRotation"), Vec2d.fromJSON(PacketUtil.getJSONObject(info,"offset")), PacketUtil.getDouble(info,"size"),PacketUtil.getDouble(info,"fov"),PacketUtil.getDouble(info,"layer"), new ConcurrentHashMap<>());
             for (int i = 0; i < array.length(); i++) {
                 JSONObject gunObj = array.getJSONObject(i);
                 PacketUtil.put(gunObj, "owner", owner.id);

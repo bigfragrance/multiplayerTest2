@@ -138,6 +138,7 @@ public class BulletEntity extends Entity {
         //g.setColor(EntityUtils.getTeamcolor(this.team));
         //Util.renderCube(g,boundingBox.switchToJFrame());
         EntityUtils.renderBullet(g,this);
+        super.renderAfter(g);
     }
     public JSONObject toJSON() {
         JSONObject o=new JSONObject();

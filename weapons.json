@@ -219,22 +219,137 @@
                     "weapon":{
                         "data":[
                             {
-                                "type":"Gun",
-                                "offsetRotation":180,
-                                "offset":{
-                                    "x":0.19,
-                                    "y":0
+                                "type":"AutoGunList",
+                                "info": {
+                                    "offsetRotation":0,
+                                    "offset":{
+                                        "x":0.15,
+                                        "y":0
+                                    },
+                                    "layer":15,
+                                    "size":0.15,
+                                    "fov":360
                                 },
-                                "reloadMultiplier":3,
-                                "layer":1,
-                                "startDelay":0,
-                                "size":[0.1,0.06,0.06],
-                                "bulletType":{
-                                    "type":0,
-                                    "sharp":false,
-                                    "sharpFactor":1,
-                                    "multipliers":[1,6,1,0.5,0.8,3,0.5,5]
-                                }
+                                "data":[
+                                    {
+                                        "type":"Gun",
+                                        "mode": 0,
+                                        "offsetRotation":0,
+                                        "offset":{
+                                            "x":0.1,
+                                            "y":0.03
+                                        },
+                                        "reloadMultiplier":2,
+                                        "layer":1,
+                                        "startDelay":0,
+                                        "size":[0.2,0.025,0.025],
+                                        "bulletType":{
+                                            "type":0,
+                                            "sharp":false,
+                                            "sharpFactor":1,
+                                            "multipliers":[1,4.5,1.5,0.4]
+                                        }
+                                    },
+                                    {
+                                        "type":"Gun",
+                                        "mode": 0,
+                                        "offsetRotation":0,
+                                        "offset":{
+                                            "x":0.1,
+                                            "y":-0.03
+                                        },
+                                        "reloadMultiplier":2,
+                                        "layer":1,
+                                        "startDelay":2,
+                                        "size":[0.2,0.025,0.025],
+                                        "bulletType":{
+                                            "type":0,
+                                            "sharp":false,
+                                            "sharpFactor":1,
+                                            "multipliers":[1,4.5,1.5,0.4]
+                                        }
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            }
+        ]
+    },
+    "launcher-auto":{
+        "data":[
+            {
+                "type":"Gun",
+                "offsetRotation":0,
+                "offset":{
+                    "x":0,
+                    "y":0
+                },
+                "reloadMultiplier":0.7,
+                "layer":1,
+                "startDelay":0,
+                "size":[0.35,0.18,0.18],
+                "bulletType":{
+                    "type":0,
+                    "sharp":false,
+                    "sharpFactor":1,
+                    "multipliers":[2,1.5,6,1.8,0.8,3,0.5,10],
+                    "weapon":{
+                        "data":[
+                            {
+                                "type":"AutoGunArray",
+                                "count": 1,
+                                "info": {
+                                    "offsetRotation":0,
+                                    "offset":{
+                                        "x":0,
+                                        "y":0
+                                    },
+                                    "layer":15,
+                                    "size":0.1,
+                                    "fov":1000
+                                },
+                                "data":[
+                                    {
+                                        "type":"Gun",
+                                        "mode": 0,
+                                        "offsetRotation":0,
+                                        "offset":{
+                                            "x":0.1,
+                                            "y":0.03
+                                        },
+                                        "reloadMultiplier":3,
+                                        "layer":1,
+                                        "startDelay":0,
+                                        "size":[0.15,0.025,0.025],
+                                        "bulletType":{
+                                            "type":0,
+                                            "sharp":false,
+                                            "sharpFactor":1,
+                                            "multipliers":[1,4.5,1.5,0.4]
+                                        }
+                                    },
+                                    {
+                                        "type":"Gun",
+                                        "mode": 0,
+                                        "offsetRotation":0,
+                                        "offset":{
+                                            "x":0.1,
+                                            "y":-0.03
+                                        },
+                                        "reloadMultiplier":3,
+                                        "layer":1,
+                                        "startDelay":2,
+                                        "size":[0.2,0.025,0.025],
+                                        "bulletType":{
+                                            "type":0,
+                                            "sharp":false,
+                                            "sharpFactor":1,
+                                            "multipliers":[1,4.5,1.5,0.4]
+                                        }
+                                    }
+                                ]
                             }
                         ]
                     }

@@ -33,6 +33,15 @@ public class GunList {
         ArrayList<CanAttack> list=new ArrayList<>(this.list.values());
         list.sort(Comparator.comparingDouble(CanAttack::getLayer));
         for(CanAttack canAttack:list){
+            if(canAttack.getLayer()>=10) continue;
+            canAttack.render(g);
+        }
+    }
+    public void renderAfter(Graphics g){
+        ArrayList<CanAttack> list=new ArrayList<>(this.list.values());
+        list.sort(Comparator.comparingDouble(CanAttack::getLayer));
+        for(CanAttack canAttack:list){
+            if(canAttack.getLayer()<10) continue;
             canAttack.render(g);
         }
     }

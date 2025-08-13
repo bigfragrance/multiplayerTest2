@@ -200,6 +200,12 @@ public abstract class Entity implements NetworkItem {
             weapon.render(g);
         }
     }
+    public void renderAfter(Graphics g){
+        this.tickDelta= Screen.tickDelta;//Math.min(1,this.tickDelta+ Screen.tickDeltaAdd);
+        if(weapon!=null){
+            weapon.renderAfter(g);
+        }
+    }
     public void setPosition(Vec2d position){
         this.prevPosition.set(this.position);
         this.prevBoundingBox=this.boundingBox.copy();
