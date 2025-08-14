@@ -35,7 +35,7 @@ public class EntityUtils {
     public static int scoreSize=7;
     public static double intersectCheckStep=0.5;
     public static double extrapolateBase=1.5;
-    public static double extrapolateCheckMax=10;
+    public static double extrapolateCheckMax=50;
     public static double extrapolateCheckStep=0.5;
     public static boolean intersects(Box pb1,Box b1,Box pb2,Box b2) {
         if(pb1==null) pb1=b1;
