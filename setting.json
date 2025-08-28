@@ -1,1 +1,5 @@
-{"chosen_tank":"test","is_server":true,"name":"X","server_port":8088,"server_address":"localhost"}
+{"chosen_tank":"single",
+"is_server":true,
+"name":"Player-206.0",
+"server_port":8088,
+"server_address":"localhost"}

@@ -6,8 +6,10 @@ import big.engine.math.Vec2d;
 import big.engine.math.util.EntityUtils;
 import big.engine.math.util.SegmentBoxIntersectionChecker;
 import big.engine.math.util.Util;
+import big.events.TickEvent;
 import big.modules.entity.Entity;
 import big.modules.world.blocks.Block;
+import meteordevelopment.orbit.EventHandler;
 import org.json.JSONObject;
 
 
@@ -93,6 +95,11 @@ public class World {
     }
     public void renderBackground(Graphics g){
 
+    }
+    @EventHandler
+    public void onTick(TickEvent event){
+        if(event.isPost()) return;
+        tick();
     }
     public void tick(){
 

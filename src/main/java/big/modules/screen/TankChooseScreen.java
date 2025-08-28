@@ -8,6 +8,7 @@ import big.engine.render.Screen;
 import big.modules.entity.player.PlayerEntity;
 import big.modules.network.packet.c2s.UpdateWeaponC2SPacket;
 import big.modules.weapon.GunList;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -57,7 +58,8 @@ public class TankChooseScreen extends GUI {
                     }
                     if(player.name.equals("PageNext")){
                         currentIndex++;
-                        if(currentIndex>toShow.size()/tankPerPage) currentIndex= Util.ceil((double) toShow.size() / tankPerPage);
+                        int max= Util.ceil((double) toShow.size() / tankPerPage);
+                        if(currentIndex>=max) currentIndex=max-1;
                         break;
                     }
                     if(player.name.equals("Close")){
@@ -65,9 +67,10 @@ public class TankChooseScreen extends GUI {
                         break;
                     }
                     cs.networkHandler.sendPacket(new UpdateWeaponC2SPacket(player.name));
+                    cs.player.currentWeapon=player.name;
                     cs.setting.setChosenTank(player.name);
                     cs.setting.save();
-                    sc.closeScreen();
+                    if(init())sc.closeScreen();
                 }
             }
         }
@@ -79,9 +82,12 @@ public class TankChooseScreen extends GUI {
             player.render(g);
         }
     }
-    public void init(){
+    public boolean init(){
+        toShow.clear();
+        currentIndex=0;
         int i=0;
         int j=0;
+        JSONObject tanksList=getTanksList();
         for(String s:tanksList.keySet()){
             j++;
             if(Objects.equals(s, PacketVariable.type)) continue;
@@ -132,6 +138,36 @@ public class TankChooseScreen extends GUI {
                 }
             }
         }
+        return j==0;
+    }
+    private JSONObject getTanksList(){
+        JSONObject newList=new JSONObject(tanksList.toString());
+        for(String name:tanksList.keySet()){
+            if(Objects.equals(name, PacketVariable.type)) {
+                newList.remove(name);
+                continue;
+            }
+            JSONObject o=tanksList.getJSONObject(name);
+            if(o.has("parent")){
+                JSONArray array =o.getJSONArray("parent");
+                if(!have(array,cs.player.currentWeapon)){
+                    newList.remove(name);
+                }
+            }else{
+                if(!cs.player.currentWeapon.equals("none")){
+                    newList.remove(name);
+                }
+            }
+        }
+        return newList;
+    }
+    private boolean have(JSONArray arr,String str){
+        for(int i=0;i<arr.length();i++){
+            if(arr.getString(i).equals(str)){
+                return true;
+            }
+        }
+        return false;
     }
     private Vec2d getPos(int index){
         return cs.camPos.add(start.add(index*distance,0).multiply(sizeMultiplier));

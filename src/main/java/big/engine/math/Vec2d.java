@@ -16,6 +16,9 @@ public class Vec2d {
     public Vec2d(double rotation){
         this(Util.cos(rotation),Util.sin(rotation));
     }
+    public Vec2d(double[] arr){
+        this(arr[0],arr[1]);
+    }
 
     public static Vec2d zero() {
         return new Vec2d(0, 0);
@@ -28,6 +31,11 @@ public class Vec2d {
     public Vec2d add(Vec2d v) {
         if(v==null) return this;
         return add(v.x, v.y);
+    }
+    public Vec2d add(double len){
+        double length=length();
+        if(length<1E-7) return this;
+        return multiply(len/length+1);
     }
 
     public double length() {
@@ -97,9 +105,12 @@ public class Vec2d {
     }
 
     public Vec2d limit(double l) {
-        if (this.length() <= 0.0001) return this;
-        double e = l / length();
-        return this.multiply(e);
+        double len=length();
+        if (len <= 1E-7) return this;
+        return this.multiply(l / len);
+    }
+    public Vec2d normalize(){
+        return limit(1);
     }
     public Vec2d limitOnlyOver(double l){
         if (this.length() <= l) return this.copy();

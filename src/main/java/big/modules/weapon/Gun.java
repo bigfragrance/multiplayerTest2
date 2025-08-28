@@ -215,8 +215,13 @@ public class Gun extends CanAttack {
     }
     public void render(Graphics g){
         Vec2d buttonPos=getRenderPosition();
+        for(int i=0;i<size.length;i+=3){
+            buttonPos=render(g,buttonPos,size[i],size[i+1],size[i+2]);
+        }
+        /*Vec2d buttonPos=getRenderPosition();
         double rotation=Util.lerp(prevRotation,this.rotation, Screen.tickDelta);
-        Vec2d gunLine=new Vec2d(size[0]*(1-getRenderFireTime()*shrinkMultiplier)*sizeMultiplier,0).rotate(rotation);
+        double shrink=(1-getRenderFireTime()*shrinkMultiplier)*sizeMultiplier;
+        Vec2d gunLine=new Vec2d(size[0]*shrink,0).rotate(rotation);
         Vec2d buttonLine=new Vec2d(0,size[1]*sizeMultiplier).rotate(rotation);
         Vec2d headLine=new Vec2d(0,size[2]*sizeMultiplier).rotate(rotation);
         g.setColor(color);
@@ -227,7 +232,24 @@ public class Gun extends CanAttack {
         Vec2d fourth=headMiddle.add(headLine);
         Util.render(g,true,first,second,third,fourth);
         g.setColor(ColorUtils.darker(color,0.6));
+        Util.render(g,false,first,second,third,fourth);*/
+    }
+    private Vec2d render(Graphics g,Vec2d buttonPos,double len,double w1,double w2){
+        double rotation=Util.lerpRotation(prevRotation,this.rotation, Screen.tickDelta);
+        double shrink=(1-getRenderFireTime()*shrinkMultiplier)*sizeMultiplier;
+        Vec2d gunLine=new Vec2d(len*shrink,0).rotate(rotation);
+        Vec2d buttonLine=new Vec2d(0,w1*sizeMultiplier).rotate(rotation);
+        Vec2d headLine=new Vec2d(0,w2*sizeMultiplier).rotate(rotation);
+        g.setColor(color);
+        Vec2d first=buttonPos.add(buttonLine);
+        Vec2d second=buttonPos.subtract(buttonLine);
+        Vec2d headMiddle=buttonPos.add(gunLine);
+        Vec2d third=headMiddle.subtract(headLine);
+        Vec2d fourth=headMiddle.add(headLine);
+        Util.render(g,true,first,second,third,fourth);
+        g.setColor(ColorUtils.darker(color,0.6));
         Util.render(g,false,first,second,third,fourth);
+        return headMiddle;
     }
     public double getRenderFireTime(){
         return Util.lerp(prevFireTime,fireTime, Screen.tickDelta);
@@ -256,10 +278,10 @@ public class Gun extends CanAttack {
         return getRenderStartPos().add(offset.multiply(sizeMultiplier).rotate(getRenderOffsetRotation()));
     }
     public double getRenderRotation(){
-        return Util.lerp(prevRotation,rotation, Screen.tickDelta);
+        return Util.lerpRotation(prevRotation,rotation, Screen.tickDelta);
     }
     public double getRenderOffsetRotation(){
-        return Util.lerp(offsetRotationAll.getPrev(),offsetRotationAll.get(), Screen.tickDelta);
+        return Util.lerpRotation(offsetRotationAll.getPrev(),offsetRotationAll.get(), Screen.tickDelta);
     }
     public double getStartDelay(){
         return startDelay;

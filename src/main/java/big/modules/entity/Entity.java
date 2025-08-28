@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static big.engine.math.util.PacketVariable.basic;
+import static big.engine.math.util.Util.floor;
 import static big.engine.math.util.Util.round;
 import static big.engine.modules.EngineMain.chunkSize;
 import static big.engine.modules.EngineMain.cs;
@@ -31,8 +32,8 @@ import static big.engine.modules.EngineMain.cs;
 public abstract class Entity implements NetworkItem {
     public static double sizeMultiplier=0.02;
     public static double extraVelocityD=0.1;
-    public static int particleLifeTimeMax=4;
-    public static double particleBoundingBoxExpand=60;
+    public static int particleLifeTimeMax=7;
+    public static double particleBoundingBoxExpand=0.01;
     public Box boundingBox;
     public Box prevBoundingBox;
     public Vec2d position;
@@ -126,7 +127,7 @@ public abstract class Entity implements NetworkItem {
         if(isParticle){
             this.resetTickDelta();
             Box b=this.boundingBox;
-            //this.boundingBox=b.expand(particleBoundingBoxExpand/(b.xSize()*b.xSize()),particleBoundingBoxExpand/(b.ySize()*b.ySize()));
+            this.boundingBox=b.expand(particleBoundingBoxExpand);
             if(lifeTime>=particleLifeTimeMax){
                 this.kill();
             }
@@ -143,7 +144,7 @@ public abstract class Entity implements NetworkItem {
             if(this.weapon!=null&&!(this instanceof PlayerEntity)){
                 this.weapon.tick(true,cs.isServer);
             }
-            if(EntityUtils.isInsideWall(boundingBox.expand(-0.01,-0.01))){
+            if(cs.world.getBlock(BlockPos.ofFloor(this.boundingBox.getCenter())).solid){
                 this.insideWall=true;
                 this.health-=this.health*0.05+5;
             }else{
@@ -189,7 +190,7 @@ public abstract class Entity implements NetworkItem {
         cs.chunkMap.addEntity(this,pos);
     }
     public ChunkPos getChunkPos(){
-        return new ChunkPos(round(this.position.x/chunkSize),round(this.position.y/chunkSize));
+        return new ChunkPos(floor(this.position.x/chunkSize),floor(this.position.y/chunkSize));
     }
     public void resetTickDelta(){
         this.tickDelta=0;

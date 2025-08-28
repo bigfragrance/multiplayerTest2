@@ -22,28 +22,8 @@ public class ClientMain {
         }*/
         
         SwingUtilities.invokeLater(()  -> {
-            File setting=new File(EngineMain.SETTING_PATH);
-            String settingData=null;
-            if(!setting.exists()){
-                try {
-                    setting.createNewFile();
-                    settingData=Setting.create();
-                    Files.write(setting.toPath(),settingData.getBytes(StandardCharsets.UTF_8),
-                            StandardOpenOption.CREATE,   // 文件不存在时创建
-                            StandardOpenOption.TRUNCATE_EXISTING);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }else{
-                try {
-                    settingData=Files.readString(setting.toPath(),  StandardCharsets.UTF_8);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            if(settingData==null) return;
-            Setting o=new Setting(settingData);
-
+            Setting.init();
+            Setting o=Setting.INSTANCE;
             Screen.frame = new JFrame(o.isServer()?"Server":"Client");
             Screen panel = new Screen();
             panel.setBackground(new Color(200,200,200));
@@ -52,8 +32,6 @@ public class ClientMain {
             Screen.frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             Screen.frame.setVisible(true);
             Thread thread = new Thread(panel);
-
-
             new EngineMain(o.getServerAddress(),o.getServerPort(),o.isServer());
             cs.setting=o;
             //new EngineMain("localhost",8088,false);

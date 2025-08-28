@@ -1,10 +1,10 @@
 package big.server;
 
+import big.engine.math.util.AvgCounter;
 import big.modules.entity.player.PlayerData;
 
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors; 
@@ -13,7 +13,7 @@ public class ServerMain {
     private static final int PORT = 8088;
     private static final int MAX_THREADS = 50;
     private static final CanvasManager canvas = new CanvasManager();
-    private static Queue<Double> connectionTimes = new java.util.LinkedList<>();
+    private static AvgCounter connectSpeed = new AvgCounter();
     public static ConcurrentHashMap<Integer,Boolean> connectedPlayers = new ConcurrentHashMap<>();
     private static long lastConnectionTime = 0;
     private static double minAvgDelay=100;
@@ -30,26 +30,14 @@ public class ServerMain {
                     client.close();
                     continue;
                 }*/
-                /*int count=0;
-                double delay=0;
-                for(double d:connectionTimes){
-                    count++;
-                    delay+=d;
+                if(connectSpeed.getAvg()<minAvgDelay){
+                    client.close();
+                    continue;
                 }
-                if(count>0){
-                    double avg=delay/count;
-                    if(avg<minAvgDelay){
-                        client.close();
-                        continue;
-                    }
-                }*/
 
                 pool.execute(new  ClientHandler(client));
                 connectedPlayers.put(client.getInetAddress().hashCode(),true);
-                connectionTimes.offer((double) (System.currentTimeMillis()-lastConnectionTime));
-                if(connectionTimes.size()>10){
-                    connectionTimes.poll();
-                }
+                connectSpeed.add((double) (System.currentTimeMillis()-lastConnectionTime));
                 lastConnectionTime = System.currentTimeMillis();
             }
         }

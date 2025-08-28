@@ -15,7 +15,7 @@ public class ServerBotEntity extends ServerPlayerEntity{
     public AutoController<ServerBotEntity> autoController;
     public ServerBotEntity(Vec2d position) {
         super(position);
-        this.weaponID="destroyor";//getRandom();
+        this.weaponID=getRandom();
 
         this.name="Bot-"+this.weaponID+" "+Util.random.nextInt(100);
         autoController=new AutoController<>(this,this.inputManager);
@@ -37,7 +37,7 @@ public class ServerBotEntity extends ServerPlayerEntity{
         ArrayList<String> list=new ArrayList<>();
         for (Iterator<String> it = GunList.data.keys(); it.hasNext(); ) {
             String s = it.next();
-            if(s.equals("test")) continue;
+            if(s.contains("test")) continue;
             if(s.contains("visitor")) continue;
             //if(s.equals("MachineGun")) continue;
             list.add(s);

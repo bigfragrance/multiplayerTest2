@@ -4,16 +4,11 @@ import big.engine.math.Vec2d;
 import big.engine.math.util.TaskManagerMemoryApproximator;
 import big.engine.math.util.Util;
 import big.engine.render.Screen;
-import big.events.MessageReceiveEvent;
 import big.events.RenderEvent;
 import big.events.TickEvent;
 import meteordevelopment.orbit.EventHandler;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -31,8 +26,9 @@ public class DebugScreen {
     public static void init(){
         INSTANCE=new DebugScreen();
         INSTANCE.addToRender(() -> "DebugScreen");
-        INSTANCE.addToRender(()->"TPS: "+String.format("%.1f",cs.currentTPS));
-        INSTANCE.addToRender(()->"MSPT: "+cs.mspt);
+        INSTANCE.addToRender(()->"TPS: "+String.format("%.1f",cs.currentTPS.getAvg()));
+        INSTANCE.addToRender(()->"MSPT: "+String.format("%.1f",cs.nspt/1000000d));
+        INSTANCE.addToRender(()->"RunTime: "+String.format("%.1f",cs.runTime/20d));
         INSTANCE.addToRender(()->"MemoryUsed: "+ String.format("%.1f",TaskManagerMemoryApproximator.getMemoryUsed()/(1024d*1024d))+"MB");
         INSTANCE.addToRender(()->"Entities: "+cs.entities.size());
         INSTANCE.addToRender(()->"Players: "+(cs.multiClientHandler==null?0: cs.multiClientHandler.clients.size()));
@@ -59,6 +55,7 @@ public class DebugScreen {
     }
     @EventHandler
     public void onTick(TickEvent event){
+        if(event.isPre()) return;
         if(System.currentTimeMillis()-lastUpdate<100) return;
         lastUpdate=System.currentTimeMillis();
         for(int i=0;i<idCounter.get();i++){

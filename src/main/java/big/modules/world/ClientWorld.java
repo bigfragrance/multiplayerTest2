@@ -2,8 +2,11 @@ package big.modules.world;
 
 import big.engine.math.BlockPos;
 import big.engine.math.Box;
+import big.events.TickEvent;
+import big.modules.entity.Entity;
 import big.modules.network.packet.c2s.WantChunkC2SPacket;
 import big.modules.world.blocks.Block;
+import meteordevelopment.orbit.EventHandler;
 
 import java.awt.*;
 
@@ -53,11 +56,20 @@ public class ClientWorld extends World{
         if(cs.player!=null){
             for(int x=-10;x<=10;x++){
                 for(int y=-10;y<=10;y++){
-                    if((x+y+playerX+playerY)%3==0) {
+                    if((x+y+playerX+playerY)%2==0) {
                         Block.render(g, new Box(x+playerX,y+playerY),Blocks.AIR.color);
                     }
                 }
             }
+        }
+    }
+    public void tick(){
+        cs.updateEntityChunk();
+        for(Entity entity:cs.entities.values()){
+            entity.tick();
+        }
+        if(cs.networkHandler!=null) {
+            cs.networkHandler.sendKeepAlive();
         }
     }
 }

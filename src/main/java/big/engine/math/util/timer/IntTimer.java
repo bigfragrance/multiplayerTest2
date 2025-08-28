@@ -22,4 +22,8 @@ public class IntTimer implements Timer{
     public void reset() {
         time=0;
     }
+
+    public void setDelay(int delay) {
+        this.delay=delay;
+    }
 }

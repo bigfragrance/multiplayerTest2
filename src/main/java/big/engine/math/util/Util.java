@@ -9,6 +9,7 @@ import big.engine.modules.EngineMain;
 import big.modules.entity.Entity;
 import com.formdev.flatlaf.util.SystemInfo;
 import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -216,6 +217,16 @@ public class Util {
     public static double lerp(double start,double end,double t){
         return start*(1-t)+end*t;
     }
+    public static double lerpRotation(double start,double end,double t){
+        double angle=end-start;
+        if(angle>180){
+            angle-=360;
+        }
+        else if(angle<-180){
+            angle+=360;
+        }
+        return start+angle*t;
+    }
     public static Vec2d lerp(Vec2d v1,Vec2d v2,double t){
         return v1.multiply(1-t).add(v2.multiply(t));
     }
@@ -290,15 +301,7 @@ public class Util {
         File setting=new File(path);
         String settingData=null;
         if(!setting.exists()){
-            try {
-                setting.createNewFile();
-                settingData=Setting.create();
-                Files.write(setting.toPath(),settingData.getBytes(StandardCharsets.UTF_8),
-                        StandardOpenOption.CREATE,   // 文件不存在时创建
-                        StandardOpenOption.TRUNCATE_EXISTING);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            return null;
         }else{
             try {
                 settingData=Files.readString(setting.toPath(),  StandardCharsets.UTF_8);
@@ -308,7 +311,11 @@ public class Util {
         }
         return settingData;
     }
-
+    public static void putAll(JSONObject obj,JSONObject toAdd){
+        for(String key:toAdd.keySet()){
+            obj.put(key,toAdd.get(key));
+        }
+    }
     public static int floor(double d) {
         return (int) Math.floor(d);
     }
@@ -340,7 +347,6 @@ public class Util {
                 usage.getMax() == Long.MAX_VALUE ? "unlimited" : String.format("%d bytes (%.2f MB)", usage.getMax(), bytesToMB(usage.getMax())));
     }
 
-    // 辅助方法：字节转 MB（保留两位小数）
     private static double bytesToMB(long bytes) {
         return bytes / (1024.0 * 1024.0);
     }

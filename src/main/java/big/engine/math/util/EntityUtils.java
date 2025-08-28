@@ -9,7 +9,9 @@ import big.modules.world.BlockState;
 import big.modules.world.Blocks;
 
 import java.awt.*;
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
@@ -293,14 +295,86 @@ public class EntityUtils {
         if(d>d2) return new Vec2d(0,0);
         return other.velocity.limit(d2-d);
     }
-    public static Vec2d getMaxMove(Box b,Vec2d v){
-        if(v.length()<=0.001) return new Vec2d(0,0);
-        Box b2=b.stretch(v.x,v.y).expand(0.1,0.1);
-        //if(!isInsideWall(b2)) return v;
-        for(CheckContent c:getCheckBoxes(b2)){
-            v.set(getMaxMoveOld(b,v,c.box,c.left,c.right,c.top,c.bottom));
+    public static Vec2d getOutOfWallOld(Box box){
+        List<int[]> boxes=new ArrayList<>();
+        for(int x=Util.floor(box.minX);x<Util.ceil(box.maxX);x++){
+            for(int y=Util.floor(box.minY);y<Util.ceil(box.maxY);y++){
+                if(cs.world.getBlockState(x,y).getBlock().solid)boxes.add(new int[]{x,y});
+            }
         }
-        return v;
+        if(boxes.isEmpty()) return Vec2d.zero();
+        double minMove=1000000;
+        Vec2d dirVec=Vec2d.zero();
+        for(int[] pos:boxes){
+            for(int i=0;i<4;i++){
+                double d;
+                if(i==0){
+                    d=pos[0]+1-box.minX;
+                }
+                else if(i==1){
+                    d=pos[1]+1-box.minY;
+                }
+                else if(i==2){
+                    d=pos[0]-box.maxX;
+                }
+                else{
+                    d=pos[1]-box.maxY;
+                }
+                if(Math.abs(d)<minMove){
+                    minMove=Math.abs(d);
+                    dirVec.set(new Vec2d(i*90));
+                }
+            }
+        }
+        return dirVec.multiply(minMove);
+    }
+    public static Vec2d getOutOfWall(Box box) {
+        Vec2d totalMove = Vec2d.zero();
+        boolean collided;
+        do {
+            collided = false;
+            List<int[]> blocks = new ArrayList<>();
+            for (int x = Util.floor(box.minX); x < Util.ceil(box.maxX); x++) {
+                for (int y = Util.floor(box.minY); y < Util.ceil(box.maxY); y++) {
+                    if (cs.world.getBlockState(x, y).getBlock().solid) {
+                        blocks.add(new int[]{x, y});
+                    }
+                }
+            }
+
+            for (int[] pos : blocks) {
+                Box blockBox = new Box(pos[0], pos[1], pos[0] + 1, pos[1] + 1);
+                if (!box.intersects(blockBox)) continue;
+
+
+                double moveX1 = blockBox.maxX - box.minX; // push right
+                double moveX2 = blockBox.minX - box.maxX; // push left
+                double moveY1 = blockBox.maxY - box.minY; // push up
+                double moveY2 = blockBox.minY - box.maxY; // push down
+
+
+                double absX = Math.abs(moveX1) < Math.abs(moveX2) ? moveX1 : moveX2;
+                double absY = Math.abs(moveY1) < Math.abs(moveY2) ? moveY1 : moveY2;
+
+
+                if (Math.abs(absX) < Math.abs(absY)) {
+                    box = box.offset(absX, 0);
+                    totalMove = totalMove.add(absX, 0);
+                } else {
+                    box = box.offset(0, absY);
+                    totalMove = totalMove.add(0, absY);
+                }
+
+                collided = true;
+            }
+        } while (collided);
+        return totalMove;
+    }
+    public static Vec2d getMaxMove(Box b,Vec2d v){
+        if(v.length()<=1e-6) return new Vec2d(0,0);
+        Box b2=b.stretch(v.x,v.y).expand(1e-3,1e-3);
+        //if(!isInsideWall(b2)) return v;
+        return CollisionUtil.getMaxMove(b.getCenter(),b.avgSize()/2d,v,getCheckBoxes(b2));
     }
     public static Vec2d getMaxMoveNoStuck(Box b,Vec2d v){
         Vec2d x=new Vec2d(v.x,0);
@@ -308,7 +382,7 @@ public class EntityUtils {
         Vec2d x2=getMaxMove(b,x);
         Vec2d y2=getMaxMove(b,y);
         Box after=b.offset(x2.x,y2.y);
-        if(EntityUtils.isInsideWall(after.expand(-0.01))){
+        if(EntityUtils.isInsideWall(after.expand(-1e-6))){
             return getMaxMove(b,v);
         }
         return new Vec2d(x2.x,y2.y);
@@ -338,14 +412,15 @@ public class EntityUtils {
                 if(cs.world.getBlockState(pos).getBlock().solid)boxes.add(new CheckContent(new Box(x,y),sl(pos),sr(pos),st(pos),sb(pos)));
             }
         }
-
-        /*if(cs.world.getBlockState(pos).getBlock().solid)boxes.add(new CheckContent(new Box(pos),sl(pos),sr(pos),st(pos),sb(pos)));
-        pos= BlockPos.ofFloor(b.maxX,b.minY);
-        if(cs.world.getBlockState(pos).getBlock().solid)boxes.add(new CheckContent(new Box(pos),sl(pos),sr(pos),st(pos),sb(pos)));
-        pos= BlockPos.ofFloor(b.minX,b.maxY);
-        if(cs.world.getBlockState(pos).getBlock().solid)boxes.add(new CheckContent(new Box(pos),sl(pos),sr(pos),st(pos),sb(pos)));
-        pos= BlockPos.ofFloor(b.maxX,b.maxY);
-        if(cs.world.getBlockState(pos).getBlock().solid)boxes.add(new CheckContent(new Box(pos),sl(pos),sr(pos),st(pos),sb(pos)));*/
+        return boxes;
+    }
+    public static List<Box> getCheckBoxes2(Box b){
+        List<Box> boxes=new ArrayList<>();
+        for(int x=Util.floor(b.minX);x<Util.ceil(b.maxX);x++){
+            for(int y=Util.floor(b.minY);y<Util.ceil(b.maxY);y++){
+                if(cs.world.getBlockState(x,y).getBlock().solid)boxes.add(new Box(x,y));
+            }
+        }
         return boxes;
     }
     public static boolean sl(BlockPos pos){
@@ -451,6 +526,60 @@ public class EntityUtils {
 
         return new Vec2d(maxX, maxY);
     }
+    public static Vec2d getMaxMoveGPT(Box box, Vec2d velocity, Box checking,
+                                   boolean checkLeft, boolean checkRight,
+                                   boolean checkTop, boolean checkBottom) {
+        if (velocity.x == 0 && velocity.y == 0) {
+            return new Vec2d(0, 0);
+        }
+
+        final double EPSILON = 1e-8; // 容差，避免浮点误差
+
+        double moveX = velocity.x;
+        double moveY = velocity.y;
+
+        // --- 先处理 X 方向 ---
+        if (velocity.x != 0) {
+            boolean shouldCheckX = (velocity.x > 0 && checkRight) || (velocity.x < 0 && checkLeft);
+            if (shouldCheckX) {
+                Box xBox = box.offset(new Vec2d(velocity.x, 0));
+                if (xBox.intersects(checking)) {
+                    if (velocity.x > 0) {
+                        moveX = checking.minX - box.maxX - EPSILON;
+                        if (moveX < 0) moveX = 0;
+                    } else {
+                        moveX = checking.maxX - box.minX + EPSILON;
+                        if (moveX > 0) moveX = 0;
+                    }
+                }
+            }
+        }
+
+        // --- 再处理 Y 方向 ---
+        if (velocity.y != 0) {
+            boolean shouldCheckY = (velocity.y > 0 && checkTop) || (velocity.y < 0 && checkBottom);
+            if (shouldCheckY) {
+                // 用 X 修正后的盒子来检测 Y
+                Box yBox = box.offset(new Vec2d(moveX, velocity.y));
+                if (yBox.intersects(checking)) {
+                    if (velocity.y > 0) {
+                        moveY = checking.minY - (box.offset(new Vec2d(moveX, 0)).maxY) - EPSILON;
+                        if (moveY < 0) moveY = 0;
+                    } else {
+                        moveY = checking.maxY - (box.offset(new Vec2d(moveX, 0)).minY) + EPSILON;
+                        if (moveY > 0) moveY = 0;
+                    }
+                }
+            }
+        }
+
+        // 将微小值直接归零，避免卡墙
+        if (Math.abs(moveX) < EPSILON) moveX = 0;
+        if (Math.abs(moveY) < EPSILON) moveY = 0;
+
+        return new Vec2d(moveX, moveY);
+    }
+
     public static Vec2d getMaxMove(Box box, Vec2d velocity, Box checking,
                                    boolean checkLeft, boolean checkRight,
                                    boolean checkTop, boolean checkBottom){
@@ -542,9 +671,9 @@ public class EntityUtils {
         }
         return new Vec2d(newX,newY);
     }
-    private static final double S=0.001;
+    private static final double S=1e-6;
     public static boolean isInsideWall(Box box){
-        return cs.serverController.isWall(box.minX+S,box.minY+S)||cs.serverController.isWall(box.maxX,box.minY+S)||cs.serverController.isWall(box.minX+S,box.maxY)||cs.serverController.isWall(box.maxX,box.maxY);
+        return !getCheckBoxes(box).isEmpty();//cs.serverController.isWall(box.minX+S,box.minY+S)||cs.serverController.isWall(box.maxX,box.minY+S)||cs.serverController.isWall(box.minX+S,box.maxY)||cs.serverController.isWall(box.maxX,box.maxY);
     }
     public static Vec2d extrapolate(Vec2d targetPos,Vec2d targetVel,double tick,Vec2d addVel){
         return targetPos.add(targetVel.add(addVel).multiply(tick));
@@ -572,6 +701,7 @@ public class EntityUtils {
         first=extrapolate(e,times+extrapolateBase);
         return first;
     }*/
+
     public static Vec2d extrapolate2(Vec2d targetPos,Vec2d targetVel,Vec2d shootPos, double bulletSpeed,Vec2d addVel){
         Vec2d bestPos=null;
         double minDiff=1000;

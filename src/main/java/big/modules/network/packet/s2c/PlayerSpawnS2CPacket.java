@@ -34,7 +34,6 @@ public class PlayerSpawnS2CPacket implements Packet<ClientNetworkHandler> {
     public void apply(ClientNetworkHandler clientNetworkHandler) {
         cs.player=player;
         cs.addEntity(player);
-        cs.generateGroundBlocks(true);
     }
 
     @Override

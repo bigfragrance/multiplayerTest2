@@ -9,6 +9,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.awt.*;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
@@ -18,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class GunList {
     public static JSONObject data=new JSONObject();
+    public static ConcurrentHashMap<String,String> parent=new ConcurrentHashMap<>();
     public JSONObject extradata=createDefData();
     public ConcurrentHashMap<Long,CanAttack> list;
     public AtomicInteger id=new AtomicInteger(0);
@@ -99,17 +101,48 @@ public class GunList {
         return bestGun;
     }
     public static void init(){
-        String s= Util.read("weapons.json");
-        if(s==null){
-            return;
-        }
+        data=new JSONObject();
         try {
-            data = new JSONObject(s);
+            loadWeaponsRecursively(new File(System.getProperty("user.dir")),data);
         }catch (Exception e){
             System.out.println("Error reading weapons.json");
         }
+        /*for(String str:data.keySet()){
+            JSONObject obj=data.getJSONObject(str);
+            if(obj.has("parent")){
+                parent.put(str,obj.getString("parent"));
+            }
+        }*/
+    }
+    public static void loadWeaponsRecursively(File dir,JSONObject data) {
+        if (dir == null || !dir.exists() || !dir.isDirectory()) return;
+
+        File[] files = dir.listFiles();
+        if (files == null) return;
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                loadWeaponsRecursively(file, data);
+            } else if (file.isFile()) {
+                String name = file.getName().toLowerCase();
+                if (name.contains("weapon") && name.endsWith(".json")) {
+                    try {
+                        String str = Util.read(file.getAbsolutePath());
+                        if (str == null) continue;
+                        JSONObject obj = new JSONObject(str);
+                        Util.putAll(data, obj);
+                    } catch (Exception e) {
+                        System.out.println("Error reading file: " + file.getAbsolutePath());
+                    }
+                }
+            }
+        }
     }
     public static GunList fromID(Entity owner,String id){
+        if(!data.has(id)){
+            System.out.println("Error loading weapon "+id);
+            return null;
+        }
         return fromJSONServer(owner, data.getJSONObject(id));
     }
     public static GunList fromJSONServer(Entity owner, JSONObject obj){

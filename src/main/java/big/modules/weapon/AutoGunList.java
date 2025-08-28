@@ -63,13 +63,13 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
             autoAim.tick();
             for (CanAttack canAttack : guns.values()) {
                 canAttack.lastNode=this;
-                canAttack.tick(fire,server);
+                canAttack.tick(fire||this.fire, true);
             }
         }else{
             offsetRotationAll.next();
             for (CanAttack canAttack : guns.values()) {
                 canAttack.lastNode=this;
-                canAttack.tick(false,server);
+                canAttack.tick(false, false);
             }
         }
     }
@@ -123,7 +123,7 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
         Util.renderPolygon(g,getRenderPos(),32,size*sizeMultiplier,getRenderRotation(),true,false);
     }
     public Vec2d getRenderPos(){
-        return getRenderStartPos().add(offset.multiply(sizeMultiplier).rotate(Util.lerp(offsetRotationAll.getPrev(),offsetRotationAll.get(), Screen.tickDelta)));
+        return getRenderStartPos().add(offset.multiply(sizeMultiplier).rotate(Util.lerpRotation(offsetRotationAll.getPrev(),offsetRotationAll.get(), Screen.tickDelta)));
     }
 
     @Override
@@ -133,7 +133,7 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
 
     @Override
     public double getRenderAimRotation() {
-        return Util.lerp(prevRotation,rotation, Screen.tickDelta);
+        return Util.lerpRotation(prevRotation,rotation, Screen.tickDelta);
     }
 
     public Vec2d getPos(){

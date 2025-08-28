@@ -13,7 +13,7 @@ public class TickS2CPacket implements Packet<ClientNetworkHandler> {
         this.timeMillis=timeMillis;
     }
     public TickS2CPacket(JSONObject o){
-        this.timeMillis=o.getLong("timeMillis");
+        this.timeMillis=o.getLong("time");
     }
     @Override
     public JSONObject toJSON() {

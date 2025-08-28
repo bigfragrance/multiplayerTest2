@@ -27,7 +27,7 @@ public class ClientPlayerEntity extends PlayerEntity {
     public InputManager inputManager= sc.inputManager;
     protected int playerDataUpdateTimer=10;
     public int skillPointCanUse=0;
-    public String currentWeapon="dai";
+    public String currentWeapon="none";
     public int lastAutoFire=0;
     public boolean autoFire=false;
     private Vec2d prevMousePos=new Vec2d(0,0);
@@ -43,13 +43,13 @@ public class ClientPlayerEntity extends PlayerEntity {
         playerDataUpdateTimer--;
         if(playerDataUpdateTimer<0) {
             cs.networkHandler.sendPlayerData(this);
-            cs.networkHandler.send(new UpdateWeaponC2SPacket(cs.setting.getChosenTank()));
+            //cs.networkHandler.send(new UpdateWeaponC2SPacket(cs.setting.getChosenTank()));
             playerDataUpdateTimer=100000000;
         }
-        if(!currentWeapon.equals(cs.setting.getChosenTank())){
+        /*if(!currentWeapon.equals(cs.setting.getChosenTank())){
             cs.networkHandler.send(new UpdateWeaponC2SPacket(cs.setting.getChosenTank()));
             currentWeapon=cs.setting.getChosenTank();
-        }
+        }*/
         super.tick();
         //if(weapon!=null) weapon.tick(false);
         cs.updateCamPos();

@@ -1,0 +1,9 @@
+{"visitor_spawn_delay":5,
+"is_siege":false,
+"random_tick_speed":80,
+"visitor_spawn_time":1000,
+"visitor_spawn_possibility":0.00004,
+"max_polygon":300,
+"max_visitor":1,
+"max_team":4,
+"bot_count":0}

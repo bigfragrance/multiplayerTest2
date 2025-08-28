@@ -33,7 +33,6 @@ public class ServerController {
     public TimerList timers=new TimerList();
     private Timer mazeGenTimer=timers.add(new IntTimer(5));
     public InputManager inputManager;
-    public int maxMerge=0;
     public double blockSize=1;
     public int mazeSize=48;
     public static double off=0.000001;
@@ -41,7 +40,7 @@ public class ServerController {
     private Timer saveTimer=timers.add(new IntTimer(5));
     private Timer actionTimer=timers.add(new IntTimer(5));
     private boolean showingCurrentBlock=false;
-    private double currentRarity=0.1;
+    public double currentRarity=0.1;
     private double currentPlaceRadius=1;
     public ServerController(){
         inputManager= sc.inputManager;

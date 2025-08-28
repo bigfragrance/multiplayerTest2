@@ -2,13 +2,16 @@ package big.engine.math.test;
 
 import java.util.Random;
 
+import static big.engine.modules.EngineMain.cs;
+
 public class MazeGenerator2 {
     private final int width;
     private final int height;
-    public final int[][] maze;
+
     private final Random random = new Random();
     private static final int FLOOR = 1;
     private static final int WALL = 0;
+    public int[][] maze;
     private static final int DOOR = 2;
 
     public MazeGenerator2(int width, int height) {
@@ -16,6 +19,9 @@ public class MazeGenerator2 {
         this.height = height;
         this.maze = new int[width][height];
         generateGameMap();
+        for(int i=0;i<cs.serverController.currentRarity;i++) {
+            smoothOnce();
+        }
     }
 
     private void generateGameMap() {
@@ -27,7 +33,7 @@ public class MazeGenerator2 {
         }
 
 
-        placeRandomWalls(0.3);
+        placeRandomWalls(cs.serverController.currentRarity<0?0.3:0.5);
 
 
         //createRooms(100, 1, 20);
@@ -119,8 +125,6 @@ public class MazeGenerator2 {
 
         if (startX != -1) {
             floodFill(startX, startY, visited);
-
-
             connectRegions(visited);
         }
     }
@@ -171,7 +175,28 @@ public class MazeGenerator2 {
             }
         }
     }
-
+    private void smoothOnce(){
+        int[][] newMaze=new int[width][height];
+        for(int y=0;y<height;y++){
+            for(int x=0;x<width;x++){
+                double c=getCount(x,y);
+                if(c>3.5) newMaze[x][y]=WALL;
+                else if(c<3.5) newMaze[x][y]=FLOOR;
+                else newMaze[x][y]=maze[x][y];
+            }
+        }
+        maze=newMaze;
+    }
+    private double getCount(int x,int y){
+        double count=0;
+        for(int dy=-1;dy<=1;dy++){
+            for(int dx=-1;dx<=1;dx++){
+                if(x+dx<0||y+dy<0||x+dx>=width||y+dy>=height) continue;
+                if(maze[x+dx][y+dy]==WALL) count+=(dx==0||dy==0)?1:0.75;
+            }
+        }
+        return count;
+    }
     public void printMaze() {
         for (int y = 0; y < height; y++) {
             for (int x = 0; x < width; x++) {

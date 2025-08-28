@@ -87,7 +87,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
             }
             if(inputManager.upgradingSkill==i){
                 if(skillPointUsed>=100){
-                    instantRegen();
+                    if(Util.random(0,10)<2)instantRegen();
                     upgradeTimer=2;
                     skillPointUsed++;
                     break;

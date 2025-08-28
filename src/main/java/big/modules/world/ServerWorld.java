@@ -7,18 +7,27 @@ import big.engine.math.util.ColorUtils;
 import big.engine.math.util.EntityUtils;
 import big.engine.math.util.Util;
 import big.engine.math.util.timer.IntTimer;
+import big.engine.modules.EngineMain;
 import big.engine.render.Screen;
+import big.events.TickEvent;
 import big.modules.entity.Entity;
 import big.modules.entity.MobEntity;
 import big.modules.entity.PolygonEntity;
 import big.modules.entity.boss.VisitorEntity;
 import big.modules.entity.player.ServerBotEntity;
 import big.modules.network.packet.s2c.BlockStateUpdateS2CPacket;
+import big.modules.network.packet.s2c.TickS2CPacket;
 import big.modules.world.blocks.Block;
+import big.server.ClientHandler;
+import meteordevelopment.orbit.EventHandler;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import static big.engine.math.util.Util.random;
 import static big.engine.math.util.Util.round;
@@ -26,8 +35,6 @@ import static big.engine.modules.EngineMain.cs;
 import static big.modules.world.Chunk.CHUNK_SIZE;
 
 public class ServerWorld extends World{
-    public static int randomTickSpeed=80;
-    public static int botsCount=2;
     private IntTimer mobSpawnTimer=new IntTimer(50);
     private IntTimer botSpawnTimer=new IntTimer(1);
     private IntTimer visitorSpawnTimer=new IntTimer(10);
@@ -42,14 +49,64 @@ public class ServerWorld extends World{
     }
     public void tick(){
         spawnMobs();
-        //spawnBot();
-        //updateVisitorSpawn();
+        spawnBot();
+        if(!cs.setting.isSiege()){
+            updateVisitorSpawn();
+        }
+        else {
+            updateVisitorSpawnSiege();
+        }
         randomTicks();
+        EngineMain.maxTeams=cs.setting.getMaxTeam();
+        visitorSpawnTimer.setDelay(cs.setting.getVisitorSpawnDelay());
+
+        updateEntity();
+    }
+    public void updateEntity(){
+        cs.serverController.update();
+        for(Long id:cs.addingEntities.keySet()){
+            cs.entities.put(id,cs.addingEntities.get(id));
+        }
+        cs.addingEntities.clear();
+        cs.updateEntityChunk();
+        int coreCount = Runtime.getRuntime().availableProcessors();
+        ExecutorService executor = Executors.newFixedThreadPool(Math.min(coreCount  * 2, 32));
+
+        List<Future<?>> futures = new ArrayList<>();
+        for (Entity entity : cs.entities.values())  {
+            futures.add(executor.submit(()  -> {
+                try {
+                    entity.tick();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }));
+        }
+
+        try {
+            for (Future<?> f : futures) {
+                f.get(500,  TimeUnit.MILLISECONDS);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            executor.shutdownNow();
+        }
+        for(Entity entity:cs.entities.values()){
+            entity.addScoreAdd();
+        }
+        cs.sendEntitiesUpdate();
+        for(int i=0;i<cs.multiClientHandler.clients.size();i++){
+            ClientHandler c=cs.multiClientHandler.clients.get(i);
+            c.serverNetworkHandler.checkDeath();
+            c.checkConnecting();
+            c.send(new TickS2CPacket(System.currentTimeMillis()));
+        }
     }
     public void randomTicks(){
         for(long l: worldChunks.keySet()){
             Chunk chunk=worldChunks.get(l);
-            for(int i=0;i<randomTickSpeed;i++){
+            for(int i=0;i<cs.setting.getRandomTickSpeed();i++){
                 int x=random.nextInt(CHUNK_SIZE);
                 int y=random.nextInt(CHUNK_SIZE);
                 int[] chunkPos=ChunkPos.fromLong(l);
@@ -83,8 +140,8 @@ public class ServerWorld extends World{
     public void updateVisitorSpawn(){
         visitorSpawnTimer.update();
         if(!visitorSpawnTimer.passed()) return;
-        if(getVisitorCount()>=1) return;
-        if(Math.random()>0.05&&visitorSpawningPosition==null) {
+        if(getVisitorCount()>=cs.setting.getMaxVisitor()) return;
+        if(Math.random()>cs.setting.getVisitorSpawnPossibility()&&visitorSpawningPosition==null) {
             visitorSpawnTimer.reset();
             return;
         }
@@ -102,10 +159,10 @@ public class ServerWorld extends World{
             }
         }
         waitedSpawn++;
-        if(waitedSpawn==50){
+        if(waitedSpawn==1){
             cs.sendMessageServer("A visitor is coming.");
         }
-        if(waitedSpawn>=1000){
+        if(waitedSpawn>=cs.setting.getVisitorSpawnTime()){
             for(Entity e:tokill){
                 e.kill();
             }
@@ -131,7 +188,7 @@ public class ServerWorld extends World{
         for(Entity e:cs.entities.values()){
             if(e instanceof ServerBotEntity) count++;
         }
-        if(count>=botsCount) return;
+        if(count>=cs.setting.getBotCount()) return;
         Vec2d pos= EntityUtils.getRandomSpawnPosition(cs.getTeam());
         ServerBotEntity player=new ServerBotEntity(pos);
         player.team=cs.getTeam();
@@ -144,7 +201,7 @@ public class ServerWorld extends World{
         for(Entity e:cs.entities.values()){
             if(e instanceof MobEntity) count++;
         }
-        if(count>=300) return;
+        if(count>=cs.setting.getMaxPolygon()) return;
         for(int i=0;i<500;i++){
             Vec2d pos= Util.randomInBox(cs.borderBox);
             BlockPos blockPos= BlockPos.ofFloor(pos);

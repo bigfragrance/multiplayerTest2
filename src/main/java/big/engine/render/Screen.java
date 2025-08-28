@@ -8,11 +8,13 @@ import big.engine.math.util.Util;
 import big.engine.math.util.timer.AutoList;
 import big.engine.modules.EngineMain;
 import big.events.RenderEvent;
+import big.events.TickEvent;
 import big.modules.ctrl.InputManager;
 import big.modules.entity.Entity;
 import big.modules.entity.bullet.BulletEntity;
 import big.modules.particle.Particle;
 import big.modules.screen.GUI;
+import meteordevelopment.orbit.EventHandler;
 
 import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
@@ -317,7 +319,9 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     public Vec2d getMiddle(){
         return new Vec2d((double) windowWidth /2, (double) windowHeight /2);
     }
-    public void tick(){
+    @EventHandler
+    public void tick(TickEvent event){
+        if(event.isPost()) return;
         if(currentScreen!=null)currentScreen.tick();
     }
     public void setScreen(GUI gui){

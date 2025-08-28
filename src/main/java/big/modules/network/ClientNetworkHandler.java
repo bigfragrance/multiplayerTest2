@@ -133,7 +133,6 @@ public class ClientNetworkHandler {
     public void handlePlayerStatus(JSONObject o){
         if(cs.player!=null){
             cs.player.updateStatus(o);
-            cs.generateGroundBlocks(true);
         }
     }
     public void handlePlayerRespawn(JSONObject o){
@@ -143,7 +142,6 @@ public class ClientNetworkHandler {
                 ClientPlayerEntity player= ClientPlayerEntity.fromJSON(o2.getJSONObject("data"));
                 cs.player=player;
                 cs.addEntity(player);
-                cs.generateGroundBlocks(true);
             }
         }
     }

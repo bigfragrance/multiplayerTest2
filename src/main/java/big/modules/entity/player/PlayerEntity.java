@@ -80,12 +80,7 @@ public class PlayerEntity extends Entity {
         });
     }
     public void move(Vec2d vec){
-        //Box b=this.boundingBox.stretch(this.velocity.x,this.velocity.y);
-        /*EntityUtils.updateCollision(this,e->e.id==this.id||!e.isAlive||!(e instanceof BlockEntity),e->e.boundingBox.intersects(b),(e)->{
-            BlockEntity block=(BlockEntity)e;
-            vec.set(EntityUtils.getMaxMove(this.boundingBox,vec,e.boundingBox,block.leftCheck,block.rightCheck,block.topCheck,block.buttonCheck));
-        });*/
-        vec.set(insideWall?vec: EntityUtils.getMaxMoveNoStuck(this.boundingBox,vec));
+        vec.set(EntityUtils.getMaxMove(this.boundingBox,vec));
         this.position.offset(vec);
         this.boundingBox=this.boundingBox.offset(vec);
     }
@@ -158,6 +153,7 @@ public class PlayerEntity extends Entity {
         this.health=PlayerEntity.healthMax;
         this.shield=PlayerEntity.shieldMax;
         this.noEnemyTimer=0;
+        this.weapon=null;
         //this.score*=0.5;
     }
     public void render(Graphics g){
