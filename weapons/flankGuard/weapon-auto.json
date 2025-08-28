@@ -1,0 +1,181 @@
+{
+  "Auto-3":{
+    "data":[
+      {
+        "type":"AutoGunArray",
+        "count": 3,
+        "info": {
+          "offsetRotation":0,
+          "offset":{
+            "x":0.12,
+            "y":0
+          },
+          "layer":1,
+          "size":0.15,
+          "fov":150
+        },
+        "data":[
+          {
+            "type":"Gun",
+            "mode": 0,
+            "offsetRotation":0,
+            "offset":{
+              "x":0.1,
+              "y":0
+            },
+            "reloadMultiplier":2,
+            "layer":1,
+            "startDelay":0,
+            "size":[0.2,0.06,0.06],
+            "bulletType":{
+              "type":0,
+              "sharp":false,
+              "sharpFactor":1,
+              "multipliers":[2.5,3,1.5,0.7]
+            }
+          }
+        ]
+      }
+    ],
+    "parent": ["FlankGuard"]
+  },
+  "Auto-5":{
+    "data":[
+      {
+        "type":"AutoGunArray",
+        "count": 5,
+        "info": {
+          "offsetRotation":0,
+          "offset":{
+            "x":0.12,
+            "y":0
+          },
+          "layer":1,
+          "size":0.15,
+          "fov":150
+        },
+        "data":[
+          {
+            "type":"Gun",
+            "mode": 0,
+            "offsetRotation":0,
+            "offset":{
+              "x":0.1,
+              "y":0
+            },
+            "reloadMultiplier":2,
+            "layer":1,
+            "startDelay":0,
+            "size":[0.2,0.04,0.04],
+            "bulletType":{
+              "type":0,
+              "sharp":false,
+              "sharpFactor":1,
+              "multipliers":[2,3,1.5,0.45]
+            }
+          }
+        ]
+      }
+    ],
+    "parent": ["Auto-3"]
+  },
+  "Mega-3":{
+    "data":[
+      {
+        "type":"AutoGunArray",
+        "count": 3,
+        "info": {
+          "offsetRotation":0,
+          "offset":{
+            "x":0.12,
+            "y":0
+          },
+          "layer":1,
+          "size":0.15,
+          "fov":150
+        },
+        "data":[
+          {
+            "type":"Gun",
+            "mode": 0,
+            "offsetRotation":0,
+            "offset":{
+              "x":0.1,
+              "y":0
+            },
+            "reloadMultiplier":1,
+            "layer":1,
+            "startDelay":0,
+            "size":[0.2,0.1,0.1],
+            "bulletType":{
+              "type":0,
+              "sharp":false,
+              "sharpFactor":1,
+              "multipliers":[4,3,2,1.1]
+            }
+          }
+        ]
+      }
+    ],
+    "parent": ["Auto-3"]
+  },
+  "Auto-4":{
+    "data":[
+      {
+        "type":"AutoGunArray",
+        "count": 4,
+        "info": {
+          "offsetRotation":0,
+          "offset":{
+            "x":0.15,
+            "y":0
+          },
+          "layer":1,
+          "size":0.15,
+          "fov":120
+        },
+        "data":[
+          {
+            "type":"Gun",
+            "mode": 0,
+            "offsetRotation":0,
+            "offset":{
+              "x":0.1,
+              "y":0.03
+            },
+            "reloadMultiplier":2,
+            "layer":1,
+            "startDelay":0,
+            "size":[0.2,0.025,0.025],
+            "bulletType":{
+              "type":0,
+              "sharp":false,
+              "sharpFactor":1,
+              "multipliers":[1,4.5,1.5,0.4]
+            }
+          },
+          {
+            "type":"Gun",
+            "mode": 0,
+            "offsetRotation":0,
+            "offset":{
+              "x":0.1,
+              "y":-0.03
+            },
+            "reloadMultiplier":2,
+            "layer":1,
+            "startDelay":2,
+            "size":[0.2,0.025,0.025],
+            "bulletType":{
+              "type":0,
+              "sharp":false,
+              "sharpFactor":1,
+              "multipliers":[1,4.5,1.5,0.4]
+            }
+          }
+        ]
+      }
+    ],
+    "parent": ["Auto-3"]
+  }
+}
