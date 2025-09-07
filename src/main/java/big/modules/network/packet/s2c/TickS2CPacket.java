@@ -28,7 +28,7 @@ public class TickS2CPacket implements Packet<ClientNetworkHandler> {
         if(lastTime>0){
             long delta=timeMillis-lastTime;
             double tps=1000.0/delta;
-            EngineMain.TPS=tps;
+            //EngineMain.TPS=tps;
         }
         lastTime=timeMillis;
     }

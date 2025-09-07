@@ -44,7 +44,7 @@ public class ClientHandler implements Runnable {
         cs.addEntity(player);
         this.serverNetworkHandler=new ServerNetworkHandler(this);
         this.serverNetworkHandler.sendPlayerSpawn(player);
-        this.serverNetworkHandler.send(new TanksDataS2CPacket(GunList.data).toJSON());
+        this.serverNetworkHandler.send(new TanksDataS2CPacket(GunList.data,GunList.presetData).toJSON());
         this.player.networkHandler=this.serverNetworkHandler;
         cs.multiClientHandler.addClient(this);
     }

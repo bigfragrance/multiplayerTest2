@@ -17,8 +17,14 @@ import static big.engine.modules.EngineMain.cs;
 
 public class TanksDataS2CPacket implements Packet<ClientNetworkHandler> {
     public JSONObject tanksData;
+    public JSONObject presetData;
+    public TanksDataS2CPacket(JSONObject tanksData,JSONObject presetData){
+        this.tanksData=tanksData;
+        this.presetData=presetData;
+    }
     public TanksDataS2CPacket(JSONObject tanksData){
         this.tanksData=tanksData;
+        this.presetData=tanksData.getJSONObject("preset");
     }
     @Override
     public JSONObject toJSON() {
@@ -36,12 +42,15 @@ public class TanksDataS2CPacket implements Packet<ClientNetworkHandler> {
             tankData.remove(s);
         }
         JSONObject weaponData=new JSONObject(tankData.toString());
+        weaponData.put("preset",presetData);
         PacketUtil.putPacketType(weaponData,getType());
         return weaponData;
     }
 
     @Override
     public void apply(ClientNetworkHandler clientNetworkHandler) {
+        GunList.data=tanksData;
+        GunList.presetData=presetData;
         TankChooseScreen.tanksList=tanksData;
         TankChooseScreen.INSTANCE.init();
         //WordHelperScreen.INSTANCE.init();

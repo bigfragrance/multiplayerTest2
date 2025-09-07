@@ -69,6 +69,17 @@ public class EntityUtils {
         if(mul<=0) return new Vec2d(0,0);
         return sub.limit(mul).limitOnlyOver(collisionMax);
     }
+    public static Vec2d getPushVectorNew(Entity e,Entity checking){
+        Vec2d sub=e.position.subtract(checking.position);
+        double subLength=sub.length();
+        if(subLength<0.0000001) return new Vec2d(0,0);
+        double length=Math.max(e.boundingBox.xSize(),e.boundingBox.ySize())+Math.max(checking.boundingBox.xSize(),checking.boundingBox.ySize());
+        double ratio=checking.mass/(checking.mass+e.mass);
+        double back=length/2-subLength-0.02;
+        if(back<=0) return new Vec2d(0,0);
+        double coll=back*ratio;
+        return sub.limit(coll);
+    }
     public static Color getTeamcolor(int team){
         if(team<0){
             return Color.PINK;
@@ -128,17 +139,7 @@ public class EntityUtils {
         if(!e.isAlive){
             team=new Color(team.getRed(),team.getGreen(),team.getBlue(),50);
         }
-        if(e.type.type==0) {
-            g.setColor(ColorUtils.darker(team, 0.6));
-            Util.render(g, Util.lerp(e.prevBoundingBox, e.boundingBox, e.getTickDelta()).switchToJFrame());
-            g.setColor(team);
-            Util.render(g,smallerBullet (Util.lerp(e.prevBoundingBox, e.boundingBox, e.getTickDelta())).switchToJFrame());
-        }else{
-            g.setColor(ColorUtils.darker(team, 0.6));
-            Util.renderPolygon(g,e.getRenderPosition(),e.type.type+2,e.boundingBox.avgSize()/2,e.getRenderRotation(),true,true,e.type.sharp,e.type.sharpFactor);
-            g.setColor(team);
-            Util.renderPolygon(g,e.getRenderPosition(),e.type.type+2,e.boundingBox.avgSize()/2*0.95,e.getRenderRotation(),true,true,e.type.sharp,e.type.sharpFactor);
-        }
+        e.type.render(g,e,team);
     }
     public static void renderBullet(Graphics g, BulletEntity e){
         renderBullet(g,e,e.getRenderAlpha());
@@ -533,12 +534,12 @@ public class EntityUtils {
             return new Vec2d(0, 0);
         }
 
-        final double EPSILON = 1e-8; // 容差，避免浮点误差
+        final double EPSILON = 1e-8;
 
         double moveX = velocity.x;
         double moveY = velocity.y;
 
-        // --- 先处理 X 方向 ---
+
         if (velocity.x != 0) {
             boolean shouldCheckX = (velocity.x > 0 && checkRight) || (velocity.x < 0 && checkLeft);
             if (shouldCheckX) {
@@ -555,11 +556,11 @@ public class EntityUtils {
             }
         }
 
-        // --- 再处理 Y 方向 ---
+
         if (velocity.y != 0) {
             boolean shouldCheckY = (velocity.y > 0 && checkTop) || (velocity.y < 0 && checkBottom);
             if (shouldCheckY) {
-                // 用 X 修正后的盒子来检测 Y
+
                 Box yBox = box.offset(new Vec2d(moveX, velocity.y));
                 if (yBox.intersects(checking)) {
                     if (velocity.y > 0) {
@@ -573,7 +574,7 @@ public class EntityUtils {
             }
         }
 
-        // 将微小值直接归零，避免卡墙
+
         if (Math.abs(moveX) < EPSILON) moveX = 0;
         if (Math.abs(moveY) < EPSILON) moveY = 0;
 

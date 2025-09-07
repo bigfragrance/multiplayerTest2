@@ -25,7 +25,10 @@ public class InputManager {
         return input;
     }
     public boolean isShooting(){
-        return Screen.isKeyPressed(' ')||Screen.isKeyPressed(Screen.MOUSECHAR);
+        return Screen.isKeyPressed(' ')||Screen.isMousePressed(1);
+    }
+    public boolean isDefending(){
+        return Screen.isKeyPressed('z')||Screen.isMousePressed(3);
     }
     public boolean isRespawning(){
         return Screen.isKeyPressed('r');
@@ -127,7 +130,7 @@ public class InputManager {
         return Screen.isKeyPressed('r');
     }
     public boolean isReloading(){
-        return Screen.isKeyPressed('z')&&Screen.isKeyClicked('/');
+        return Screen.isKeyClicked('x')&&Screen.isKeyPressed('/');
     }
     public void unFocus(){
         for(char c:Screen.keyPressed.keySet()){

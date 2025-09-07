@@ -8,7 +8,7 @@
                     "x":0,
                     "y":0
                 },
-                "reloadMultiplier":2.5,
+                "reloadMultiplier":1,
                 "layer":1,
                 "startDelay":0,
                 "size":[0.35,0.08,0.08],
@@ -19,7 +19,92 @@
                     "multipliers":[2.5,3,2,1]
                 }
             }
-        ]
+        ],
+        "extradata":{
+            "stopFollow":3
+        }
+    },
+    "Auto-Defend-Single":{
+        "data":[
+            {
+                "type":"Gun",
+                "offsetRotation":0,
+                "offset":{
+                    "x":0,
+                    "y":0
+                },
+                "reloadMultiplier":1,
+                "layer":1,
+                "startDelay":0,
+                "size":[0.35,0.08,0.08],
+                "bulletType":{
+                    "type":0,
+                    "sharp":false,
+                    "sharpFactor":1,
+                    "multipliers":[2.5,3,2,1]
+                }
+            },
+            {
+                "preset": ["FullDefend","AutoTurret"]
+            }
+        ],
+        "extradata":{
+            "stopFollow":3
+        },
+        "parent": ["Single"]
+    },
+    "Dicktest":{
+        "data":[
+            {
+                "type":"Gun",
+                "offsetRotation":0,
+                "offset":{
+                    "x":0,
+                    "y":0
+                },
+                "reloadMultiplier":1,
+                "layer":1,
+                "startDelay":0,
+                "size":[3,0.2,0.2],
+                "bulletType":{
+                    "type":0,
+                    "sharp":false,
+                    "sharpFactor":1,
+                    "multipliers":[2.5,3,2,1]
+                }
+            },
+            {
+                "type":"AutoGunList",
+                "info": {
+                    "offsetRotation":0,
+                    "offset":{
+                        "x":-0.5,
+                        "y":-0.5
+                    },
+                    "layer":1,
+                    "size":0.5,
+                    "fov":150
+                },
+                "data": []
+            },
+            {
+                "type":"AutoGunList",
+                "info": {
+                    "offsetRotation":0,
+                    "offset":{
+                        "x":-0.5,
+                        "y":0.5
+                    },
+                    "layer":1,
+                    "size":0.5,
+                    "fov":150
+                },
+                "data": []
+            }
+        ],
+        "extradata":{
+            "stopFollow":3
+        }
     },
     "Destroyer":{
         "data":[
@@ -42,7 +127,10 @@
                 }
             }
         ],
-        "parent": ["Single"]
+        "parent": ["Single"],
+        "extradata":{
+            "stopFollow":3
+        }
     },
     "Launcher":{
         "data":[
@@ -53,7 +141,7 @@
                     "x":0,
                     "y":0
                 },
-                "reloadMultiplier":0.7,
+                "reloadMultiplier":0.5,
                 "layer":1,
                 "startDelay":0,
                 "size":[0.35,0.18,0.18,0.05,0.1,0.1],
@@ -122,9 +210,12 @@
                 }
             }
         ],
-        "parent": ["Destroyer"]
+        "parent": ["Single"],
+        "extradata":{
+            "stopFollow":3.5
+        }
     },
-    "Launcher-auto0":{
+    "Launcher-Auto":{
         "data":[
             {
                 "type":"Gun",
@@ -133,7 +224,7 @@
                     "x":0,
                     "y":0
                 },
-                "reloadMultiplier":0.7,
+                "reloadMultiplier":0.4,
                 "layer":1,
                 "startDelay":0,
                 "size":[0.3,0.14,0.14,0.2,0.05,0.05],
@@ -141,7 +232,7 @@
                     "type":0,
                     "sharp":false,
                     "sharpFactor":1,
-                    "multipliers":[2,1.5,6,1.4,0.8,3,0.5,10],
+                    "multipliers":[2,1.5,6,1.4,0.8,3,0.5,0.1],
                     "weapon":{
                         "data":[
                             {
@@ -174,7 +265,7 @@
                                             "type":0,
                                             "sharp":false,
                                             "sharpFactor":1,
-                                            "multipliers":[1,4.5,1,0.4]
+                                            "multipliers":[1,4.5,1,0.4,1,1,1,0.1]
                                         }
                                     },
                                     {
@@ -193,7 +284,7 @@
                                             "type":0,
                                             "sharp":false,
                                             "sharpFactor":1,
-                                            "multipliers":[1,4.5,1,0.4]
+                                            "multipliers":[1,4.5,1,0.4,1,1,1,0.1]
                                         }
                                     }
                                 ]
@@ -203,7 +294,10 @@
                 }
             }
         ],
-        "parent": ["Launcher"]
+        "parent": ["Launcher"],
+        "extradata":{
+            "stopFollow":3
+        }
     },
     "StreamLiner":{
         "data":[
@@ -214,7 +308,7 @@
                     "x":0.1,
                     "y":0
                 },
-                "reloadMultiplier":2,
+                "reloadMultiplier":1.5,
                 "layer":1,
                 "startDelay":0,
                 "size":[0.4,0.08,0.08],
@@ -232,7 +326,7 @@
                     "x":0.1,
                     "y":0
                 },
-                "reloadMultiplier":2,
+                "reloadMultiplier":1.5,
                 "layer":2,
                 "startDelay":2,
                 "size":[0.35,0.08,0.08],
@@ -250,7 +344,7 @@
                     "x":0.1,
                     "y":0
                 },
-                "reloadMultiplier":2,
+                "reloadMultiplier":1.5,
                 "layer":3,
                 "startDelay":4,
                 "size":[0.3,0.08,0.08],
@@ -262,7 +356,10 @@
                 }
             }
         ],
-        "parent": ["Single"]
+        "parent": ["Single"],
+        "extradata":{
+            "stopFollow":4
+        }
     },
     "Predictor":{
         "data":[
@@ -321,6 +418,9 @@
                 }
             }
         ],
-        "parent": ["Destroyer"]
+        "parent": ["Destroyer"],
+        "extradata":{
+            "stopFollow":3
+        }
     }
 }

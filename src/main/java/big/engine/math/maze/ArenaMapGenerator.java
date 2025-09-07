@@ -12,7 +12,7 @@ public class ArenaMapGenerator {
         int width = 61;
         int height = 41;
         boolean preview = true;
-        double density = 0.08;  // 障碍物占比，越小越开放
+        double density = 0.08;
 
         int[][] map = generateArena(width, height, density, System.nanoTime(), preview);
 
@@ -23,7 +23,6 @@ public class ArenaMapGenerator {
         int[][] grid = new int[height][width];
         Random rng = new Random(seed);
 
-        // 默认全部空地
         for (int y = 0; y < height; y++)
             for (int x = 0; x < width; x++)
                 grid[y][x] = FLOOR;

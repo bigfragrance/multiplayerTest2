@@ -2,6 +2,7 @@ package big.modules.entity.player;
 
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
+import big.engine.math.util.EntityUtils;
 import big.engine.math.util.Util;
 import big.modules.ctrl.ServerInputManager;
 import big.modules.entity.Attackable;
@@ -10,6 +11,7 @@ import big.modules.network.ServerNetworkHandler;
 import big.modules.network.packet.Packet;
 import big.modules.network.packet.s2c.MessageS2CPacket;
 import big.modules.network.packet.s2c.PlayerDataS2CPacket;
+import big.modules.network.packet.s2c.PlayerWeaponUpdateS2CPacket;
 import big.modules.weapon.GunList;
 import org.json.JSONObject;
 
@@ -47,7 +49,6 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
         }
         this.size=SIZE*getSizeMultiplier();
         this.boundingBox=new Box(position,size,size);
-        //updateBullet(1);
         super.tick();
         updateBullet();
         this.updateCollision();
@@ -58,8 +59,12 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
             this.speed=SPEED*5;
         }else{
             this.speed=SPEED*skillPoints[5];
+            if(inputManager.defend){
+                this.speed*=0.2;
+            }
         }
     }
+
     public void whenAlive(){
         if(!this.isAlive) return;
         Vec2d input=new Vec2d(inputManager.side,inputManager.forward);
@@ -71,6 +76,21 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
             this.health=0;
         }
         regenShieldAndHealth();
+        if(inputManager.defend){
+            regenShieldAndHealth();
+            regenShieldAndHealth();
+            regenShieldAndHealth();
+        }
+    }
+    public void respawn(){
+        this.isAlive=true;
+        this.setPosition(EntityUtils.getRandomSpawnPosition(this.team));
+        this.health=PlayerEntity.healthMax;
+        this.shield=PlayerEntity.shieldMax;
+        this.noEnemyTimer=0;
+        this.weapon=null;
+        this.networkHandler.send(new PlayerWeaponUpdateS2CPacket(this.id,null).toJSON());
+        //this.score*=0.5;
     }
     public JSONObject getUpdate(){
         return super.getUpdate();
@@ -87,9 +107,9 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
             }
             if(inputManager.upgradingSkill==i){
                 if(skillPointUsed>=100){
-                    if(Util.random(0,10)<2)instantRegen();
+                    /*if(Util.random(0,10)<2)instantRegen();
                     upgradeTimer=2;
-                    skillPointUsed++;
+                    skillPointUsed++;*/
                     break;
                 }
                 if(skillPointLevels[i]>=18){
@@ -114,7 +134,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
     }
     public void updateBullet(){
         if(weapon==null||!isAlive) return;
-        weapon.tick(inputManager.shoot,cs.isServer);
+        weapon.tick(inputManager.shoot,inputManager.defend,cs.isServer);
     }
     public static double getMultiplier(double level,double max){
         return max*level/8;
@@ -143,6 +163,11 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
     @Override
     public Vec2d getPosition() {
         return position;
+    }
+
+    @Override
+    public int getTeam() {
+        return team;
     }
 
     @Override

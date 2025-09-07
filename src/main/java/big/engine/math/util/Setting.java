@@ -91,7 +91,15 @@ public class Setting {
         o.put("is_siege",false);
         o.put("max_team",2);
         o.put("random_tick_speed",80);
+        o.put("maze_bullet_break",true);
+        o.put("maze_bullet_rebound",false);
         return o.toString();
+    }
+    public boolean isMazeBulletBreak(){
+        return data.getBoolean("maze_bullet_break");
+    }
+    public boolean isMazeBulletRebound(){
+        return data.getBoolean("maze_bullet_rebound");
     }
     public static void init(){
         String data=Util.read(SETTING_PATH);

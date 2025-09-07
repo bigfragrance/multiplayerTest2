@@ -55,8 +55,8 @@ public class MobEntity extends Entity{
                 }
             }
             if(!(e instanceof BulletEntity)) {
-                Vec2d coll = EntityUtils.getPushVector(this, e);
-                this.velocity.offset(coll);
+                Vec2d coll = EntityUtils.getPushVectorNew(this, e);
+                this.move(coll);
             }
         });
     }

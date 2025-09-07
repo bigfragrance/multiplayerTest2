@@ -1,0 +1,168 @@
+{
+  "AutoTurret": {
+    "data": [
+      {
+        "type":"AutoGunArray",
+        "count": 1,
+        "info": {
+          "offsetRotation":0,
+          "offset":{
+            "x":0,
+            "y":0
+          },
+          "layer":15,
+          "size":0.1,
+          "fov":1000
+        },
+        "data":[
+          {
+            "type":"Gun",
+            "mode": 0,
+            "offsetRotation":0,
+            "offset":{
+              "x":0.1,
+              "y":0
+            },
+            "reloadMultiplier":0.8,
+            "layer":1,
+            "startDelay":0,
+            "size":[0.15,0.05,0.05],
+            "bulletType":{
+              "type":0,
+              "sharp":false,
+              "sharpFactor":1,
+              "multipliers":[2,3,2,0.7]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "Tri-AutoTurret": {
+    "data": [
+      {
+        "type":"AutoGunArray",
+        "count": 3,
+        "info": {
+          "offsetRotation":0,
+          "offset":{
+            "x":0.1,
+            "y":0
+          },
+          "layer":15,
+          "size":0.1,
+          "fov":1000
+        },
+        "data":[
+          {
+            "type":"Gun",
+            "mode": 0,
+            "offsetRotation":0,
+            "offset":{
+              "x":0.1,
+              "y":0
+            },
+            "reloadMultiplier":0.8,
+            "layer":1,
+            "startDelay":0,
+            "size":[0.15,0.05,0.05],
+            "bulletType":{
+              "type":0,
+              "sharp":false,
+              "sharpFactor":1,
+              "multipliers":[2,3,2,0.7]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "DriveTurret": {
+    "data": [
+      {
+        "type":"AutoGunArray",
+        "count": 1,
+        "info": {
+          "offsetRotation":0,
+          "offset":{
+            "x":0,
+            "y":0
+          },
+          "layer":15,
+          "size":0.05,
+          "fov":1000
+        },
+        "data":[
+          {
+            "type":"Gun",
+            "mode": 0,
+            "offsetRotation":0,
+            "offset":{
+              "x":0.05,
+              "y":0
+            },
+            "reloadMultiplier":0.8,
+            "layer":1,
+            "startDelay":0,
+            "size":[0.08,0.025,0.025],
+            "bulletType":{
+              "type":0,
+              "sharp":false,
+              "sharpFactor":1,
+              "multipliers":[0.5,3,1,0.35]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "DriveMark": {
+    "data": [
+      {
+        "type":"Gun",
+        "offsetRotation":0,
+        "offset":{
+          "x":-0.05,
+          "y":0
+        },
+        "reloadMultiplier":0,
+        "layer":100,
+        "startDelay":10000000,
+        "size":[0.15,0.0866,0],
+        "bulletType":{
+          "type":0,
+          "sharp":false,
+          "sharpFactor":1,
+          "multipliers":[0,1,0.1,0,0]
+        }
+      }
+    ]
+  },
+  "FullDefend":{
+    "data":[
+      {
+        "type":"GunArray",
+        "count": 60,
+        "startDelays": [0,2,4,6,8],
+        "offsetRotation":0,
+        "offset":{
+          "x":0.18,
+          "y":0
+        },
+        "reloadMultiplier":0.1,
+        "layer":7,
+        "startDelay":0,
+        "size":[0.03,0.04,0.04],
+        "bulletType":{
+          "type":0,
+          "sharp":false,
+          "sharpFactor":1,
+          "multipliers":[1.5,2.5,1.2,2,0.05]
+        },
+        "extraData": {
+          "defend": true
+        }
+      }
+    ]
+  }
+}

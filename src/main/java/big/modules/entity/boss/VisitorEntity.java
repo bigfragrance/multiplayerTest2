@@ -30,7 +30,7 @@ public class VisitorEntity extends ServerBotEntity {
     private boolean inited=false;
     private ConcurrentHashMap<Integer,RotationNode> rotationNodes=new ConcurrentHashMap<>();
     public VisitorEntity(Vec2d position,int level){
-        super(position);
+        super(position,-1);
         this.team=-1;
         this.skillPointUsed=100000000;
         this.skillPoints=defSkillPoints;
@@ -55,7 +55,7 @@ public class VisitorEntity extends ServerBotEntity {
         }
     }
     private void initWeapon(){
-        weapon.tick(true,true);
+        weapon.tick(true,false,true);
         boolean r=false;
         for(CanAttack ca:weapon.list.values()){
             if(ca.lastNode==null){
@@ -76,7 +76,7 @@ public class VisitorEntity extends ServerBotEntity {
         inited=true;
         for(int i=0;i<50;i++){
             updateWeapon();
-            weapon.tick(true,true);
+            weapon.tick(true,false,true);
         }
     }
     public void render(Graphics g){

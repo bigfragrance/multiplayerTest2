@@ -77,7 +77,7 @@ public class AutoController<T extends Entity&Controllable> {
         updateFollow();
         /*inputManager.side=0;
         inputManager.forward=0;*/
-        if(dodge)updateDodge();
+        //if(dodge)updateDodge();
         awayFromOthersBase();
     }
     public void updateDodge(){
@@ -169,6 +169,8 @@ public class AutoController<T extends Entity&Controllable> {
         Vec2d vec=target.getPos().subtract(owner.getPos());
         if(vec.length()<owner.weapon.getStopFollowDistance()){
             vec=vec.rotate(90);
+        }if(vec.length()<owner.weapon.getStopFollowDistance()-0.5){
+            vec=vec.rotate(90);
         }
         Vec2d v=getPathPos(vec.add(owner.getPos()));
         updateInput(v==null?vec:v.subtract(owner.getPos()));
@@ -251,6 +253,7 @@ public class AutoController<T extends Entity&Controllable> {
         Entity mob=null;
         for(Entity e:cs.entities.values()){
             if(e.team==owner.team) continue;
+            if(!e.isAlive) continue;
             if(e instanceof PlayerEntity||e instanceof MobEntity){
                 boolean b=e instanceof PlayerEntity;
                 if(b){

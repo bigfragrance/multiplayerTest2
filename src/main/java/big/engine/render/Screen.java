@@ -35,9 +35,10 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     public static JFrame frame;
     public volatile double camX=0;
     public volatile double camY=0;
-    public static double defZoom=12.8/0.02;
+    public static double renderFix=512;
+    public static double defZoom=1.6*renderFix/0.02;
     public volatile double zoom=defZoom;
-    public volatile double zoom2=0.125;
+    public volatile double zoom2=1/renderFix;
     private double oldZoom=defZoom;
     public double lineWidth=1;
     public int windowWidth=1000;
@@ -67,13 +68,13 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
             }
             @Override
             public void mousePressed(MouseEvent e) {
-                keyPressed.put(MOUSECHAR,true);
+                keyPressed.put((char)(MOUSECHAR+e.getButton()),true);
                 //use this
             }
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                keyPressed.put(MOUSECHAR,false);
+                keyPressed.put((char)(MOUSECHAR+e.getButton()),false);
             }
 
             @Override
@@ -145,6 +146,15 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     }
     public static boolean isKeyClicked(char c){
         return isKeyPressed(c)&&!isKeyLastPressed(c);
+    }
+    public static boolean isMousePressed(int c){
+        return keyPressed.getOrDefault((char)(c+(int)MOUSECHAR),false);
+    }
+    public static boolean isMouseLastPressed(int c){
+        return lastKeyPressed.getOrDefault((char)(c+(int)MOUSECHAR),false);
+    }
+    public static boolean isMouseClicked(int c){
+        return isMousePressed(c)&&!isMouseLastPressed(c);
     }
     public void run(){
         setUIFont(new Font("微软雅黑", Font.PLAIN, 14));

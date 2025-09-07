@@ -16,6 +16,7 @@ import big.modules.entity.Entity;
 import big.modules.entity.bullet.BulletEntity;
 import big.modules.entity.bullet.BulletType;
 import big.modules.entity.player.PlayerEntity;
+import big.modules.network.packet.s2c.TanksDataS2CPacket;
 import big.modules.weapon.GunList;
 import big.modules.world.blocks.Block;
 import big.modules.world.BlockState;
@@ -58,6 +59,7 @@ public class ServerController {
             for(Entity e:cs.world.getEntities()){
                 e.kill();
             }
+            cs.multiClientHandler.clients.forEach(clientHandler -> clientHandler.send(new TanksDataS2CPacket(GunList.data,GunList.presetData).toJSON())); ;
         }
         if(inputManager.isGeneratingMaze()&&mazeGenTimer.passed()){
             mazeGenTimer.reset();

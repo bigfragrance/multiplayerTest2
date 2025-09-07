@@ -142,7 +142,7 @@ public abstract class Entity implements NetworkItem {
             this.move(this.velocity.add(extraVelocity));
             this.extraVelocity.multiply1(extraVelocityD);
             if(this.weapon!=null&&!(this instanceof PlayerEntity)){
-                this.weapon.tick(true,cs.isServer);
+                this.weapon.tick(true,false,cs.isServer);
             }
             if(cs.world.getBlock(BlockPos.ofFloor(this.boundingBox.getCenter())).solid){
                 this.insideWall=true;
@@ -169,7 +169,7 @@ public abstract class Entity implements NetworkItem {
                     rotation+=360;
                 }
             }
-            if(weapon!=null) weapon.tick(false,cs.isServer);
+            if(weapon!=null) weapon.tick(false,false,cs.isServer);
         }
     }
     public void move(Vec2d v){

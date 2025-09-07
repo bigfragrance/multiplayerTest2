@@ -38,7 +38,7 @@ public class PolygonEntity extends MobEntity{
     public static double[] damageMultipliers2={0.5,0.7,1,1.2,1.3,1.4,1.45,1.5,1.55,1.6};
     public static double[] spawnAreas={1,1,0.4,0.4,0.4,0.3,0.3,0.3,0.3,0.3};
     public static double sizeBase=12*sizeMultiplier;
-    public static double damageBase=3;
+    public static double damageBase=8;
     public static double speed=0.15*sizeMultiplier;
     public static double attackSpeed=1*sizeMultiplier;
     public Vec2d addVelocity=new Vec2d(0,0);
@@ -46,7 +46,7 @@ public class PolygonEntity extends MobEntity{
     public int sides;
     public int type;
     public double size;
-    public double scoreBase=1;
+    public double scoreBase=0.3;
 
     public PolygonEntity(Vec2d position,int sides,int type){
         super();

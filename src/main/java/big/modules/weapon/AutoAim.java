@@ -39,6 +39,7 @@ public class AutoAim<T extends AbleToAim> {
         Entity mob=null;
         for(Entity e:cs.entities.values()){
             if(e.team==owner.getTeam()) continue;
+            if(!e.isAlive) continue;
             if(e instanceof PlayerEntity||e instanceof MobEntity){
                 boolean b=e instanceof PlayerEntity;
                 if(b){

@@ -190,8 +190,7 @@ public class ServerWorld extends World{
         }
         if(count>=cs.setting.getBotCount()) return;
         Vec2d pos= EntityUtils.getRandomSpawnPosition(cs.getTeam());
-        ServerBotEntity player=new ServerBotEntity(pos);
-        player.team=cs.getTeam();
+        ServerBotEntity player=new ServerBotEntity(pos,cs.getTeam());
         cs.addEntity(player);
     }
     public void spawnMobs(){

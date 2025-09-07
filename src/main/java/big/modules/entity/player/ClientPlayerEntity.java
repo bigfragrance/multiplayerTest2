@@ -36,24 +36,15 @@ public class ClientPlayerEntity extends PlayerEntity {
         inputManager= sc.inputManager;
     }
     public void tick(){
-        /*if(this.weapon==null){
-            this.weapon= Weapon.get(this,cs.setting.getChosenTank());
-        }*/
         this.name=cs.setting.getName();
         playerDataUpdateTimer--;
         if(playerDataUpdateTimer<0) {
             cs.networkHandler.sendPlayerData(this);
-            //cs.networkHandler.send(new UpdateWeaponC2SPacket(cs.setting.getChosenTank()));
             playerDataUpdateTimer=100000000;
         }
-        /*if(!currentWeapon.equals(cs.setting.getChosenTank())){
-            cs.networkHandler.send(new UpdateWeaponC2SPacket(cs.setting.getChosenTank()));
-            currentWeapon=cs.setting.getChosenTank();
-        }*/
         super.tick();
-        //if(weapon!=null) weapon.tick(false);
         cs.updateCamPos();
-        sc.zoom=(12.8/0.02)/this.getFov();
+        sc.zoom=(Screen.defZoom)/this.getFov();
         Screen.tickDelta=0;
         updateInput();
         if(!isAlive) {
@@ -76,6 +67,7 @@ public class ClientPlayerEntity extends PlayerEntity {
         serverInputManager.side=input[0];
         serverInputManager.aimPos=inputManager.getMouseVec();
         serverInputManager.shoot= sc.currentScreen==null&& (inputManager.isShooting()||autoFire);
+        serverInputManager.defend=sc.currentScreen==null&&inputManager.isDefending();
         serverInputManager.sendUpdate();
 
         if(inputManager.isOpeningSendMsg()){
@@ -92,7 +84,6 @@ public class ClientPlayerEntity extends PlayerEntity {
         }
     }
     private void updateSkillPoint(){
-        //if(skillPointCanUse<=0) return;
         serverInputManager.upgradingSkill=-1;
         for(int i=0;i<skillPoints.length;i++){
             if(inputManager.isUpgrading(i)){

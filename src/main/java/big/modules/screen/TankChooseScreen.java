@@ -42,10 +42,10 @@ public class TankChooseScreen extends GUI {
             player.rotation+=1;
             if(player.weapon!=null){
                 player.weapon.setSize(sizeMultiplier);
-                player.weapon.tick(false,true);
+                player.weapon.tick(false,false,true);
             }
         }
-        if(Screen.isKeyClicked(Screen.MOUSECHAR)){
+        if(Screen.isMouseClicked(1)){
             Vec2d mouse=sc.inputManager.getMouseVec().add(cs.getCamPos());
             for(int i=currentIndex*tankPerPage;i<(currentIndex+1)*tankPerPage;i++){
                 if(i>=toShow.size())break;
@@ -70,10 +70,14 @@ public class TankChooseScreen extends GUI {
                     cs.player.currentWeapon=player.name;
                     cs.setting.setChosenTank(player.name);
                     cs.setting.save();
-                    if(init())sc.closeScreen();
+                    sc.closeScreen();
                 }
             }
         }
+    }
+    public void open(){
+        if(getTanksList().isEmpty()) return;
+        sc.setScreen(this);
     }
     public void render(Graphics g){
         for(int i=currentIndex*tankPerPage;i<(currentIndex+1)*tankPerPage;i++){

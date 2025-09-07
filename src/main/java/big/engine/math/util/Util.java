@@ -144,6 +144,35 @@ public class Util {
             if(side) g.drawPolygon(xPoints, yPoints, nSides);
         }
     }
+    public static void renderPolygon(Graphics g,Vec2d center,int nSides,double radius,double rotation,boolean side,boolean fill,boolean sharp,double[] sharpFactors){
+        if(sharp) {
+            nSides *= sharpFactors.length;
+            int[] xPoints = new int[nSides];
+            int[] yPoints = new int[nSides];
+            double angleIncrement = 360d / nSides;
+            for (int i = 0; i < nSides; i++) {
+                double angle = i * angleIncrement + rotation;
+                double r=radius*sharpFactors[i%sharpFactors.length];
+                Vec2d point = center.add(new Vec2d(cos(angle) * r, sin(angle) * r)).switchToJFrame();
+                xPoints[i] = round(point.x);
+                yPoints[i] = round(point.y);
+            }
+            if(fill)g.fillPolygon(xPoints, yPoints, nSides);
+            if(side) g.drawPolygon(xPoints, yPoints, nSides);
+        }else{
+            int[] xPoints = new int[nSides];
+            int[] yPoints = new int[nSides];
+            double angleIncrement = 360d / nSides;
+            for (int i = 0; i < nSides; i++) {
+                double angle = i * angleIncrement + rotation;
+                Vec2d point = center.add(new Vec2d(cos(angle) * radius, sin(angle) * radius)).switchToJFrame();
+                xPoints[i] = round(point.x);
+                yPoints[i] = round(point.y);
+            }
+            if(fill)g.fillPolygon(xPoints, yPoints, nSides);
+            if(side) g.drawPolygon(xPoints, yPoints, nSides);
+        }
+    }
     public static void render(Graphics g,boolean fill,Vec2d... points){
         int[] xPoints = new int[points.length];
         int[] yPoints = new int[points.length];

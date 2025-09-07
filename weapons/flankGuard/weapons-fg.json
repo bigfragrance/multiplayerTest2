@@ -9,7 +9,7 @@
                     "x":0,
                     "y":0
                 },
-                "reloadMultiplier":2,
+                "reloadMultiplier":1.5,
                 "layer":1,
                 "startDelay":0,
                 "size":[0.35,0.08,0.08],
@@ -20,7 +20,10 @@
                     "multipliers":[2.5,3,1.5,1]
                 }
             }
-        ]
+        ],
+        "extradata":{
+            "stopFollow":1.5
+        }
     },
     "TripleTwin":{
         "data":[
@@ -32,7 +35,7 @@
                     "x":0,
                     "y":0.1
                 },
-                "reloadMultiplier":1.5,
+                "reloadMultiplier":0.8,
                 "layer":1,
                 "startDelay":0,
                 "size":[0.35,0.08,0.08],
@@ -51,9 +54,9 @@
                     "x":0,
                     "y":-0.1
                 },
-                "reloadMultiplier":1.5,
+                "reloadMultiplier":0.8,
                 "layer":1,
-                "startDelay":2,
+                "startDelay":4,
                 "size":[0.35,0.08,0.08],
                 "bulletType":{
                     "type":0,
@@ -61,9 +64,15 @@
                     "sharpFactor":1,
                     "multipliers":[1.5,3,1.5,1]
                 }
+            },
+            {
+                "preset": ["AutoTurret"]
             }
         ],
-        "parent": ["FlankGuard"]
+        "parent": ["FlankGuard","DoubleTwin"],
+        "extradata":{
+            "stopFollow":2
+        }
     },
     "HexaTank":{
         "data":[
@@ -76,7 +85,7 @@
                     "x":0,
                     "y":0
                 },
-                "reloadMultiplier":2,
+                "reloadMultiplier":1.2,
                 "layer":1,
                 "startDelay":0,
                 "size":[0.35,0.08,0.08],
@@ -88,7 +97,10 @@
                 }
             }
         ],
-        "parent": ["FlankGuard"]
+        "parent": ["FlankGuard","Twin"],
+        "extradata":{
+            "stopFollow":1
+        }
     },
     "OctoTank":{
         "data":[
@@ -101,7 +113,7 @@
                     "x":0,
                     "y":0
                 },
-                "reloadMultiplier":2,
+                "reloadMultiplier":1.2,
                 "layer":1,
                 "startDelay":0,
                 "size":[0.35,0.08,0.08],
@@ -113,7 +125,10 @@
                 }
             }
         ],
-        "parent": ["HexaTank"]
+        "parent": ["HexaTank"],
+        "extradata":{
+            "stopFollow":0
+        }
     },
     "Cyclone":{
         "data":[
@@ -126,7 +141,7 @@
                     "x":0.18,
                     "y":0
                 },
-                "reloadMultiplier":2,
+                "reloadMultiplier":1.5,
                 "layer":1,
                 "startDelay":0,
                 "size":[0.1,0.04,0.04],
@@ -134,10 +149,13 @@
                     "type":0,
                     "sharp":false,
                     "sharpFactor":1,
-                    "multipliers":[1.5,3.5,1.2,0.4]
+                    "multipliers":[1.5,2.5,1.2,0.4]
                 }
             }
         ],
-        "parent": ["HexaTank"]
+        "parent": ["HexaTank"],
+        "extradata":{
+            "stopFollow":0
+        }
     }
 }

@@ -34,7 +34,7 @@ public class WordHelperScreen extends GUI {
     }
     public void tick(){
         timer++;
-        if(Screen.isKeyClicked(Screen.MOUSECHAR)){
+        if(Screen.isMouseClicked(1)){
             Vec2d mouse=sc.inputManager.getMouseVec().add(cs.getCamPos());
             for(int i=0;i<toShow.size();i++){
                 PlayerEntity player=toShow.get(i);

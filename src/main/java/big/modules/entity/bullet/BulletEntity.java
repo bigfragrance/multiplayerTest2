@@ -19,7 +19,7 @@ import java.awt.*;
 import static big.engine.modules.EngineMain.cs;
 
 public class BulletEntity extends Entity {
-    public static double[] baseValues={10,0.1,4,0.1,100,20,0.003,0.05};//damage speed health size lifeTime kbFactor randomVelocity selfKB
+    public static double[] baseValues={10,0.1,4,0.1,100,20,0.003,0.3};//damage speed health size lifeTime kbFactor randomVelocity selfKB
     public long ownerId;
     public Entity owner=null;
     private boolean invisibleTick=false;
@@ -61,12 +61,15 @@ public class BulletEntity extends Entity {
             if (!inited) {
                 initWeapon();
             }
+
         }catch (Exception e){
             kill();
         }
     }
     private void updateRotation(){
-        if(this.velocity.length()>0.0000001){
+        if(this.type.shouldCustomRotation()){
+            this.rotation+=type.getCustomRotation();
+        }else if(this.velocity.length()>0.0000001){
             this.rotation=this.velocity.angle();
         }
         //this.rotation+=10;
@@ -109,10 +112,10 @@ public class BulletEntity extends Entity {
             }*/
         });
         //this.velocity.set(EntityUtils.getReboundVelocity(velocity,this.boundingBox));
-
         if(EntityUtils.isInsideWall(this.boundingBox.expand(0.01,0.01))){
             this.health=-1;
         }
+
     }
     public Vec2d getTargetingPos(){
         return this.velocity.multiply(10);

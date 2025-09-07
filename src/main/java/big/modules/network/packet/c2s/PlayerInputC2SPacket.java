@@ -12,12 +12,14 @@ public class PlayerInputC2SPacket implements Packet<ServerNetworkHandler> {
     public int side;
     public Vec2d aimPos;
     public boolean shoot;
+    public boolean defend;
     public int upgradingSkill;
-    public PlayerInputC2SPacket(int forward, int side, Vec2d aimPos, boolean shoot,int upgradingSkill) {
+    public PlayerInputC2SPacket(int forward, int side, Vec2d aimPos, boolean shoot,boolean defend,int upgradingSkill) {
         this.forward = forward;
         this.side = side;
         this.aimPos = aimPos;
         this.shoot = shoot;
+        this.defend=defend;
         this.upgradingSkill=upgradingSkill;
     }
     public PlayerInputC2SPacket(JSONObject o) {
@@ -25,6 +27,7 @@ public class PlayerInputC2SPacket implements Packet<ServerNetworkHandler> {
         this.side = PacketUtil.getInt(o,"side");
         this.aimPos = Vec2d.fromJSON(PacketUtil.getJSONObject(o,"aimPos"));
         this.shoot = PacketUtil.getBoolean(o,"shoot");
+        this.defend=PacketUtil.getBoolean(o,"defend");
         this.upgradingSkill=PacketUtil.getInt(o,"upgradingSkill");
     }
     @Override
@@ -35,6 +38,7 @@ public class PlayerInputC2SPacket implements Packet<ServerNetworkHandler> {
         PacketUtil.put(o,"side",side);
         PacketUtil.put(o,"aimPos",aimPos);
         PacketUtil.put(o,"shoot",shoot);
+        PacketUtil.put(o,"defend",defend);
         PacketUtil.put(o,"upgradingSkill",upgradingSkill);
         return o;
     }
@@ -47,6 +51,7 @@ public class PlayerInputC2SPacket implements Packet<ServerNetworkHandler> {
             player.inputManager.side=side;
             player.inputManager.aimPos=aimPos;
             player.inputManager.shoot=shoot;
+            player.inputManager.defend=defend;
             player.inputManager.upgradingSkill=upgradingSkill;
             player.rotation=aimPos.angle();
             //System.out.println("input:"+forward+","+side+","+aimPos+","+shoot+","+upgradingSkill);

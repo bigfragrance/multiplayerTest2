@@ -55,7 +55,7 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
     public AutoGunList another(double offsetRotation,Vec2d offset,double startDelay){
         return new AutoGunList(owner,this.offsetRotation+offsetRotation,offset,size,fov,layer,getCloneGuns());
     }
-    public void tick(boolean fire,boolean server){
+    public void tick(boolean fire,boolean defend,boolean server){
         if(server) {
             this.sizeMultiplier=owner.getSizeMultiplier();
             updateOffsetRotation();
@@ -63,13 +63,13 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
             autoAim.tick();
             for (CanAttack canAttack : guns.values()) {
                 canAttack.lastNode=this;
-                canAttack.tick(fire||this.fire, true);
+                canAttack.tick(fire||this.fire,defend, true);
             }
         }else{
             offsetRotationAll.next();
             for (CanAttack canAttack : guns.values()) {
                 canAttack.lastNode=this;
-                canAttack.tick(false, false);
+                canAttack.tick(false,defend, false);
             }
         }
     }
@@ -120,7 +120,7 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
         Util.render(g,box.switchToJFrame());
         Color dark= ColorUtils.darker(color,0.6);
         g.setColor(dark);
-        Util.renderPolygon(g,getRenderPos(),32,size*sizeMultiplier,getRenderRotation(),true,false);
+        Util.renderPolygon(g,getRenderPos(),64,size*sizeMultiplier,getRenderRotation(),true,false);
     }
     public Vec2d getRenderPos(){
         return getRenderStartPos().add(offset.multiply(sizeMultiplier).rotate(Util.lerpRotation(offsetRotationAll.getPrev(),offsetRotationAll.get(), Screen.tickDelta)));
@@ -237,6 +237,9 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
         PacketUtil.put(obj,"data",array);
         return obj;
     }
+    public void setLayer(double v){
+        layer=v;
+    }
     @Override
     public double getLayer() {
         return layer;
@@ -277,7 +280,6 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
     public double getRotation() {
         return offsetRotationAll.get();
     }
-
     @Override
     public int getTeam() {
         return owner.team;

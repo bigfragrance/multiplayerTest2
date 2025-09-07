@@ -54,7 +54,7 @@ public class PlayerEntity extends Entity {
         this.boundingBox=new Box(position,size,size);
         this.prevBoundingBox=boundingBox.copy();
         this.health=PlayerEntity.healthMax;
-        this.damage=2;
+        this.damage=5;
         this.shield=shieldMax;
     }
     public void tick() {
@@ -74,8 +74,8 @@ public class PlayerEntity extends Entity {
                 }
             }
             if(!(e instanceof BulletEntity)) {
-                Vec2d coll = EntityUtils.getPushVector(this, e);
-                this.velocity.offset(coll);
+                Vec2d coll = EntityUtils.getPushVectorNew(this, e);
+                this.move(coll);
             }
         });
     }
@@ -147,15 +147,7 @@ public class PlayerEntity extends Entity {
         this.prevPosition.set(this.nextPosition);
         this.prevBoundingBox=this.nextBoundingBox.copy();
     }
-    public void respawn(){
-        this.isAlive=true;
-        this.setPosition(EntityUtils.getRandomSpawnPosition(this.team));
-        this.health=PlayerEntity.healthMax;
-        this.shield=PlayerEntity.shieldMax;
-        this.noEnemyTimer=0;
-        this.weapon=null;
-        //this.score*=0.5;
-    }
+
     public void render(Graphics g){
         super.render(g);
         EntityUtils.render(g,this);

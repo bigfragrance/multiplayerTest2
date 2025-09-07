@@ -10,6 +10,7 @@ public class ServerInputManager {
     public int side;
     public Vec2d aimPos;
     public boolean shoot;
+    public boolean defend;
     public int upgradingSkill;
     public ServerInputManager(){
         this.forward=0;
@@ -17,8 +18,9 @@ public class ServerInputManager {
         this.aimPos=new Vec2d(0,0);
         this.shoot=false;
         this.upgradingSkill=-1;
+        this.defend=false;
     }
     public void sendUpdate(){
-        cs.networkHandler.send(new PlayerInputC2SPacket(forward,side,aimPos,shoot,upgradingSkill));
+        cs.networkHandler.send(new PlayerInputC2SPacket(forward,side,aimPos,shoot,defend,upgradingSkill));
     }
 }

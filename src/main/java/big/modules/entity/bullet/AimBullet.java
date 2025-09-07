@@ -1,15 +1,15 @@
 package big.modules.entity.bullet;
 
 import big.engine.math.BlockPos;
-import big.engine.math.Box;
 import big.engine.math.Vec2d;
 import big.engine.math.util.EntityUtils;
+import big.engine.math.util.Util;
 import big.engine.math.util.pathing.Calculator;
 import big.engine.math.util.pathing.Path;
-import big.engine.modules.EngineMain;
 import big.modules.entity.Attackable;
 import big.modules.entity.Entity;
-import big.modules.entity.player.ServerPlayerEntity;
+import big.modules.entity.MobEntity;
+import big.modules.entity.player.PlayerEntity;
 
 import static big.engine.modules.EngineMain.cs;
 
@@ -24,8 +24,10 @@ public class AimBullet extends BulletEntity{
     public double dragFactor=dragFactorDef;
     private Calculator calculator=null;
     public double attackDistance=0;
+    private boolean shouldAutoAim;
     public AimBullet(Vec2d position, Vec2d velocity,int team,BulletType type) {
         super(position, velocity,team,type);
+        this.shouldAutoAim =type.shouldAutoAim(Math.random());
     }
     public void tick(){
         if(infinityLifeTime)this.lifeTime=0;
@@ -61,10 +63,14 @@ public class AimBullet extends BulletEntity{
                 Vec2d sub=this.position.subtract(owner.getPosition());
                 double r=sub.angle();
                 target=owner.getPosition().add(new Vec2d(r+30).limit(flyRange));
+                target= Util.secondIfNull(getAutoAimPos(3*getFov()),target);
             }
         }
         if(aimPos!=null) {
             target=aimPos;
+        }
+        if(shouldAutoAim){
+            target= Util.secondIfNull(getAutoAimPos(5*getFov()),target);
         }
         if(target!=null){
             Vec2d sub=target.subtract(this.position);
@@ -80,8 +86,50 @@ public class AimBullet extends BulletEntity{
         if(target!=null) {
             Vec2d offVel = target.subtract(this.position).limitOnlyOver(speedAdd * 5).multiply(0.2);
             this.velocity.offset(offVel);
-            this.rotation = offVel.angle();
+            if(!type.shouldCustomRotation())this.rotation = offVel.angle();
         }
+    }
+    private double getFov(){
+        if(owner==null) return 1;
+        return owner.getFov();
+    }
+    private Vec2d getAutoAimPos(double r){
+        if(owner==null) return null;
+        Vec2d target=null;
+        double minDistance= r +1;
+        double minDistanceMob= r;
+        PlayerEntity player=null;
+        Entity mob=null;
+        for(Entity e:cs.entities.values()){
+            if(e.team==owner.getTeam()) continue;
+            if(!e.isAlive) continue;
+            if(e instanceof PlayerEntity||e instanceof MobEntity){
+                boolean b=e instanceof PlayerEntity;
+                if(b){
+                    if(((PlayerEntity) e).name.equals("God")) continue;
+                }
+                double distance=getPos().distanceTo(e.getPos());
+                if(b?distance<minDistance:distance<minDistanceMob){
+                    if(b){
+                        minDistance=distance;
+                        player=(PlayerEntity) e;
+                    }
+                    else{
+                        if(e.score>500) {
+                            minDistanceMob = distance;
+                            mob = e;
+                        }
+                    }
+                }
+            }
+        }
+        if(player!=null){
+            target=player.getPos();
+        }
+        else if(mob!=null){
+            target=mob.getPos();
+        }
+        return target;
     }
     private Vec2d getPathPos(Vec2d target){
         if(calculator==null) calculator=new Calculator(this);
@@ -95,18 +143,15 @@ public class AimBullet extends BulletEntity{
             if (e.team != this.team) {
                 EntityUtils.takeDamage(this,e);
             }
-            if(!(e instanceof BulletEntity)||e instanceof AimBullet) {
-                Vec2d coll = EntityUtils.getPushVector(this, e);
-                this.velocity.offset(coll);
+            if(e instanceof AimBullet) {
+                Vec2d coll = EntityUtils.getPushVectorNew(this, e);
+                this.move(coll);
             }
         });
         //this.velocity.set(EntityUtils.getReboundVelocity(velocity,this.boundingBox));
-
-        if(EntityUtils.isInsideWall(this.boundingBox.expand(0.0000001,0.0000001))){
+        if(EntityUtils.isInsideWall(this.boundingBox.expand(0.01,0.01))){
             this.health=-1;
         }
-        /*if(EntityUtils.isInsideWall(this.boundingBox)){
-            this.health=-1;
-        }*/
+
     }
 }

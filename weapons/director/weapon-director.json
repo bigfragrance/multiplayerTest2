@@ -1,0 +1,402 @@
+{
+  "Director":{
+    "data":[
+      {
+        "type":"Gun",
+        "offsetRotation":0,
+        "offset":{
+          "x":0,
+          "y":0
+        },
+        "reloadMultiplier":0.5,
+        "layer":1,
+        "startDelay":0,
+        "size":[0.3,0.1,0.15],
+        "bulletType":{
+          "type":1,
+          "sharp":false,
+          "sharpFactor":1,
+          "multipliers":[2.5,3,3,1,1000000]
+        },
+        "extraData":{
+          "maxCount":8
+        }
+      }
+    ],
+    "extradata":{
+      "stopFollow":3
+    }
+  },
+  "BigCheese":{
+    "data":[
+      {
+        "type":"Gun",
+        "offsetRotation":0,
+        "offset":{
+          "x":0,
+          "y":0
+        },
+        "reloadMultiplier":0.2,
+        "layer":1,
+        "startDelay":0,
+        "size":[0.3,0.18,0.25],
+        "bulletType":{
+          "type":1,
+          "sharp":true,
+          "sharpFactor":1,
+          "multipliers":[2,2,20,3,1000000],
+          "tags": {
+            "sharpFactors":[0.0,0.2,0.4,0.6,0.8,1,0.5,0.2],
+            "rotation":50,
+            "autoAim": 0.2
+          }
+        },
+        "extraData":{
+          "maxCount":1
+        }
+      }
+    ],
+    "extradata":{
+      "stopFollow":3
+    },
+    "parent": ["Director"]
+  },
+  "Overseer":{
+    "data":[
+      {
+        "type":"GunArray",
+        "count": 2,
+        "startDelays": [0,3],
+        "offsetRotation":0,
+        "offset":{
+          "x":0,
+          "y":0
+        },
+        "reloadMultiplier":0.3,
+        "layer":1,
+        "startDelay":0,
+        "size":[0.3,0.1,0.15],
+        "bulletType":{
+          "type":1,
+          "sharp":false,
+          "sharpFactor":1,
+          "multipliers":[2.5,3,3,1,1000000]
+        },
+        "extraData":{
+          "maxCount":8
+        }
+      }
+    ],
+    "extradata":{
+      "stopFollow":3,
+      "maxCount": 8
+    },
+    "parent": ["Director"]
+  },
+  "OverDrive":{
+    "data":[
+      {
+        "type":"GunArray",
+        "count": 2,
+        "startDelays": [0,3],
+        "offsetRotation":0,
+        "offset":{
+          "x":0,
+          "y":0
+        },
+        "reloadMultiplier":0.3,
+        "layer":1,
+        "startDelay":0,
+        "size":[0.3,0.1,0.15],
+        "bulletType":{
+          "type":1,
+          "sharp":false,
+          "sharpFactor":1,
+          "multipliers":[2.5,3,3,1,1000000],
+          "weapon": {
+            "data": [
+              {
+                "preset": ["DriveTurret"]
+              }
+            ]
+          }
+        },
+        "extraData":{
+          "maxCount":8
+        }
+      },{
+        "preset": ["DriveMark"]
+      }
+    ],
+    "extradata":{
+      "stopFollow":3,
+      "maxCount": 8
+    },
+    "parent": ["Overseer"]
+  },
+  "Auto-Overseer":{
+    "data":[
+      {
+        "type":"GunArray",
+        "count": 2,
+        "startDelays": [0,3],
+        "offsetRotation":0,
+        "offset":{
+          "x":0,
+          "y":0
+        },
+        "reloadMultiplier":0.3,
+        "layer":1,
+        "startDelay":0,
+        "size":[0.3,0.1,0.15],
+        "bulletType":{
+          "type":1,
+          "sharp":false,
+          "sharpFactor":1,
+          "multipliers":[2.5,3,3,1,1000000]
+        },
+        "extraData":{
+          "maxCount":8
+        }
+      },
+      {
+        "preset": ["AutoTurret"]
+      }
+    ],
+    "extradata":{
+      "stopFollow":3,
+      "maxCount": 8
+    },
+    "parent": ["Overseer"]
+  },
+  "Overlord":{
+    "data":[
+      {
+        "type":"GunArray",
+        "count": 4,
+        "startDelays": [0,3,6,9],
+        "offsetRotation":0,
+        "offset":{
+          "x":0,
+          "y":0
+        },
+        "reloadMultiplier":0.3,
+        "layer":1,
+        "startDelay":0,
+        "size":[0.3,0.1,0.15],
+        "bulletType":{
+          "type":1,
+          "sharp":false,
+          "sharpFactor":1,
+          "multipliers":[2.5,3,3,1,1000000]
+        },
+        "extraData":{
+          "maxCount":8
+        }
+      }
+    ],
+    "extradata":{
+      "stopFollow":3,
+      "maxCount": 8
+    },
+    "parent": ["Overseer"]
+  },
+  "MiniMotherShip":{
+    "data":[
+      {
+        "type":"GunArray",
+        "count":12,
+        "startDelays":[0,5,11,16],
+        "offsetRotation":0,
+        "offset":{
+          "x":0.18,
+          "y":0
+        },
+        "reloadMultiplier":0.3,
+        "layer":1,
+        "startDelay":0,
+        "size":[0.08,0.05,0.03],
+        "bulletType":{
+          "type":1,
+          "sharp":false,
+          "sharpFactor":1,
+          "multipliers":[0.5,2,1,0.5,10],
+          "tags": {
+            "autoAim": 0.5
+          }
+        }
+      }
+    ],
+    "extradata":{
+      "addVelocity":false
+    },
+    "parent": ["Overseer"]
+  },
+  "Cruiser":{
+    "data":[
+      {
+        "type":"Mirror",
+        "mode": 0,
+        "startDelays": [0,3],
+        "offsetRotation":0,
+        "offset":{
+          "x":0.11,
+          "y":0.08
+        },
+        "reloadMultiplier":1,
+        "layer":1,
+        "startDelay":0,
+        "size":[0.2,0.08,0.06],
+        "bulletType":{
+          "type":1,
+          "sharp":false,
+          "sharpFactor":1,
+          "multipliers":[0.8,3.5,2,0.7,2],
+          "tags": {
+            "autoAim": 0.5
+          }
+        }
+      }
+    ],
+    "extradata":{
+      "stopFollow":3
+    },
+    "parent": ["Director"]
+  },
+  "BattleShip":{
+    "data":[
+      {
+        "type":"Mirror",
+        "mode": 0,
+        "startDelays": [0,3],
+        "offsetRotation":90,
+        "offset":{
+          "x":0.11,
+          "y":0.08
+        },
+        "reloadMultiplier":0.8,
+        "layer":1,
+        "startDelay":3,
+        "size":[0.2,0.08,0.06],
+        "bulletType":{
+          "type":1,
+          "sharp":false,
+          "sharpFactor":1,
+          "multipliers":[0.8,3.5,2,0.7,2],
+          "tags": {
+            "autoAim": 0.5
+          }
+        }
+      },
+      {
+        "type":"Mirror",
+        "mode": 0,
+        "startDelays": [0,3],
+        "offsetRotation":-90,
+        "offset":{
+          "x":0.11,
+          "y":0.08
+        },
+        "reloadMultiplier":0.8,
+        "layer":1,
+        "startDelay":3,
+        "size":[0.2,0.08,0.06],
+        "bulletType":{
+          "type":1,
+          "sharp":false,
+          "sharpFactor":1,
+          "multipliers":[0.8,3.5,2,0.7,2],
+          "tags": {
+            "autoAim": 0.5
+          }
+        }
+      }
+    ],
+    "extradata":{
+      "stopFollow":3
+    },
+    "parent": ["Cruiser"]
+  },
+  "Auto-Cruiser":{
+    "data":[
+      {
+        "type":"Mirror",
+        "mode": 0,
+        "startDelays": [0,3],
+        "offsetRotation":0,
+        "offset":{
+          "x":0.11,
+          "y":0.08
+        },
+        "reloadMultiplier":1,
+        "layer":1,
+        "startDelay":0,
+        "size":[0.2,0.08,0.06],
+        "bulletType":{
+          "type":1,
+          "sharp":false,
+          "sharpFactor":1,
+          "multipliers":[0.8,3.5,2,0.7,2],
+          "tags": {
+            "autoAim": 0.5
+          }
+        }
+      },
+      {
+        "preset": ["AutoTurret"]
+      }
+    ],
+    "extradata":{
+      "stopFollow":3
+    },
+    "parent": ["Cruiser"]
+  },
+  "Carrier":{
+    "data":[
+      {
+        "type":"Mirror",
+        "mode": 0,
+        "offsetRotation":30,
+        "offset":{
+          "x":0.15,
+          "y":0.0
+        },
+        "reloadMultiplier":1,
+        "layer":1,
+        "startDelay":3,
+        "size":[0.2,0.08,0.06],
+        "bulletType":{
+          "type":1,
+          "sharp":false,
+          "sharpFactor":1,
+          "multipliers":[0.8,3.5,2,0.7,2],
+          "tags": {
+            "autoAim": 0.8
+          }
+        }
+      },
+      {
+        "type":"Gun",
+        "offsetRotation":0,
+        "offset":{
+          "x":0.15,
+          "y":0.0
+        },
+        "reloadMultiplier":1,
+        "layer":1,
+        "startDelay":0,
+        "size":[0.2,0.08,0.06],
+        "bulletType":{
+          "type":1,
+          "sharp":false,
+          "sharpFactor":1,
+          "multipliers":[0.8,3.5,2,0.7,2]
+        }
+      }
+    ],
+    "extradata":{
+      "stopFollow":3
+    },
+    "parent": ["Cruiser"]
+  }
+}

@@ -25,7 +25,7 @@ public class PlayerRespawnC2SPacket implements Packet<ServerNetworkHandler> {
 
     @Override
     public void apply(ServerNetworkHandler serverNetworkHandler) {
-        PlayerEntity e=serverNetworkHandler.clientHandler.player;
+        ServerPlayerEntity e=serverNetworkHandler.clientHandler.player;
         if(e!=null){
             if(e.isAlive) return;
             e.respawn();

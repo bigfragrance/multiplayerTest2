@@ -29,10 +29,10 @@ public class Gun extends CanAttack {
     public Vec2d offset;
     public BulletType bulletType;
     public double reloadMultiplier;
-    public int layer;
+    public double layer;
     private double startDelay;
     private double[] size;
-    private double reload=0;
+    private double reload=1;
     private boolean lastFire=false;
     private int fireTime=0;
     private int prevFireTime=0;
@@ -45,7 +45,7 @@ public class Gun extends CanAttack {
         this.offset=Vec2d.fromJSON(PacketUtil.getJSONObject(data,"offset"));
         this.bulletType=BulletType.fromJSON(PacketUtil.getJSONObject(data,"bulletType"));
         this.reloadMultiplier=PacketUtil.getDouble(data,"reloadMultiplier");
-        this.layer=PacketUtil.getInt(data,"layer");
+        this.layer=PacketUtil.getDouble(data,"layer");
         this.startDelay=PacketUtil.getDouble(data,"startDelay");
         this.owner=cs.entities.get(PacketUtil.getLong(data,"owner"));
         try {
@@ -72,7 +72,7 @@ public class Gun extends CanAttack {
     public Gun(JSONObject data){
         this(data,PacketUtil.getLong(data,"id"));
     }
-    public Gun(Entity owner, double offsetRotation,Vec2d offset, BulletType bulletType, double reloadMultiplier,int layer,double startDelay,double[] size,long id,JSONObject extraData){
+    public Gun(Entity owner, double offsetRotation,Vec2d offset, BulletType bulletType, double reloadMultiplier,double layer,double startDelay,double[] size,long id,JSONObject extraData){
         this.offsetRotation =offsetRotation;
         this.offset=offset;
         this.bulletType=bulletType;
@@ -109,8 +109,9 @@ public class Gun extends CanAttack {
     public double getReload(){
         return reload;
     }
-    public void tick(boolean fire,boolean server){
+    public void tick(boolean fire,boolean defend,boolean server){
         if(server) {
+            boolean firing=(PacketUtil.contains(extraData,"defend"))?defend:fire;
             this.sizeMultiplier=owner.getSizeMultiplier();
             BulletType bulletType=getBulletType();
             //bulletType.multipliers[3]=sizeMultiplier;
@@ -118,17 +119,17 @@ public class Gun extends CanAttack {
             updateOffsetRotation();
             updateRotation();
             this.reload = Math.max(0, reload - 1);
-            if (!lastFire && fire) {
+            if (!lastFire && firing) {
                 this.reload = Math.max(reload,startDelay);
             }
-            if (fire && reload <= 0&&canFire()) {
+            if (firing && reload <= 0&&canFire()) {
                 reload = 10d/reloadMultiplier;
                 fireTime = 4;
                 BulletEntity b=create(bulletType);
                 cs.addEntity(b);
                 owner.velocity.offset(b.velocity.subtract(owner.getRealVelocity()).multiply(-BulletEntity.getMultipliedValue(7,bulletType)/bulletType.getMultiplier(1)));
             }
-            lastFire = fire;
+            lastFire = firing;
             if (fireTime > 0) {
                 fireTime--;
             }
@@ -309,6 +310,9 @@ public class Gun extends CanAttack {
         PacketUtil.put(o,"extraData",extraData);
         PacketUtil.put(o,"type","Gun");
         return o;
+    }
+    public void setLayer(double v) {
+        layer = v;
     }
     public static Gun fromJSON(JSONObject obj){
         return new Gun(obj);

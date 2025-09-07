@@ -1,0 +1,57 @@
+{
+  "Gunner":{
+    "data":[
+      {
+        "preset": ["Gunner"]
+      }
+    ],
+    "extradata":{
+      "stopFollow":3
+    },
+    "parent": ["Twin"]
+  },
+  "Auto-Gunner":{
+    "data":[
+      {
+        "preset": ["Gunner","AutoTurret"]
+      }
+    ],
+    "extradata":{
+      "stopFollow":3
+    },
+    "parent": ["Gunner"]
+  },
+  "Defend-Gunner":{
+    "data":[
+      {
+        "preset": ["Gunner","FullDefend"]
+      }
+    ],
+    "extradata":{
+      "stopFollow":3
+    },
+    "parent": ["Gunner"]
+  },
+  "GunnerTrapper":{
+    "data":[
+      {
+        "preset": ["MiniGunner","BigTrapBehind"]
+      }
+    ],
+    "extradata":{
+      "stopFollow":3
+    },
+    "parent": ["Gunner","TrapGuard"]
+  },
+  "OverGunner":{
+    "data":[
+      {
+        "preset": ["MiniGunner","2DirectorBehind"]
+      }
+    ],
+    "extradata":{
+      "stopFollow":3
+    },
+    "parent": ["Gunner"]
+  }
+}

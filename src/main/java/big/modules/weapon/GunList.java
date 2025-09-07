@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class GunList {
     public static JSONObject data=new JSONObject();
+    public static JSONObject presetData=new JSONObject();
     public static ConcurrentHashMap<String,String> parent=new ConcurrentHashMap<>();
     public JSONObject extradata=createDefData();
     public ConcurrentHashMap<Long,CanAttack> list;
@@ -26,9 +27,9 @@ public class GunList {
     public GunList(){
         this.list=new ConcurrentHashMap<>();
     }
-    public void tick(boolean fire,boolean server){
+    public void tick(boolean fire,boolean defend,boolean server){
         for(CanAttack canAttack:list.values()){
-            canAttack.tick(fire,server);
+            canAttack.tick(fire,defend,server);
         }
     }
     public void render(Graphics g){
@@ -103,7 +104,8 @@ public class GunList {
     public static void init(){
         data=new JSONObject();
         try {
-            loadWeaponsRecursively(new File(System.getProperty("user.dir")),data);
+            loadWeaponsRecursively(new File(System.getProperty("user.dir")),data,"weapon");
+            loadWeaponsRecursively(new File(System.getProperty("user.dir")),presetData,"preset");
         }catch (Exception e){
             System.out.println("Error reading weapons.json");
         }
@@ -114,7 +116,7 @@ public class GunList {
             }
         }*/
     }
-    public static void loadWeaponsRecursively(File dir,JSONObject data) {
+    public static void loadWeaponsRecursively(File dir,JSONObject data,String weapon) {
         if (dir == null || !dir.exists() || !dir.isDirectory()) return;
 
         File[] files = dir.listFiles();
@@ -122,10 +124,10 @@ public class GunList {
 
         for (File file : files) {
             if (file.isDirectory()) {
-                loadWeaponsRecursively(file, data);
+                loadWeaponsRecursively(file, data,weapon);
             } else if (file.isFile()) {
                 String name = file.getName().toLowerCase();
-                if (name.contains("weapon") && name.endsWith(".json")) {
+                if (name.contains(weapon) && name.endsWith(".json")) {
                     try {
                         String str = Util.read(file.getAbsolutePath());
                         if (str == null) continue;
@@ -151,6 +153,18 @@ public class GunList {
         for(int i=0;i<array.length();i++){
             JSONObject gunObj=array.getJSONObject(i);
             PacketUtil.put(gunObj,"owner",owner.id);
+            if(gunObj.has("preset")){
+                JSONArray preset=gunObj.getJSONArray("preset");
+                for(int j=0;j<preset.length();j++){
+                    String presetName=preset.getString(j);
+                    JSONObject pre=presetData.getJSONObject(presetName);
+                    GunList list1=fromJSONServer(owner, pre);
+                    for(CanAttack ca:list1.list.values()){
+                        gunList.add(ca);
+                    }
+                }
+                continue;
+            }
             CanAttack o=CanAttack.fromJSON(gunObj);
             if(o==null) {
                 System.out.println("Error loading gun");

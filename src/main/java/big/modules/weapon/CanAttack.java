@@ -18,7 +18,7 @@ public class CanAttack extends Entity {
     public CanAttack(){
 
     }
-    public void tick(boolean fire,boolean server){
+    public void tick(boolean fire,boolean defend,boolean server){
 
     }
     public void render(Graphics g){
@@ -54,6 +54,8 @@ public class CanAttack extends Entity {
                 return new Gun(json,0);
             case "GunArray":
                 return new SurroundGun(new Gun(json,0),PacketUtil.getInt(json,"count"),PacketUtil.contains(json,"startDelays")? Util.getDoubles(PacketUtil.getJSONArray(json, "startDelays")):null);
+            case "GunLine":
+                return new LineGun(new Gun(json,0),PacketUtil.getInt(json,"count"),PacketUtil.getVec2d(json,"oOffset"),PacketUtil.contains(json,"startDelays")? Util.getDoubles(PacketUtil.getJSONArray(json, "startDelays")):null);
             case "Mirror":
                 return new MirrorGun(new Gun(json,0),PacketUtil.getInt(json,"mode"),PacketUtil.contains(json,"startDelays")? Util.getDoubles(PacketUtil.getJSONArray(json, "startDelays")):null);
             case "AutoGunList":
@@ -62,6 +64,8 @@ public class CanAttack extends Entity {
                 return new SurroundGun(AutoGunList.fromJSONServer(json),PacketUtil.getInt(json,"count"),PacketUtil.contains(json,"startDelays")? Util.getDoubles(PacketUtil.getJSONArray(json, "startDelays")):null);
             case "AutoMirror":
                 return new MirrorGun(AutoGunList.fromJSONServer(json),PacketUtil.getInt(json,"mode"),PacketUtil.contains(json,"startDelays")? Util.getDoubles(PacketUtil.getJSONArray(json, "startDelays")):null);
+            case "AutoLine":
+                return new LineGun(AutoGunList.fromJSONServer(json),PacketUtil.getInt(json,"count"),PacketUtil.getVec2d(json,"oOffset"),PacketUtil.contains(json,"startDelays")? Util.getDoubles(PacketUtil.getJSONArray(json, "startDelays")):null);
             default:
                 return null;
         }
@@ -88,4 +92,10 @@ public class CanAttack extends Entity {
     protected double getStartDelay() {
         return 0;
     }
+
+    public void setLayer(double v) {
+
+    }
+
+
 }

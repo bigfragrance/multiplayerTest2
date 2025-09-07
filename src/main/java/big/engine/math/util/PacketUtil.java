@@ -281,6 +281,12 @@ public class PacketUtil {
         }
         return o.getJSONArray(getShortVariableName(name));
     }
+    public static Vec2d getVec2d(JSONObject o,String name){
+        if(o.has(name)) {
+            return Vec2d.fromJSON(o.getJSONObject(name));
+        }
+        return Vec2d.fromJSON(o.getJSONObject(getShortVariableName(name)));
+    }
     public static boolean contains(JSONObject o,String name){
         if(o.has(name)) {
             return true;
