@@ -58,10 +58,10 @@ public class PolygonEntity extends MobEntity{
         if(type<0||type>9) {
             type=0;
         }
-        if(sides>=5||type>=4){
+        if(sides>=5||type>=7){
             attackPlayer=true;
         }
-        if(sides>=7||type>=5){
+        if(sides>=7||type>=8){
             autoTargeting=true;
         }
         this.sides=sides;
@@ -115,6 +115,14 @@ public class PolygonEntity extends MobEntity{
             if(player.getPos().distanceTo(this.getPos())>=7) return;
             if(target==null){
                 target=player;
+            }
+        }
+    }
+    public void kill(){
+        super.kill();
+        if(this.type>0&&cs.isServer){
+            for(int i=0;i<cs.setting.getPolygonSplit();i++){
+                cs.addEntity(new PolygonEntity(this.getPos().add(Util.randomVec().multiply(0.1)),this.sides,this.type-1));
             }
         }
     }

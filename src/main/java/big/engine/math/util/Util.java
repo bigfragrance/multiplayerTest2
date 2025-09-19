@@ -110,7 +110,7 @@ public class Util {
     }
     public static void renderString(Graphics g,String s,Vec2d centerPos,int size,boolean center){
         double offX=center?s.length()*size/4d:0;
-        g.setFont(new Font("微软雅黑",Font.BOLD,size));
+        g.setFont(new Font("Microsoft JhengHei",Font.BOLD,size));
         g.drawString(s,round(centerPos.x-offX),round(centerPos.y+ (double) size /2));
     }
     public static void renderPolygon(Graphics g,Vec2d center,int nSides,double radius,double rotation,boolean side,boolean fill,boolean sharp,double sharpFactor){

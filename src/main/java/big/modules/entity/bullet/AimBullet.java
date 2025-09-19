@@ -11,6 +11,8 @@ import big.modules.entity.Entity;
 import big.modules.entity.MobEntity;
 import big.modules.entity.player.PlayerEntity;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 import static big.engine.modules.EngineMain.cs;
 
 public class AimBullet extends BulletEntity{
@@ -21,6 +23,7 @@ public class AimBullet extends BulletEntity{
     public double speedAdd=2;
     public boolean infinityLifeTime=false;
     public boolean pathing=false;
+    public boolean isDefend=false;
     public double dragFactor=dragFactorDef;
     private Calculator calculator=null;
     public double attackDistance=0;
@@ -57,7 +60,10 @@ public class AimBullet extends BulletEntity{
     public void updateAim(){
         Vec2d target=null;
         if(owner!=null){
-            if(owner.isFiring()) {
+            if(this.isDefend){
+                target=getDefendPosition();
+            }
+            else if(owner.isFiring()) {
                 target= owner.getAimPos();
             }else{
                 Vec2d sub=this.position.subtract(owner.getPosition());
@@ -89,6 +95,7 @@ public class AimBullet extends BulletEntity{
             if(!type.shouldCustomRotation())this.rotation = offVel.angle();
         }
     }
+
     private double getFov(){
         if(owner==null) return 1;
         return owner.getFov();
@@ -131,6 +138,24 @@ public class AimBullet extends BulletEntity{
         }
         return target;
     }
+    private Vec2d getDefendPosition(){
+        if(owner==null) return null;
+        ConcurrentHashMap<Entity,Vec2d> controllingShieldBullets=owner.getControllingShieldBullets();
+        if(controllingShieldBullets.containsKey(this)){
+            return controllingShieldBullets.get(this).add(owner.getPosition());
+        }
+        return null;
+    }
+    private double getDefendDistance(){
+        if(owner==null) return 0;
+        double m=1;
+        if(this.type.tags.has("defendDistanceMultiplier")){
+            m= this.type.tags.getDouble("defendDistanceMultiplier");
+        }
+        double d=owner.getAimPos().distanceTo(owner.getPosition())/2;
+        return m*Math.min(d,1.5);
+    }
+
     private Vec2d getPathPos(Vec2d target){
         if(calculator==null) calculator=new Calculator(this);
         Path p=calculator.getPath(BlockPos.ofFloor(this.position).toCenterPos(),target.copy());

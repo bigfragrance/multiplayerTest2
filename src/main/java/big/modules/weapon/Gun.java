@@ -194,6 +194,14 @@ public class Gun extends CanAttack {
                 b=new AimBullet(pos, vel, owner.team, bulletType);
                 ((AimBullet) b).dragFactor=0.86;
             }
+            case 4->{
+                b=new AimBullet(pos, vel, owner.team, bulletType);
+                ((AimBullet)b).speedAdd=bulletType.getMultiplier(1)*baseValues[1]*0.2;
+                if(owner instanceof Attackable a){
+                    ((AimBullet)b).owner=a;
+                }
+                ((AimBullet) b).isDefend=true;
+            }
         }
         if(b==null) return null;
         b.ownerId=owner.getOwnerID();

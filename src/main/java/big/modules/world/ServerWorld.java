@@ -58,6 +58,7 @@ public class ServerWorld extends World{
         }
         randomTicks();
         EngineMain.maxTeams=cs.setting.getMaxTeam();
+        EngineMain.damageExchangeSpeed=cs.setting.getDamageExchangeSpeed();
         visitorSpawnTimer.setDelay(cs.setting.getVisitorSpawnDelay());
 
         updateEntity();
@@ -201,13 +202,15 @@ public class ServerWorld extends World{
             if(e instanceof MobEntity) count++;
         }
         if(count>=cs.setting.getMaxPolygon()) return;
+        double pow=cs.setting.getPolygonRandomPow();
+        double typeMax=cs.setting.getPolygonType();
         for(int i=0;i<500;i++){
             Vec2d pos= Util.randomInBox(cs.borderBox);
             BlockPos blockPos= BlockPos.ofFloor(pos);
             BlockState blockState=cs.world.getBlockState(blockPos);
             if(blockState.getBlock().solid) continue;
             double s = blockState.getSpawnMobRarity()*7+Math.random()*1.6-0.8;
-            double t = Math.pow(Math.random(),4)*2.5;
+            double t = Math.pow(Math.random(),pow)*(typeMax-0.2);
             int sides = (round(s) + 3);
             int type = round(t);
             if(Math.random()<blockState.getSpawnMobRarity()){

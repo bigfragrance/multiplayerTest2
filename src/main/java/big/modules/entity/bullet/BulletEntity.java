@@ -19,7 +19,7 @@ import java.awt.*;
 import static big.engine.modules.EngineMain.cs;
 
 public class BulletEntity extends Entity {
-    public static double[] baseValues={10,0.1,4,0.1,100,20,0.003,0.3};//damage speed health size lifeTime kbFactor randomVelocity selfKB
+    public static double[] baseValues={10,0.1,4,0.1,100,20,0.003,0.1};//damage speed health size lifeTime kbFactor randomVelocity selfKB
     public long ownerId;
     public Entity owner=null;
     private boolean invisibleTick=false;

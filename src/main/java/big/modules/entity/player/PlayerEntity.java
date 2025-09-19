@@ -76,6 +76,7 @@ public class PlayerEntity extends Entity {
             if(!(e instanceof BulletEntity)) {
                 Vec2d coll = EntityUtils.getPushVectorNew(this, e);
                 this.move(coll);
+                this.velocity.offset(coll.multiply(0.2));
             }
         });
     }
@@ -183,18 +184,18 @@ public class PlayerEntity extends Entity {
     public JSONObject getUpdate(){
         JSONObject o=new JSONObject();
         PacketUtil.putPacketType(o,"entity_update");
-        if(weapon!=null)PacketUtil.put(o,"wUpdate",weapon.getUpdate());
+        if(weapon!=null)PacketUtil.put(o,"weapon",weapon.getUpdate());
         super.addJSON(o);
         return o;
     }
     public void update(JSONObject o){
         super.update(o);
-        if(PacketUtil.contains(o,"wUpdate")) {
+        if(PacketUtil.contains(o,"weapon")) {
             if (weapon == null) {
                 cs.networkHandler.sendPacket(new WantWeaponC2SPacket(this.id));
                 return;
             }
-            this.weapon.update(PacketUtil.getJSONArray(o, "wUpdate"));
+            this.weapon.update(PacketUtil.getJSONArray(o, "weapon"));
         }
     }
     public boolean killed(){
@@ -206,6 +207,9 @@ public class PlayerEntity extends Entity {
     }
     public double getFovMultiplier(){
         return getFov();
+    }
+    public double getRotation(){
+        return this.rotation;
     }
 
 }

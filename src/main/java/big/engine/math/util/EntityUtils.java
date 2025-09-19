@@ -1,6 +1,7 @@
 package big.engine.math.util;
 
 import big.engine.math.*;
+import big.engine.modules.EngineMain;
 import big.modules.entity.Entity;
 import big.modules.entity.bullet.BulletEntity;
 import big.modules.entity.player.PlayerEntity;
@@ -259,8 +260,8 @@ public class EntityUtils {
     }
     public static double[] getBetterDamage(double thisHealth,double thisDamage,double othersHealth,double othersDamage){
         //[0] to enemy, [1] to self
-        double d1=Math.clamp(othersHealth/thisDamage,0,0.5);
-        double d2=Math.clamp(thisHealth/othersDamage,0,0.5);
+        double d1=Math.clamp(othersHealth/thisDamage,0, EngineMain.damageExchangeSpeed);
+        double d2=Math.clamp(thisHealth/othersDamage,0,EngineMain.damageExchangeSpeed);
         return new double[]{d2*thisDamage,d1*othersDamage};
     }
     public static void takeDamage(Entity e1,Entity e2){

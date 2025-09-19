@@ -61,6 +61,21 @@ public class Setting {
     public int getRandomTickSpeed(){
         return serverData.getInt("random_tick_speed");
     }
+    public double getDamageExchangeSpeed(){
+        return serverData.getDouble("damage_exchange_speed");
+    }
+    public int getPolygonSplit(){
+        return serverData.getInt("polygon_split");
+    }
+    public double getPolygonSide(){
+        return serverData.getDouble("polygon_side");
+    }
+    public double getPolygonType(){
+        return serverData.getDouble("polygon_type");
+    }
+    public double getPolygonRandomPow(){
+        return serverData.getDouble("polygon_random_pow");
+    }
     public void save(){
         try {
             Util.write(SETTING_PATH, data.toString().replaceAll(",",",\n"));
@@ -91,7 +106,12 @@ public class Setting {
         o.put("is_siege",false);
         o.put("max_team",2);
         o.put("random_tick_speed",80);
+        o.put("damage_exchange_speed",1);
         o.put("maze_bullet_break",true);
+        o.put("polygon_split", true);
+        o.put("polygon_side", 3);
+        o.put("polygon_type", 4);
+        o.put("polygon_random_pow", 2);
         o.put("maze_bullet_rebound",false);
         return o.toString();
     }

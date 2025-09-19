@@ -19,6 +19,7 @@ import big.modules.weapon.Node;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static big.engine.modules.EngineMain.cs;
@@ -26,7 +27,7 @@ import static big.engine.render.Screen.sc;
 
 public class VisitorEntity extends ServerBotEntity {
     //                                       {          "Damage[z]","Speed[x]","Health[c]","Size[v]","Reload[b]","MoveSpeed[n]","DamageAbsorb[m]","ShieldRegen[,]","HealthRegen[.]","Fov[/]"};
-    public static double[] defSkillPoints= new double[]{1.5         ,1.5       ,1.5          ,5        ,1.5          ,0.5           ,20               ,0.1             ,0.05           ,3};
+    public static double[] defSkillPoints= new double[]{0.5         ,1       ,0.5          ,5        ,1          ,0.5           ,10               ,0.1             ,0.05           ,2};
     private boolean inited=false;
     private ConcurrentHashMap<Integer,RotationNode> rotationNodes=new ConcurrentHashMap<>();
     public VisitorEntity(Vec2d position,int level){
@@ -36,7 +37,7 @@ public class VisitorEntity extends ServerBotEntity {
         this.skillPoints=defSkillPoints;
         this.score=1000000;
         this.name="Visitor";
-        this.weaponID="visitor-3-0";//getRandom(level);
+        this.weaponID=getRandom(new Random(System.nanoTime()).nextInt(4));
         this.damage*=5;
         this.autoController.dodge=false;
     }

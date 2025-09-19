@@ -15,7 +15,7 @@ public class ServerBotEntity extends ServerPlayerEntity{
     public AutoController<ServerBotEntity> autoController;
     public ServerBotEntity(Vec2d position,int team) {
         super(position);
-        this.weaponID=getRandom();
+        this.weaponID=getFixed(team);
         this.team=team;
         this.name="Bot-"+this.weaponID+" "+Util.random.nextInt(100);
         autoController=new AutoController<>(this,this.inputManager);
@@ -36,9 +36,9 @@ public class ServerBotEntity extends ServerPlayerEntity{
     private String getFixed(int team){
         switch (team){
             case 0:
-                return "Septa-Trapper";
+                return "OverDrive";
             case 1:
-                return "Predictor";
+                return "Overlord";
             case 2:
                 return "shotgun";
             case 3:

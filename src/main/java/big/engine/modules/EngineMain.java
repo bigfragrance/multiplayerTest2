@@ -52,6 +52,7 @@ public class EngineMain implements Runnable{
     public volatile AtomicLong lastEntityID=new AtomicLong(0);
     public static double TPS=20;
     public static double chunkSize=8;
+    public static double damageExchangeSpeed=1;
     public boolean isServer=true;
     public ClientNetworkHandler networkHandler;
     public MultiClientHandler multiClientHandler=null;

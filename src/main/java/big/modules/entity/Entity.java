@@ -126,8 +126,8 @@ public abstract class Entity implements NetworkItem {
         lifeTime++;
         if(isParticle){
             this.resetTickDelta();
-            Box b=this.boundingBox;
-            this.boundingBox=b.expand(particleBoundingBoxExpand);
+            //Box b=this.boundingBox;
+            //this.boundingBox=b.expand(particleBoundingBoxExpand);
             if(lifeTime>=particleLifeTimeMax){
                 this.kill();
             }
