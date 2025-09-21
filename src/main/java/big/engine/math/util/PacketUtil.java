@@ -1,5 +1,6 @@
 package big.engine.math.util;
 
+import big.engine.math.Box;
 import big.engine.math.Vec2d;
 import big.modules.network.ClientNetworkHandler;
 import big.modules.network.ServerNetworkHandler;
@@ -287,10 +288,18 @@ public class PacketUtil {
         }
         return Vec2d.fromJSON(o.getJSONObject(getShortVariableName(name)));
     }
+    public static Box getBox(JSONObject o, String name) {
+        if(o.has(name)) {
+            return Box.fromJSON(o.getJSONObject(name));
+        }
+        return Box.fromJSON(o.getJSONObject(getShortVariableName(name)));
+    }
     public static boolean contains(JSONObject o,String name){
         if(o.has(name)) {
             return true;
         }
         return o.has(getShortVariableName(name));
     }
+
+
 }

@@ -111,7 +111,7 @@ public class Gun extends CanAttack {
     }
     public void tick(boolean fire,boolean defend,boolean server){
         if(server) {
-            boolean firing=(PacketUtil.contains(extraData,"defend"))?defend:fire;
+            boolean firing=shouldAutoFire()||((PacketUtil.contains(extraData,"defend"))?defend:fire);
             this.sizeMultiplier=owner.getSizeMultiplier();
             BulletType bulletType=getBulletType();
             //bulletType.multipliers[3]=sizeMultiplier;
@@ -122,7 +122,11 @@ public class Gun extends CanAttack {
             if (!lastFire && firing) {
                 this.reload = Math.max(reload,startDelay);
             }
-            if (firing && reload <= 0&&canFire()) {
+            boolean canFire=canFire();
+            if(!canFire){
+                reload=Math.max(reload,startDelay)+1;
+            }
+            if (firing && reload <= 0) {
                 reload = 10d/reloadMultiplier;
                 fireTime = 4;
                 BulletEntity b=create(bulletType);
@@ -144,6 +148,9 @@ public class Gun extends CanAttack {
             offsetRotationAll.next();
         }
     }
+    public boolean shouldAutoFire(){
+        return PacketUtil.contains(extraData,"autoFire")&&PacketUtil.getBoolean(extraData,"autoFire");
+    }
     public BulletType getBulletType(){
         return owner.addMultipliers(this.bulletType);
     }
@@ -162,7 +169,9 @@ public class Gun extends CanAttack {
                     count++;
                 }
             }
-            if(count>=maxCount)return false;
+            if(count>=maxCount){
+                return false;
+            }
         }
         return true;
     }

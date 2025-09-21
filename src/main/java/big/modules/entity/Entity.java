@@ -75,9 +75,8 @@ public abstract class Entity implements NetworkItem {
             JSONObject basic = o.getJSONObject(PacketVariable.basic);
             basic.keys().forEachRemaining(key -> {
                 if(PacketUtil.getShortVariableName("position").equals(key)){
-                    JSONObject position = basic.getJSONObject(PacketUtil.getShortVariableName("position"));
                     Vec2d last=this.position.copy();
-                    this.nextPosition =Vec2d.fromJSON(position);
+                    this.nextPosition =PacketUtil.getVec2d(basic,"position");
                     this.velocity=this.nextPosition.subtract(last);
                     this.nextBoundingBox=new Box(nextPosition,this.boundingBox.xSize()/2,this.boundingBox.ySize()/2);
                 } else if (PacketUtil.getShortVariableName("boundingBox").equals(key)) {
@@ -315,6 +314,11 @@ public abstract class Entity implements NetworkItem {
     }
     public double getTickDelta(){
         return isParticle?Screen.tickDelta:tickDelta;
+    }
+    public boolean isOnGround(){
+        Vec2d vec=new Vec2d(0,-0.02);
+        Vec2d after=EntityUtils.getMaxMove(this.boundingBox,vec);
+        return Math.abs(after.y-vec.y)>1e-8;
     }
     public void addScore(){
         double total=0;

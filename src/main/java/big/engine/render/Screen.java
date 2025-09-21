@@ -13,6 +13,7 @@ import big.modules.ctrl.InputManager;
 import big.modules.entity.Entity;
 import big.modules.entity.bullet.BulletEntity;
 import big.modules.particle.Particle;
+import big.modules.screen.ChatMessageScreen;
 import big.modules.screen.GUI;
 import meteordevelopment.orbit.EventHandler;
 
@@ -113,6 +114,8 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
                         cs.prevCamPos=cs.camPos;
                         setRealZoom(d[2]);
                     }
+                }else{
+                    ChatMessageScreen.INSTANCE.currentIndex+= e.getPreciseWheelRotation()<0?2:-2;
                 }
             }
         });

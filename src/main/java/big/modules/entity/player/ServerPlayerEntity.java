@@ -16,10 +16,12 @@ import big.modules.network.packet.s2c.MessageS2CPacket;
 import big.modules.network.packet.s2c.PlayerDataS2CPacket;
 import big.modules.network.packet.s2c.PlayerWeaponUpdateS2CPacket;
 import big.modules.weapon.GunList;
+import big.modules.world.World;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static big.engine.modules.EngineMain.cs;
@@ -28,6 +30,7 @@ import static java.lang.Math.floor;
 public class ServerPlayerEntity extends PlayerEntity implements Attackable, Controllable {
 
     public static double drag=0.67;
+    public static double initScore=120001;
     public ServerInputManager inputManager=null;
     public int upgradeTimer=0;
     public int skillPointNow=0;
@@ -35,16 +38,21 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
     public String weaponID="dai";
     public ServerNetworkHandler networkHandler=null;
     public ConcurrentHashMap<Entity,Vec2d> controllingShieldBullets=new ConcurrentHashMap<>();
+
     public ServerPlayerEntity(Vec2d position) {
         super(position);
         inputManager=new ServerInputManager();
-        this.score=100/scoreMultiplier+10;
+        this.score=initScore;
     }
     public void tick(){
         skillPointNow=(int)floor(score*scoreMultiplier);
         this.targetingPos=inputManager.aimPos;
         updateSkillPoint();
-        this.velocity.multiply1(drag);
+        if(World.gravityEnabled){
+            this.velocity.multiply1(0.98);
+        }else{
+            this.velocity.multiply1(drag);
+        }
         whenAlive();
         if(this.weapon==null){
             try {
@@ -55,7 +63,11 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
         }
         this.size=SIZE*getSizeMultiplier();
         this.boundingBox=new Box(position,size,size);
+        if(World.gravityEnabled){
+            this.velocity.offset(0,World.gravity);
+        }
         super.tick();
+        this.velocity=getRealVelocity();
         updateBullet();
         this.updateCollision();
         sendPacket(new PlayerDataS2CPacket(skillPoints,skillPointNow-skillPointUsed));
@@ -75,6 +87,16 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
         if(!this.isAlive) return;
         Vec2d input=new Vec2d(inputManager.side,inputManager.forward);
         input=input.limit(speed);
+        if(World.gravityEnabled){
+            if(this.isOnGround()){
+                if(inputManager.forward>0){
+                    this.velocity.set((input.x+velocity.x*0.2)*2,15*speed);
+                }
+                this.velocity.multiply1(drag,1);
+            }else{
+                input=input.multiply(0.3);
+            }
+        }
         this.velocity.offset(input);
 
         if(this.health<=0){
@@ -89,6 +111,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
             regenShieldAndHealth();
         }
     }
+
     public void respawn(){
         this.isAlive=true;
         this.setPosition(EntityUtils.getRandomSpawnPosition(this.team));
@@ -97,7 +120,26 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
         this.noEnemyTimer=0;
         this.weapon=null;
         this.networkHandler.send(new PlayerWeaponUpdateS2CPacket(this.id,null).toJSON());
-        //this.score*=0.5;
+        this.score*=0.5;
+        if(this.score<initScore) this.score=initScore;
+        int skillPointNow=Util.floor(score*scoreMultiplier);
+        if(skillPointNow<this.skillPointUsed){
+            int m=skillPointUsed-skillPointNow;
+            int[] arr={0,1,2,3,4,5,6,7,8,9};
+            for(int i=0;i<m;i++){
+                int[] random=arr.clone();
+                shuffle(random);
+                for(int j=0;j<random.length;j++){
+                    int k=random[j];
+                    if(skillPointLevels[k]>0){
+                        skillPointLevels[k]--;
+                        skillPoints[k]=skillPointDefault+ getMultiplier(skillPointLevels[k],skillPointMultipliersMax[k]);
+                        break;
+                    }
+                }
+            }
+            skillPointUsed=skillPointNow;
+        }
     }
     public JSONObject getUpdate(){
         return super.getUpdate();
@@ -113,7 +155,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
                 break;
             }
             if(inputManager.upgradingSkill==i){
-                if(skillPointUsed>=100){
+                if(skillPointUsed>=120){
                     /*if(Util.random(0,10)<2)instantRegen();
                     upgradeTimer=2;
                     skillPointUsed++;*/
@@ -155,7 +197,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
         updateShieldControl();
     }
     public void updateShieldControl(){
-        controllingShieldBullets.clear();
+        ConcurrentHashMap<Entity,Vec2d> controllingShieldBullets=new ConcurrentHashMap<>();
         for(Entity b:cs.world.getEntities()){
             if(b instanceof AimBullet bullet){
                 if(bullet.getOwnerID()==this.id&&bullet.isDefend){
@@ -180,6 +222,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
                 positions.remove(minDistance);
             }
         }
+        this.controllingShieldBullets=controllingShieldBullets;
     }
     public List<Vec2d> createBulletMatrix(int count){
         List<Vec2d> list=new ArrayList<>();
@@ -215,7 +258,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
             double centerX = sumX / tempPositions.size();
             double centerY = sumY / tempPositions.size();
 
-            double angleRad = Math.toRadians(this.rotation);
+            double angleRad = Math.toRadians(this.rotation+30);
             for(Vec2d v : tempPositions){
                 double adjustedX = v.x - centerX;
                 double adjustedY = v.y - centerY;
@@ -296,6 +339,15 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
 
 
         return list;
+    }
+    public static void shuffle(int[] array) {
+        Random rand = new Random();
+        for (int i = array.length - 1; i > 0; i--) {
+            int j = rand.nextInt(i + 1);
+            int temp = array[i];
+            array[i] = array[j];
+            array[j] = temp;
+        }
     }
     @Override
     public ConcurrentHashMap<Entity, Vec2d> getControllingShieldBullets() {

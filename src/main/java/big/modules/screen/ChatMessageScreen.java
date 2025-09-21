@@ -6,9 +6,12 @@ import big.engine.math.util.timer.AutoList;
 import big.engine.render.Screen;
 import big.events.MessageReceiveEvent;
 import big.events.RenderEvent;
+import big.events.TickEvent;
 import meteordevelopment.orbit.EventHandler;
 
 import java.awt.*;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,6 +25,8 @@ public class ChatMessageScreen {
     public List<String> messageList=new ArrayList<>();
     public AutoList<String> renderList=new AutoList<>();
     public static int textSize=12;
+    public int currentIndex=0;
+    public boolean isFullRendering=false;
     public static void init(){
         INSTANCE=new ChatMessageScreen();
     }
@@ -32,23 +37,43 @@ public class ChatMessageScreen {
     @EventHandler
     public void onRender(RenderEvent event){
         sc.storeAndSetDef();
-        Vec2d pos=getChatMessageRenderPosition();
+        currentIndex=Math.clamp(currentIndex,0,messageList.size());
+        Vec2d pos=getChatMessageRenderPosition().add(0,currentIndex*18/sc.zoom2);
         event.g.setColor(Color.DARK_GRAY);
         renderList.update(20000);
-        List<String> strings=renderList.getList();
+        List<String> strings=getStrings();
         for(int i=strings.size()-1;i>=0;i--){
             String s=strings.get(i);
             Util.renderString(event.g,s.substring(0,s.length()-1),pos,Util.round(textSize* sc.zoom*sizeMultiplier),false);
-            pos.y-=15/sc.zoom2;
+            pos.y-=18/sc.zoom2;
         }
         sc.restoreZoom();
     }
     @EventHandler
     public void onMessage(MessageReceiveEvent event){
-        renderList.add(event.text+(char)Util.random.nextInt(65536));
-        messageList.add(event.text);
+        LocalTime now = LocalTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        String formattedTime = now.format(formatter);
+        String text=formattedTime+" | "+event.text+(char)Util.random.nextInt(65536);
+        renderList.add(text);
+        messageList.add(text);
         if(messageList.size()>1000){
             messageList.remove(0);
+        }
+    }
+    @EventHandler
+    public void onTick(TickEvent event){
+        if(Screen.isKeyClicked('y')){
+            isFullRendering=!isFullRendering;
+            if(isFullRendering){
+                currentIndex=0;
+            }
+        }
+    }
+    private List<String> getStrings(){
+        if(!isFullRendering) return renderList.getList();
+        else{
+            return messageList;//.subList(Math.clamp(currentIndex,0,Math.max(0,messageList.size()-20)),Math.clamp(currentIndex,0,Math.max(0,messageList.size())));
         }
     }
 

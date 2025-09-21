@@ -78,14 +78,21 @@ public class Util {
         return String.format("%."+3+"f",d);
     }
 
-    public static void render( Graphics g,double mx, double my, double xs, double ys){
-        g.fillOval(round(mx),round(my),round(xs),round(ys));
+    public static void render( Graphics g,double mx, double my, double xs, double ys,boolean fill){
+        if(fill)g.fillOval(round(mx),round(my),round(xs),round(ys));
+        else g.drawOval(round(mx),round(my),round(xs),round(ys));
     }
     public static void render(Graphics g, Box b){
-        render(g,b.minX,b.minY,b.xSize(),b.ySize());
+        render(g,b.minX,b.minY,b.xSize(),b.ySize(),true);
     }
     public static void render(Graphics g, Box b,double i){
-        render(g,b.minX+i,b.minY+i,b.xSize()-2*i,b.ySize()-2*i);
+        render(g,b.minX+i,b.minY+i,b.xSize()-2*i,b.ySize()-2*i,true);
+    }
+    public static void renderCLine(Graphics g, Box b){
+        render(g,b.minX,b.minY,b.xSize(),b.ySize(),false);
+    }
+    public static void renderCLine(Graphics g, Box b,double i){
+        render(g,b.minX+i,b.minY+i,b.xSize()-2*i,b.ySize()-2*i,false);
     }
     public static void renderCube( Graphics g,double mx, double my, double xs, double ys){
         g.fillRect(round(mx),round(my),round(xs),round(ys));

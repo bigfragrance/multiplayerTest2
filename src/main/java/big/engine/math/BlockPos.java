@@ -44,7 +44,12 @@ public class BlockPos {
             return false;
         }
     }
-
+    public int hashCode() {
+        int result = 17;
+        result = 31 * result + x;
+        result = 31 * result + y;
+        return result;
+    }
     public double distanceTo(BlockPos pos) {
         return Math.sqrt((x-pos.x)*(x-pos.x)+(y-pos.y)*(y-pos.y));
     }

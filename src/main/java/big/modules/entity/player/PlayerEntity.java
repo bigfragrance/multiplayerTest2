@@ -63,7 +63,6 @@ public class PlayerEntity extends Entity {
     }
 
     protected void updateCollision(){
-        ///(1+this.score*scoreMultiplier);
         EntityUtils.updateCollision(this,e->(e.id==this.id||!e.isAlive),e->EntityUtils.intersectsCircle(this,e),e->{
             if (e.team != this.team) {
                 if(this.noEnemyTimer<=0){
@@ -116,11 +115,6 @@ public class PlayerEntity extends Entity {
             this.health-=d;
             this.shield = -shieldRespawn;
         }
-        //debug
-        /*if(health<=0){
-            health=healthMax;
-            shield=shieldMax;
-        }*/
     }
     public void regenShieldAndHealth(){
         double healthRegen=PlayerEntity.healthRegen*skillPoints[8];
@@ -157,8 +151,6 @@ public class PlayerEntity extends Entity {
             EntityUtils.render(gr,Util.toMiniMap(this.boundingBox.expand(0.3,0.3)),EntityUtils.getTeamcolor(this.team));
             sc.restoreZoom();
         });
-        //EntityUtils.renderHealthBar(g,this,);
-        //System.out.println(this.name);
         super.renderAfter(g);
         EntityUtils.renderPlayerName(g,this);
         EntityUtils.renderScore(g,this);

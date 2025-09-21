@@ -125,6 +125,9 @@ public class ClientNetworkHandler {
             case("block")->{
                 cs.addEntity(BlockEntity.fromJSON(o2.getJSONObject("data")));
             }
+            case("rock")->{
+                cs.addEntity(RockEntity.fromJSON(o2.getJSONObject("data")));
+            }
         }
     }
     public void handleEntityRemove(JSONObject o){

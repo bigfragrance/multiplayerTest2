@@ -146,15 +146,6 @@ public class AimBullet extends BulletEntity{
         }
         return null;
     }
-    private double getDefendDistance(){
-        if(owner==null) return 0;
-        double m=1;
-        if(this.type.tags.has("defendDistanceMultiplier")){
-            m= this.type.tags.getDouble("defendDistanceMultiplier");
-        }
-        double d=owner.getAimPos().distanceTo(owner.getPosition())/2;
-        return m*Math.min(d,1.5);
-    }
 
     private Vec2d getPathPos(Vec2d target){
         if(calculator==null) calculator=new Calculator(this);

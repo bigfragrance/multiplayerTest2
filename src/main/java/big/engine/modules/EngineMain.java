@@ -41,6 +41,11 @@ import static big.engine.math.util.Util.round;
 import static big.engine.render.Screen.sc;
 
 public class EngineMain implements Runnable{
+    public static double TPS=20;
+    public static double chunkSize=8;
+    public static double damageExchangeSpeed=1;
+    public static int maxTeams=2;
+
 
     public static volatile EngineMain cs;
     private long lastGc=System.currentTimeMillis();
@@ -50,13 +55,9 @@ public class EngineMain implements Runnable{
     public ArrayList<Particle> particles=new ArrayList<>();
     public ArrayList<Entity> entityParticles =new ArrayList<>();
     public volatile AtomicLong lastEntityID=new AtomicLong(0);
-    public static double TPS=20;
-    public static double chunkSize=8;
-    public static double damageExchangeSpeed=1;
     public boolean isServer=true;
     public ClientNetworkHandler networkHandler;
     public MultiClientHandler multiClientHandler=null;
-    public static int maxTeams=2;
     public long runTime=0;
     public ClientPlayerEntity player;
     public ChunkMap chunkMap=new ChunkMap();

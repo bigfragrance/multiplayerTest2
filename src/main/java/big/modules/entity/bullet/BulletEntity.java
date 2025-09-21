@@ -12,6 +12,7 @@ import big.modules.network.packet.c2s.WantWeaponC2SPacket;
 import big.modules.weapon.CanAttack;
 import big.modules.weapon.GunList;
 import big.modules.weapon.Node;
+import big.modules.world.World;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -48,6 +49,9 @@ public class BulletEntity extends Entity {
     }
     public void tick(){
         try {
+            if(World.gravityEnabled){
+                this.velocity.offset(0,World.gravity);
+            }
             super.tick();
             if (!cs.isServer) return;
             //Entity e=cs.entities.get(ownerId);

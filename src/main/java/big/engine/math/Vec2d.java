@@ -49,9 +49,14 @@ public class Vec2d {
     public Vec2d multiply(double a) {
         return new Vec2d(x * a, y * a);
     }
-
+    public Vec2d multiply(double a,double b) {
+        return new Vec2d(x * a, y * b);
+    }
     public void multiply1(double a) {
         set(x * a, y * a);
+    }
+    public void multiply1(double a,double b) {
+        set(x * a, y * b);
     }
 
     public Vec2d subtract(Vec2d pos) {
@@ -126,6 +131,12 @@ public class Vec2d {
         if(this.length()<=0.00000001) return 0;
         return Math.toDegrees(Math.atan2(y, x));
     }
+    public Vec2d xOnly(){
+        return new Vec2d(x,0);
+    }
+    public Vec2d yOnly(){
+        return new Vec2d(0,y);
+    }
     public double distanceTo(Vec2d pos) {
         return this.subtract(pos).length();
     }
@@ -158,6 +169,12 @@ public class Vec2d {
     }
     public static Vec2d fromJSON(JSONObject json) {
         return new Vec2d(json.getDouble("x"), json.getDouble("y"));
+    }
+    public int hashCode() {
+        long bitsA = Double.doubleToLongBits(x);
+        long bitsB = Double.doubleToLongBits(y);
+        long combined = bitsA * 31 + bitsB;
+        return Long.hashCode(combined);
     }
 
     public Vec2d opposite() {

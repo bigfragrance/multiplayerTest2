@@ -11,7 +11,7 @@ import java.util.List;
 public class CurvePredictorUI extends JFrame {
 
     private List<Vec2d> history = new ArrayList<>();
-    private int predictSteps = 20; // 预测的未来点数
+    private int predictSteps = 20;
 
     public CurvePredictorUI() {
         setTitle("曲线预判演示");

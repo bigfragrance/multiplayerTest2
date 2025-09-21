@@ -7,6 +7,7 @@ import big.engine.math.util.EntityUtils;
 import big.engine.math.util.PacketUtil;
 import big.engine.math.util.Util;
 import big.modules.entity.player.PlayerEntity;
+import big.modules.world.World;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -92,8 +93,12 @@ public class PolygonEntity extends MobEntity{
                 target=null;
             }
         }
-        this.velocity.offset(addVelocity);
+        this.velocity=getRealVelocity();
         this.velocity.multiply1(0.9);
+        this.velocity.offset(addVelocity);
+        if(World.gravityEnabled){
+            whenGravity();
+        }
         this.rotation+=1;
         this.health+=0.15;
         this.health=Math.min(this.health,getHealthMax(sides,type));
@@ -102,6 +107,12 @@ public class PolygonEntity extends MobEntity{
             this.rotation-=360;
         }
         super.tick();
+    }
+    private void whenGravity(){
+        this.velocity.offset(0,World.gravity);
+        if(EntityUtils.isInsideWall(this.boundingBox.expand(-0.02).offset(velocity.x*5,0))&&isOnGround()){
+            this.velocity.set(velocity.x*2,0.5);
+        }
     }
     public void update(JSONObject o){
         super.update(o);

@@ -13,6 +13,7 @@ import big.engine.math.util.timer.TimerList;
 import big.engine.modules.EngineMain;
 import big.modules.ctrl.InputManager;
 import big.modules.entity.Entity;
+import big.modules.entity.RockEntity;
 import big.modules.entity.bullet.BulletEntity;
 import big.modules.entity.bullet.BulletType;
 import big.modules.entity.player.PlayerEntity;
@@ -136,9 +137,10 @@ public class ServerController {
             lastMousePos = mousePos;
         }
         if(inputManager.isSpawningBullet()){
-            for(int i=0;i<10;i++) {
+            /*for(int i=0;i<10;i++) {
                 cs.addEntity(new BulletEntity(mousePos, Util.randomVec().limit(0.5), 5, BulletType.KILLER));
-            }
+            }*/
+            cs.addEntity(new RockEntity(mousePos,Util.random(1,2)));
         }
         int[] in=inputManager.getPlayerInput();
         cs.prevCamPos.set(cs.camPos);

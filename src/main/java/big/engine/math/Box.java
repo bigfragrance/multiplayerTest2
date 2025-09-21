@@ -177,7 +177,18 @@ public class Box {
     public static Box fromJSON(JSONObject json){
         return new Box(json.getDouble("a"),json.getDouble("b"),json.getDouble("c"),json.getDouble("d"));
     }
-
+    public int hashCode() {
+        long bitsA = Double.doubleToLongBits(minX);
+        long bitsB = Double.doubleToLongBits(maxX);
+        long bitsC = Double.doubleToLongBits(minY);
+        long bitsD = Double.doubleToLongBits(maxY);
+        long combined = 17;
+        combined = 31 * combined + bitsA;
+        combined = 31 * combined + bitsB;
+        combined = 31 * combined + bitsC;
+        combined = 31 * combined + bitsD;
+        return Long.hashCode(combined);
+    }
     public Vec2d getMinPos(){
         return new Vec2d(minX,minY);
     }

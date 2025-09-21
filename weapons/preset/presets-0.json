@@ -142,14 +142,14 @@
     "data":[
       {
         "type":"GunArray",
-        "count": 60,
+        "count": 15,
         "startDelays": [0,2,4,6,8,10,12,14,16,18,20,22,24],
         "offsetRotation":0,
         "offset":{
           "x":0.18,
           "y":0
         },
-        "reloadMultiplier":0.1,
+        "reloadMultiplier":0.05,
         "layer":7,
         "startDelay":2,
         "size":[0.03,0.04,0.04],
@@ -158,10 +158,11 @@
           "renderType": 0,
           "sharp":false,
           "sharpFactor":1,
-          "multipliers":[1.5,2.5,3,2,40]
+          "multipliers":[2,2.5,3,2,40]
         },
         "extraData": {
           "defend": true,
+          "autoFire": true,
           "maxCount": 15
         }
       }

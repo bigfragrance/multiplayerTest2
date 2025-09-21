@@ -21,6 +21,9 @@ import java.util.stream.Collectors;
 import static big.engine.modules.EngineMain.cs;
 
 public class World {
+    public static boolean gravityEnabled=true;
+    public static double gravity=-0.05;
+
     public ConcurrentHashMap<Long,Chunk> worldChunks=new  ConcurrentHashMap<>();
     public Chunk getChunk(int x,int y){
         return getChunk(x,y,true);

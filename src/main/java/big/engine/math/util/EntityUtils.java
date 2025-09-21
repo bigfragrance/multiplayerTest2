@@ -10,15 +10,12 @@ import big.modules.world.BlockState;
 import big.modules.world.Blocks;
 
 import java.awt.*;
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.function.Predicate;
 
 import static big.engine.math.util.Util.round;
 import static big.engine.modules.EngineMain.cs;
-import static big.engine.render.Screen.defZoom;
 import static big.engine.render.Screen.sc;
 import static big.modules.entity.Entity.collisionMax;
 import static big.modules.entity.Entity.sizeMultiplier;
@@ -426,16 +423,16 @@ public class EntityUtils {
         return boxes;
     }
     public static boolean sl(BlockPos pos){
-        return true||!cs.world.getBlockState(pos.add(-1,0)).getBlock().solid;
+        return !cs.world.getBlockState(pos.add(-1,0)).getBlock().solid;
     }
     public static boolean sr(BlockPos pos){
-        return true||!cs.world.getBlockState(pos.add(1,0)).getBlock().solid;
+        return !cs.world.getBlockState(pos.add(1,0)).getBlock().solid;
     }
     public static boolean st(BlockPos pos){
-        return  true||!cs.world.getBlockState(pos.add(0,1)).getBlock().solid;
+        return  !cs.world.getBlockState(pos.add(0,1)).getBlock().solid;
     }
     public static boolean sb(BlockPos pos){
-        return true||!cs.world.getBlockState(pos.add(0,-1)).getBlock().solid;
+        return !cs.world.getBlockState(pos.add(0,-1)).getBlock().solid;
     }
     public static Vec2d getMaxMoveOld(Box box, Vec2d velocity, Box checking,
                                    boolean checkLeft, boolean checkRight,
