@@ -15,7 +15,7 @@ public class ServerBotEntity extends ServerPlayerEntity{
     public AutoController<ServerBotEntity> autoController;
     public ServerBotEntity(Vec2d position,int team) {
         super(position);
-        this.weaponID=getFixed(team);
+        this.weaponID=getRandom();
         this.team=team;
         this.name="Bot-"+this.weaponID+" "+Util.random.nextInt(100);
         autoController=new AutoController<>(this,this.inputManager);

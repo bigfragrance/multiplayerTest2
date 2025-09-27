@@ -24,7 +24,7 @@
       }
     ],
     "parent": ["FlankGuard"],
-    "extradata":{
+    "extraData":{
       "stopFollow":1
     }
   },
@@ -53,7 +53,7 @@
       }
     ],
     "parent": ["TrapGuard"],
-    "extradata":{
+    "extraData":{
       "stopFollow":3
     }
   }

@@ -140,7 +140,7 @@ public class ServerController {
             /*for(int i=0;i<10;i++) {
                 cs.addEntity(new BulletEntity(mousePos, Util.randomVec().limit(0.5), 5, BulletType.KILLER));
             }*/
-            cs.addEntity(new RockEntity(mousePos,Util.random(1,2)));
+            cs.addEntity(new RockEntity(mousePos,currentPlaceRadius));
         }
         int[] in=inputManager.getPlayerInput();
         cs.prevCamPos.set(cs.camPos);

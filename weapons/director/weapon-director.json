@@ -23,7 +23,7 @@
         }
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":3
     }
   },
@@ -56,7 +56,7 @@
         }
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":3
     },
     "parent": ["Director"]
@@ -87,7 +87,7 @@
         }
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":3,
       "maxCount": 8
     },
@@ -128,7 +128,7 @@
         "preset": ["DriveMark"]
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":3,
       "maxCount": 8
     },
@@ -163,7 +163,7 @@
         "preset": ["AutoTurret"]
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":3,
       "maxCount": 8
     },
@@ -195,7 +195,7 @@
         }
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":3,
       "maxCount": 8
     },
@@ -227,7 +227,7 @@
         }
       }
     ],
-    "extradata":{
+    "extraData":{
       "addVelocity":false
     },
     "parent": ["Overseer"]
@@ -258,7 +258,7 @@
         }
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":3
     },
     "parent": ["Director"]
@@ -312,7 +312,7 @@
         }
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":3
     },
     "parent": ["Cruiser"]
@@ -346,7 +346,7 @@
         "preset": ["AutoTurret"]
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":3
     },
     "parent": ["Cruiser"]
@@ -394,7 +394,7 @@
         }
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":3
     },
     "parent": ["Cruiser"]

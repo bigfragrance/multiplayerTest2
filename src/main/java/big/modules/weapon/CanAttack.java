@@ -9,7 +9,7 @@ import org.json.JSONObject;
 
 import java.awt.*;
 
-public class CanAttack extends Entity {
+public abstract class CanAttack extends Entity {
     public boolean customOffsetRotation=false;
     public double customOffsetRotationAngle=0;
     public NNPRecorder<Double> offsetRotationAll=new NNPRecorder<>(0d);
@@ -66,6 +66,13 @@ public class CanAttack extends Entity {
                 return new MirrorGun(AutoGunList.fromJSONServer(json),PacketUtil.getInt(json,"mode"),PacketUtil.contains(json,"startDelays")? Util.getDoubles(PacketUtil.getJSONArray(json, "startDelays")):null);
             case "AutoLine":
                 return new LineGun(AutoGunList.fromJSONServer(json),PacketUtil.getInt(json,"count"),PacketUtil.getVec2d(json,"oOffset"),PacketUtil.contains(json,"startDelays")? Util.getDoubles(PacketUtil.getJSONArray(json, "startDelays")):null);
+            case "GunArrayList":
+                return new SurroundGunList(GunArray.getGuns(json),PacketUtil.getInt(json,"count"),PacketUtil.contains(json,"startDelays")? Util.getDoubles(PacketUtil.getJSONArray(json, "startDelays")):null);
+            case "GunLineList":
+                return new LineGunList(GunArray.getGuns(json),PacketUtil.getInt(json,"count"),PacketUtil.getVec2d(json,"oOffset"),PacketUtil.contains(json,"startDelays")? Util.getDoubles(PacketUtil.getJSONArray(json, "startDelays")):null);
+            case "MirrorList":
+                return new MirrorGunList(GunArray.getGuns(json),PacketUtil.getInt(json,"mode"),PacketUtil.contains(json,"startDelays")? Util.getDoubles(PacketUtil.getJSONArray(json, "startDelays")):null);
+
             default:
                 return null;
         }
@@ -74,16 +81,8 @@ public class CanAttack extends Entity {
         switch (PacketUtil.getString(json,"type")){
             case "Gun":
                 return new Gun(json);
-            /*case "GunArray":
-                return new SurroundGun(new Gun(json),PacketUtil.getInt(json,"count"));
-            case "Mirror":
-                return new MirrorGun(new Gun(json),PacketUtil.getInt(json,"mode"));*/
             case "AutoGunList":
                 return AutoGunList.fromJSONClient(json);
-            /*case "AutoGunArray":
-                return new SurroundGun(AutoGunList.fromJSONClient(json),PacketUtil.getInt(json,"count"));
-            case "AutoMirror":
-                return new MirrorGun(AutoGunList.fromJSONClient(json),PacketUtil.getInt(json,"mode"));*/
             default:
                 return null;
         }

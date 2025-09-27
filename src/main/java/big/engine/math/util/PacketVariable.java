@@ -29,4 +29,5 @@ public class PacketVariable {
     public static String blockState="z";
     public static String block="0";
     public static String weapon="1";
+    public static String spawnMobRarity="2";
 }

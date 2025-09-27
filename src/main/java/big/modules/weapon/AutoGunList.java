@@ -22,6 +22,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import static big.engine.modules.EngineMain.cs;
 import static big.engine.render.Screen.sc;
 import static big.modules.weapon.Gun.color;
+import static big.modules.weapon.GunList.presetData;
 
 public class AutoGunList extends CanAttack implements AbleToAim,Node {
     private AtomicInteger lastID=new AtomicInteger(0);
@@ -185,6 +186,18 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
                 JSONObject gunObj = array.getJSONObject(i);
                 PacketUtil.put(gunObj, "owner", owner.id);
                 PacketUtil.put(gunObj, "id", 0);
+                if(gunObj.has("preset")){
+                    JSONArray preset=gunObj.getJSONArray("preset");
+                    for(int j=0;j<preset.length();j++){
+                        String presetName=preset.getString(j);
+                        JSONObject pre=presetData.getJSONObject(presetName);
+                        GunList list1=GunList.fromJSONServer(owner, pre);
+                        for(CanAttack ca:list1.list.values()){
+                            gunList.add(ca);
+                        }
+                    }
+                    continue;
+                }
                 CanAttack o = CanAttack.fromJSON(gunObj);
                 if (o == null) continue;
                 gunList.add(o);

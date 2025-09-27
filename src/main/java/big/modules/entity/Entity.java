@@ -14,6 +14,7 @@ import big.modules.entity.player.PlayerEntity;
 import big.modules.weapon.GunList;
 import big.modules.weapon.Weapon;
 import big.modules.world.ChunkPos;
+import big.modules.world.World;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -54,6 +55,7 @@ public abstract class Entity implements NetworkItem {
     public double prevRotation;
     public double nextRotation=0;
     public double score=0;
+    public boolean onGround=false;
     private ConcurrentHashMap<Long,Double> scoreAdd=new ConcurrentHashMap<>();
     public static double collisionVector=0.1;
     public static double collisionMax=1;
@@ -125,8 +127,6 @@ public abstract class Entity implements NetworkItem {
         lifeTime++;
         if(isParticle){
             this.resetTickDelta();
-            //Box b=this.boundingBox;
-            //this.boundingBox=b.expand(particleBoundingBoxExpand);
             if(lifeTime>=particleLifeTimeMax){
                 this.kill();
             }
@@ -148,6 +148,9 @@ public abstract class Entity implements NetworkItem {
                 this.health-=this.health*0.05+5;
             }else{
                 this.insideWall=false;
+            }
+            if(World.gravityEnabled){
+                this.onGround=EntityUtils.isOnGround(this);
             }
             this.prevHealth=health;
 
@@ -315,11 +318,7 @@ public abstract class Entity implements NetworkItem {
     public double getTickDelta(){
         return isParticle?Screen.tickDelta:tickDelta;
     }
-    public boolean isOnGround(){
-        Vec2d vec=new Vec2d(0,-0.02);
-        Vec2d after=EntityUtils.getMaxMove(this.boundingBox,vec);
-        return Math.abs(after.y-vec.y)>1e-8;
-    }
+
     public void addScore(){
         double total=0;
         for(DamageSource ds:damageTaken.values()){
@@ -358,5 +357,9 @@ public abstract class Entity implements NetworkItem {
     }
     public double getFovMultiplier(){
         return 1;
+    }
+
+    public boolean isOnGround() {
+        return onGround;
     }
 }

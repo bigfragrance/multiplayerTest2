@@ -110,7 +110,8 @@ public class PolygonEntity extends MobEntity{
     }
     private void whenGravity(){
         this.velocity.offset(0,World.gravity);
-        if(EntityUtils.isInsideWall(this.boundingBox.expand(-0.02).offset(velocity.x*5,0))&&isOnGround()){
+        boolean shouldJump=EntityUtils.isInsideWall(this.boundingBox.expand(-0.02).offset(velocity.x*5,0))||target!=null;
+        if(shouldJump&&isOnGround()){
             this.velocity.set(velocity.x*2,0.5);
         }
     }

@@ -39,7 +39,7 @@
         }
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":0
     },
     "parent": ["FlankGuard"]
@@ -87,7 +87,7 @@
         "preset": ["AutoTurret"]
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":0
     },
     "parent": ["Triangle"]
@@ -151,12 +151,12 @@
         }
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":0
     },
     "parent": ["Triangle"]
   },
-  "Rockettest":{
+  "Rocket":{
     "data":[
       {
         "type":"Gun",
@@ -192,7 +192,7 @@
           "type":0,
           "sharp":false,
           "sharpFactor":1,
-          "multipliers":[0.5,3,0.5,1,1,1,1,2.5]
+          "multipliers":[0.5,3,0.5,1,1,1,1,5]
         }
       },
       {
@@ -211,7 +211,7 @@
           "type":0,
           "sharp":false,
           "sharpFactor":1,
-          "multipliers":[0.5,3,0.5,1,1,1,1,2.5]
+          "multipliers":[0.5,3,0.5,1,1,1,1,5]
         }
       },
       {
@@ -230,7 +230,7 @@
           "type":0,
           "sharp":false,
           "sharpFactor":1,
-          "multipliers":[0.5,3,0.5,1,1,1,1,2.5]
+          "multipliers":[0.5,3,0.5,1,1,1,1,5]
         }
       },
       {
@@ -253,7 +253,7 @@
         }
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":0
     },
     "parent": ["Triangle"]

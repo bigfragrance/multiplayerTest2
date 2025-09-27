@@ -72,7 +72,7 @@
             }
         ],
         "parent": ["Tri-Trapper"],
-        "extradata":{
+        "extraData":{
             "stopFollow":1.5
         }
     },
@@ -100,7 +100,7 @@
             }
         ],
         "parent": ["Tri-Trapper"],
-        "extradata":{
+        "extraData":{
             "stopFollow":1
         }
     },
@@ -144,7 +144,7 @@
             }
         ],
         "parent": ["Trapper","Single"],
-        "extradata":{
+        "extraData":{
             "stopFollow":3
         }
     },
@@ -170,7 +170,7 @@
             }
         ],
         "parent": ["Trapper"],
-        "extradata":{
+        "extraData":{
             "stopFollow":3,
             "addVelocity":false
         }
@@ -218,7 +218,7 @@
             }
         ],
         "parent": ["Builder"],
-        "extradata":{
+        "extraData":{
             "stopFollow":3,
             "addVelocity":false
         }
@@ -251,7 +251,7 @@
             }
         ],
         "parent": ["Trapper","StreamLiner"],
-        "extradata":{
+        "extraData":{
             "stopFollow":2
         }
     }

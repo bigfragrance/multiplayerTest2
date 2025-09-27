@@ -8,6 +8,7 @@ import big.engine.math.util.AvgCounter;
 import big.engine.math.util.Util;
 import big.engine.render.Screen;
 import big.events.TickEvent;
+import big.modules.entity.RockEntity;
 import big.modules.network.packet.s2c.MessageS2CPacket;
 import big.modules.screen.DebugScreen;
 import meteordevelopment.orbit.EventBus;
@@ -46,10 +47,10 @@ public class EngineMain implements Runnable{
     public static double damageExchangeSpeed=1;
     public static int maxTeams=2;
 
-
     public static volatile EngineMain cs;
     private long lastGc=System.currentTimeMillis();
     public Map<Long, Entity> entities=new ConcurrentHashMap<>();
+    public ArrayList<RockEntity > rocks=new ArrayList<>();
     public Map<Long,Entity> addingEntities=new ConcurrentHashMap<>();
     public ArrayList<BlockEntity> groundBlocks=new ArrayList<>();
     public ArrayList<Particle> particles=new ArrayList<>();
@@ -172,6 +173,7 @@ public class EngineMain implements Runnable{
         for(Entity o: entityParticles){
             o.tick();
         }
+        rocks.removeIf(entity -> !entities.containsValue(entity));
         EVENT_BUS.post(TickEvent.get(0));
         Screen.lastKeyPressed= getCloneKeyPressed();
     }
@@ -270,6 +272,9 @@ public class EngineMain implements Runnable{
         }
         else{
             entities.put(entity.id,entity);
+        }
+        if(entity instanceof RockEntity){
+            rocks.add((RockEntity) entity);
         }
     }
     public void addEntityBlock(BlockEntity entity){

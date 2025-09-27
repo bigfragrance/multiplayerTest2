@@ -21,7 +21,7 @@
                 }
             }
         ],
-        "extradata":{
+        "extraData":{
             "stopFollow":1.5
         }
     },
@@ -70,7 +70,7 @@
             }
         ],
         "parent": ["FlankGuard","DoubleTwin"],
-        "extradata":{
+        "extraData":{
             "stopFollow":2
         }
     },
@@ -98,7 +98,7 @@
             }
         ],
         "parent": ["FlankGuard","Twin"],
-        "extradata":{
+        "extraData":{
             "stopFollow":1
         }
     },
@@ -126,7 +126,7 @@
             }
         ],
         "parent": ["HexaTank"],
-        "extradata":{
+        "extraData":{
             "stopFollow":0
         }
     },
@@ -154,7 +154,7 @@
             }
         ],
         "parent": ["HexaTank"],
-        "extradata":{
+        "extraData":{
             "stopFollow":0
         }
     }

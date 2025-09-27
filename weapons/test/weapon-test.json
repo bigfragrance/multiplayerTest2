@@ -25,44 +25,29 @@
                 }
             }
         ],
-        "extradata":{
+        "extraData":{
             "stopFollow":3
         }
     },
     "test0":{
         "data":[
             {
-                "type":"GunLine",
-                "startDelays": [0,5,10,15,20],
-                "count": 5,
+                "type":"GunLineList",
+                "startDelays": [0,5],
+                "count": 10,
                 "oOffset":{
-                    "x":0.2,
-                    "y":0
-                },
-                "offsetRotation":0,
-                "offset":{
                     "x":0,
-                    "y":0
+                    "y":0.1
                 },
-                "reloadMultiplier":4,
-                "layer":1,
-                "startDelay":0,
-                "size":[0.35,0.08,0.08],
-                "bulletType":{
-                    "type":1,
-                    "renderType": 1,
-                    "sharp":true,
-                    "sharpFactor":1,
-                    "multipliers":[2.5,3,2,0.9],
-                    "tags": {
-                        "sharpFactors":[0.0,0.2,0.4,0.6,0.8,1],
-                        "rotation":50,
-                        "autoAim": 0.2
+                "data": [
+                    {
+                        "preset": ["Gunner"]
                     }
-                }
+                ]
+
             }
         ],
-        "extradata":{
+        "extraData":{
             "stopFollow":3
         }
     }

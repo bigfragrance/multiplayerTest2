@@ -172,8 +172,8 @@ public class GunList {
             }
             gunList.add(o);
         }
-        if(obj.has("extradata")){
-            gunList.extradata=obj.getJSONObject("extradata");
+        if(obj.has("extraData")){
+            gunList.extradata=obj.getJSONObject("extraData");
             fixData(gunList.extradata);
         }
         return gunList;

@@ -40,7 +40,7 @@ public class InputManager {
         return Screen.isKeyClicked('t');
     }
     public Vec2d getMouseVec(){
-        return Screen.mousePos.switchToGame1();
+        return Screen.mousePos.switchToGame(Screen.sc.getRealZoom());
     }
     public boolean isUpgrading(int skill){
         char c;

@@ -5,7 +5,7 @@
         "preset": ["Gunner"]
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":3
     },
     "parent": ["Twin"]
@@ -16,7 +16,7 @@
         "preset": ["Gunner","AutoTurret"]
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":3
     },
     "parent": ["Gunner"]
@@ -27,7 +27,7 @@
         "preset": ["Gunner","FullDefend"]
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":3
     },
     "parent": ["Gunner"]
@@ -38,7 +38,7 @@
         "preset": ["MiniGunner","BigTrapBehind"]
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":3
     },
     "parent": ["Gunner","TrapGuard"]
@@ -49,7 +49,7 @@
         "preset": ["MiniGunner","2DirectorBehind"]
       }
     ],
-    "extradata":{
+    "extraData":{
       "stopFollow":3
     },
     "parent": ["Gunner"]

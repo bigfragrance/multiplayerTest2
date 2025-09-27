@@ -38,7 +38,7 @@
       }
     ],
     "parent": ["FlankGuard"],
-    "extradata":{
+    "extraData":{
       "stopFollow":3
     }
   },
@@ -81,7 +81,7 @@
       }
     ],
     "parent": ["Auto-3"],
-    "extradata":{
+    "extraData":{
       "stopFollow":3
     }
   },
@@ -124,7 +124,7 @@
       }
     ],
     "parent": ["Auto-3"],
-    "extradata":{
+    "extraData":{
       "stopFollow":4
     }
   },
@@ -186,7 +186,7 @@
       }
     ],
     "parent": ["Auto-3"],
-    "extradata":{
+    "extraData":{
       "stopFollow":4
     }
   }

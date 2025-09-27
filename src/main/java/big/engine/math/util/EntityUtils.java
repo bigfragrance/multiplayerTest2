@@ -12,6 +12,7 @@ import big.modules.world.Blocks;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Predicate;
 
 import static big.engine.math.util.Util.round;
@@ -269,9 +270,9 @@ public class EntityUtils {
         e1.storeDamage(e2,d[1]);
     }
     public static void updateCollision(Entity entity, Predicate<Entity> neverCheck,Predicate<Entity> check,AfterCheckTask<Entity> task){
-        updateCollision(entity,neverCheck,check,task,1);
+        updateCollision(entity,neverCheck,check,task,1,false);
     }
-    public static void updateCollision(Entity entity, Predicate<Entity> neverCheck,Predicate<Entity> check,AfterCheckTask<Entity> task,int r){
+    public static void updateCollision(Entity entity, Predicate<Entity> neverCheck,Predicate<Entity> check,AfterCheckTask<Entity> task,int r,boolean instantStop){
         BlockPos pos=entity.getChunkPos();
         for(int x=-r;x<=r;x++){
             for(int y=-r;y<=r;y++){
@@ -282,6 +283,7 @@ public class EntityUtils {
                     if(neverCheck.test(e)) continue;
                     if(check.test(e)){
                         task.run(e);
+                        if(instantStop) return;
                     }
                 }
             }
@@ -715,5 +717,17 @@ public class EntityUtils {
             }
         }
         return bestPos==null?targetPos:bestPos;
+    }
+    public static boolean isOnGround(Entity e){
+        Vec2d vec=new Vec2d(0,-0.02);
+        Vec2d after=EntityUtils.getMaxMove(e.boundingBox,vec);
+        AtomicBoolean b= new AtomicBoolean(Math.abs(after.y - vec.y) > 1e-8);
+        if(!b.get()){
+            EntityUtils.updateCollision(e,entity -> entity instanceof BulletEntity,entity->EntityUtils.intersectsCircle(e,entity)&&Util.withIn(30,150,e.position.subtract(entity.position).angle(),true,true),entity->{
+                b.set(true);
+            },1,true);
+        }
+        return b.get();
+
     }
 }

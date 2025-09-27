@@ -20,7 +20,7 @@
                 }
             }
         ],
-        "extradata":{
+        "extraData":{
             "stopFollow":3
         }
     },
@@ -48,7 +48,7 @@
                 "preset": ["FullDefend","AutoTurret"]
             }
         ],
-        "extradata":{
+        "extraData":{
             "stopFollow":3
         },
         "parent": ["Single"]
@@ -102,7 +102,7 @@
                 "data": []
             }
         ],
-        "extradata":{
+        "extraData":{
             "stopFollow":3
         }
     },
@@ -128,7 +128,7 @@
             }
         ],
         "parent": ["Single"],
-        "extradata":{
+        "extraData":{
             "stopFollow":3
         }
     },
@@ -211,7 +211,7 @@
             }
         ],
         "parent": ["Single"],
-        "extradata":{
+        "extraData":{
             "stopFollow":3.5
         }
     },
@@ -295,7 +295,7 @@
             }
         ],
         "parent": ["Launcher"],
-        "extradata":{
+        "extraData":{
             "stopFollow":3
         }
     },
@@ -357,7 +357,7 @@
             }
         ],
         "parent": ["Single"],
-        "extradata":{
+        "extraData":{
             "stopFollow":4
         }
     },
@@ -419,7 +419,7 @@
             }
         ],
         "parent": ["Destroyer"],
-        "extradata":{
+        "extraData":{
             "stopFollow":3
         }
     }

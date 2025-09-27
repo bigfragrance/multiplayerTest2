@@ -36,7 +36,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     public static JFrame frame;
     public volatile double camX=0;
     public volatile double camY=0;
-    public static double renderFix=512;
+    public static double renderFix=128;
     public static double defZoom=1.6*renderFix/0.02;
     public volatile double zoom=defZoom;
     public volatile double zoom2=1/renderFix;
@@ -91,16 +91,16 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
         addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
-                mouseX = round((e.getX()));
-                mouseY = round((e.getY()));
+                mouseX = e.getX();
+                mouseY = e.getY();
                 mousePos.set(mouseX,mouseY);
             }
 
         });
         addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
-                mouseX = round((e.getX()));
-                mouseY = round((e.getY()));
+                mouseX = e.getX();
+                mouseY = e.getY();
                 mousePos.set(mouseX,mouseY);
             }
         });
@@ -164,7 +164,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
         while (true) {
             try {
                 SCREEN_BOX=new Box(0, Screen.sc.windowWidth,0,Screen.sc.windowHeight);
-                if(cs.ticking&&!cs.isServer) continue;
+                if(cs.ticking) continue;
                 long start=System.currentTimeMillis();
                 windowWidth=frame.getWidth();
                 windowHeight=frame.getHeight();
