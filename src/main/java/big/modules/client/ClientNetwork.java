@@ -3,8 +3,11 @@ package big.modules.client;
 import big.engine.math.util.PacketUtil;
 import big.engine.math.util.PercentEncoder;
 import big.modules.network.ClientNetworkHandler;
-import org.json.JSONArray;
-import org.json.JSONObject; 
+import big.modules.network.JSONNBTConverter;
+import net.querz.nbt.io.*;
+import net.querz.nbt.tag.CompoundTag;
+import net.querz.nbt.tag.Tag;
+import org.json.JSONObject;
 import javax.swing.*; 
 import java.awt.*; 
 import java.io.*; 
@@ -13,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
 import java.util.Queue;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.zip.GZIPOutputStream;
 
 import static big.engine.modules.EngineMain.cs;
 
@@ -57,30 +61,6 @@ public class ClientNetwork {
             }
         }).start();
     }
-    private void handleSnapshot(JSONArray snapshot) {
-        canvasLock.writeLock().lock();
-        try {
-            for (int i = 0; i < snapshot.length();  i++) {
-                JSONObject pixel = snapshot.getJSONObject(i);
-                int x = pixel.getInt("x");
-                int y = pixel.getInt("y");
-                canvas[x][y] = new Color(pixel.getInt("color"),  true);
-            }
-        } finally {
-            canvasLock.writeLock().unlock();
-        }
-    }
-
-    private void handleSingleUpdate(JSONObject update) {
-        canvasLock.writeLock().lock();
-        try {
-            int x = update.getInt("x");
-            int y = update.getInt("y");
-            canvas[x][y] = new Color(update.getInt("color"),  true);
-        } finally {
-            canvasLock.writeLock().unlock();
-        }
-    }
     private void establishConnection() throws IOException {
         socket = new Socket();
         socket.connect(new  InetSocketAddress(serverAddress, port), 3000);
@@ -121,9 +101,10 @@ public class ClientNetwork {
         out.println(json.toString());
         out.println(json.toString());
     }
-    public void send(JSONObject json) {
+    public void sendold(JSONObject json) {
         if(!connected){
             toSend.add(json.toString());
+
             return;
         }
         while(!toSend.isEmpty()){
@@ -131,7 +112,67 @@ public class ClientNetwork {
         }
         out.println(PercentEncoder.encodeChinese(json.toString()));
     }
- 
+    public void send(JSONObject json) {
+        if (!connected) {
+            toSend.add(json.toString());
+            return;
+        }
+
+        try {
+            DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
+
+
+            while (!toSend.isEmpty()) {
+                String cached = toSend.poll();
+                sendJsonAsCompoundTag(cached, dos);
+            }
+
+            sendJsonAsCompoundTag(json.toString(), dos);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    private void sendJsonAsCompoundTag(String jsonString, DataOutputStream dos) throws IOException {
+        JSONObject obj = new JSONObject(jsonString);
+        CompoundTag compoundTag = JSONNBTConverter.toCompound(obj);
+
+        NamedTag namedTag = new NamedTag("root", compoundTag);
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        try (OutputStream out = new GZIPOutputStream(baos, true)) {
+            NBTOutput nbtOut = new NBTOutputStream(out); // LittleEndianNBTOutputStream(out)
+            nbtOut.writeTag(namedTag, Tag.DEFAULT_MAX_DEPTH);
+            nbtOut.flush();
+        }
+
+        byte[] bytes = baos.toByteArray();
+
+        dos.writeInt(bytes.length);
+        dos.write(bytes);
+        dos.flush();
+    }
+
+
+    /*private void sendCompoundTag(CompoundTag tag, DataOutputStream dos) throws IOException {
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+
+        try (OutputStream out = new GZIPOutputStream(baos, true)) {
+            NBTOutput nbtOut = new NBTOutputStream(out);
+            nbtOut.writeTag(tag, Tag.DEFAULT_MAX_DEPTH);
+            nbtOut.flush();
+        }
+
+        byte[] bytes = baos.toByteArray();
+
+        dos.writeInt(bytes.length);
+        dos.write(bytes);
+        dos.flush();
+    }*/
     public Color getPixel(int x, int y) {
         canvasLock.readLock().lock(); 
         try {

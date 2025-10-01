@@ -1,0 +1,178 @@
+package nbt;
+
+import nbt.scanner.NbtScanner;
+import nbt.visitor.NbtElementVisitor;
+import org.apache.commons.lang3.ArrayUtils;
+
+import java.io.DataInput;
+import java.io.DataOutput;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+
+/**
+ * Represents an NBT byte array. This object is mutable and backed by {@code byte[]}.
+ * Its type is {@value NbtElement#BYTE_ARRAY_TYPE}. Like Java arrays, accessing
+ * indices that are out of bounds will throw {@link ArrayIndexOutOfBoundsException}.
+ * The backing array can be obtained via {@link #getByteArray()}.
+ */
+public class NbtByteArray extends AbstractNbtList<NbtByte> {
+	private static final int SIZE = 24;
+	public static final NbtType<NbtByteArray> TYPE = new NbtType.OfVariableSize<NbtByteArray>() {
+		public NbtByteArray read(DataInput dataInput, NbtSizeTracker nbtSizeTracker) throws IOException {
+			return new NbtByteArray(readByteArray(dataInput, nbtSizeTracker));
+		}
+
+		public NbtScanner.Result doAccept(DataInput input, NbtScanner visitor, NbtSizeTracker tracker) throws IOException {
+			return visitor.visitByteArray(readByteArray(input, tracker));
+		}
+
+		private static byte[] readByteArray(DataInput input, NbtSizeTracker tracker) throws IOException {
+			tracker.add(24L);
+			int i = input.readInt();
+			tracker.add(1L, (long)i);
+			byte[] bs = new byte[i];
+			input.readFully(bs);
+			return bs;
+		}
+
+		public void skip(DataInput input, NbtSizeTracker tracker) throws IOException {
+			input.skipBytes(input.readInt() * 1);
+		}
+
+		public String getCrashReportName() {
+			return "BYTE[]";
+		}
+
+		public String getCommandFeedbackName() {
+			return "TAG_Byte_Array";
+		}
+	};
+	private byte[] value;
+
+	public NbtByteArray(byte[] value) {
+		this.value = value;
+	}
+
+	public NbtByteArray(List<Byte> value) {
+		this(toArray(value));
+	}
+
+	private static byte[] toArray(List<Byte> list) {
+		byte[] bs = new byte[list.size()];
+
+		for(int i = 0; i < list.size(); ++i) {
+			Byte byte_ = (Byte)list.get(i);
+			bs[i] = byte_ == null ? 0 : byte_;
+		}
+
+		return bs;
+	}
+
+	public void write(DataOutput output) throws IOException {
+		output.writeInt(this.value.length);
+		output.write(this.value);
+	}
+
+	public int getSizeInBytes() {
+		return 24 + 1 * this.value.length;
+	}
+
+	public byte getType() {
+		return NbtElement.BYTE_ARRAY_TYPE;
+	}
+
+	public NbtType<NbtByteArray> getNbtType() {
+		return TYPE;
+	}
+
+	public String toString() {
+		return this.asString();
+	}
+
+	public NbtElement copy() {
+		byte[] bs = new byte[this.value.length];
+		System.arraycopy(this.value, 0, bs, 0, this.value.length);
+		return new NbtByteArray(bs);
+	}
+
+	public boolean equals(Object o) {
+		if (this == o) {
+			return true;
+		} else {
+			return o instanceof NbtByteArray && Arrays.equals(this.value, ((NbtByteArray)o).value);
+		}
+	}
+
+	public int hashCode() {
+		return Arrays.hashCode(this.value);
+	}
+
+	public void accept(NbtElementVisitor visitor) {
+		visitor.visitByteArray(this);
+	}
+
+	/**
+	 * {@return the underlying byte array}
+	 *
+	 * @apiNote This does not copy the array, so modifications to the returned array
+	 * also apply to this NBT byte array.
+	 */
+	public byte[] getByteArray() {
+		return this.value;
+	}
+
+	public int size() {
+		return this.value.length;
+	}
+
+	public NbtByte get(int i) {
+		return NbtByte.of(this.value[i]);
+	}
+
+	public NbtByte set(int i, NbtByte nbtByte) {
+		byte b = this.value[i];
+		this.value[i] = nbtByte.byteValue();
+		return NbtByte.of(b);
+	}
+
+	public void method_10531(int i, NbtByte nbtByte) {
+		this.value = ArrayUtils.add(this.value, i, nbtByte.byteValue());
+	}
+
+	public boolean setElement(int index, NbtElement element) {
+		if (element instanceof AbstractNbtNumber) {
+			this.value[index] = ((AbstractNbtNumber)element).byteValue();
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public boolean addElement(int index, NbtElement element) {
+		if (element instanceof AbstractNbtNumber) {
+			this.value = ArrayUtils.add(this.value, index, ((AbstractNbtNumber)element).byteValue());
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public NbtByte method_10536(int i) {
+		byte b = this.value[i];
+		this.value = ArrayUtils.remove(this.value, i);
+		return NbtByte.of(b);
+	}
+
+	public byte getHeldType() {
+		return NbtElement.BYTE_TYPE;
+	}
+
+	public void clear() {
+		this.value = new byte[0];
+	}
+
+	public NbtScanner.Result doAccept(NbtScanner visitor) {
+		return visitor.visitByteArray(this.value);
+	}
+}

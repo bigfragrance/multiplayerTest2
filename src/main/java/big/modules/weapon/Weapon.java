@@ -12,6 +12,7 @@ import static big.engine.modules.EngineMain.cs;
 import static big.modules.entity.Entity.sizeMultiplier;
 
 public class Weapon{
+    //not used
     public static double damageBase=10;
     public static double speedBase=5*sizeMultiplier;
     public static double healthBase=1;
@@ -50,9 +51,7 @@ public class Weapon{
     }
     public static Weapon get(Entity owner,int type){
         switch (type){
-            case(0)->{
-                return new Weapon0(owner);
-            }
+
         }
         return null;
     }

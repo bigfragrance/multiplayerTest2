@@ -7,7 +7,7 @@ import big.engine.math.Box;
 import big.engine.math.Vec2d;
 import big.engine.modules.EngineMain;
 import big.modules.entity.Entity;
-import com.formdev.flatlaf.util.SystemInfo;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 

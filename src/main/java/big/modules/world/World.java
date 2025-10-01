@@ -21,7 +21,7 @@ import java.util.stream.Collectors;
 import static big.engine.modules.EngineMain.cs;
 
 public class World {
-    public static boolean gravityEnabled=true;
+    public static boolean gravityEnabled=false;
     public static double gravity=-0.05;
 
     public ConcurrentHashMap<Long,Chunk> worldChunks=new  ConcurrentHashMap<>();

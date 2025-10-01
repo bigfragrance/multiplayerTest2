@@ -189,5 +189,23 @@
     "extraData":{
       "stopFollow":4
     }
+  },
+  "Wrench":{
+    "data":[
+      {
+        "type":"GunArrayList",
+        "count": 1,
+        "data": [
+          {
+            "preset": ["Wrench"]
+          }
+        ]
+      }
+
+    ],
+    "parent": ["Auto-3"],
+    "extraData":{
+      "stopFollow":1
+    }
   }
 }

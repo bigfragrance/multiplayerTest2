@@ -57,17 +57,11 @@ public class ClientHandler implements Runnable {
             writer = new PrintWriter(
                 new OutputStreamWriter(clientSocket.getOutputStream(), StandardCharsets.UTF_8), false);
  
-            // Send initial snapshot 
-            /*JSONObject initMsg = new JSONObject();
-            initMsg.put(PacketUtil.getShortVariableName("type"),  "full_snapshot");
-            initMsg.put("data",  canvas.getFullSnapshot()); 
-            writer.println(initMsg.toString()); */
- 
-            // Start broadcast receiver 
+
             processThread= new Thread(this::processBroadcasts);
             processThread.start();
  
-            // Handle incoming messages 
+
             String inputLine;
             lastReceive=System.currentTimeMillis();
             while ((inputLine = reader.readLine())  != null&&System.currentTimeMillis()-lastReceive<6000&&!interrupted&&!Thread.currentThread().isInterrupted()) {

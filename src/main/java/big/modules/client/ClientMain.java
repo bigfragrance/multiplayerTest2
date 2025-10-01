@@ -13,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 
 import static big.engine.modules.EngineMain.cs;
+import static big.engine.render.Screen.sc;
 
 public class ClientMain {
     public static void main(String[] args) {
@@ -34,6 +35,7 @@ public class ClientMain {
             Thread thread = new Thread(panel);
             new EngineMain(o.getServerAddress(),o.getServerPort(),o.isServer());
             cs.setting=o;
+            Screen.mouseOffset=o.getMouseOffset();
             //new EngineMain("localhost",8088,false);
             new Thread(()->{
                 cs.run();

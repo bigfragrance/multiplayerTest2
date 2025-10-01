@@ -39,8 +39,11 @@ public class InputManager {
     public boolean isOpeningSendMsg(){
         return Screen.isKeyClicked('t');
     }
+    public boolean isCheckingMouseOffset(){
+        return Screen.isKeyPressed('q')&&Screen.isKeyPressed('e');
+    }
     public Vec2d getMouseVec(){
-        return Screen.mousePos.switchToGame(Screen.sc.getRealZoom());
+        return Screen.mousePos.switchToGame(Screen.sc.zoom);
     }
     public boolean isUpgrading(int skill){
         char c;

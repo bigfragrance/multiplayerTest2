@@ -1,6 +1,6 @@
 package big.modules.client;
 
-import com.formdev.flatlaf.FlatDarkLaf;
+
 import big.engine.math.Vec2d;
 
 import javax.swing.*; 
@@ -24,7 +24,7 @@ public class ClientGUI extends JFrame {
     }
  
     private void setupUI() {
-        FlatDarkLaf.setup(); 
+        //FlatDarkLaf.setup();
         setTitle("Pixel Canvas v2025.05");
         setSize(64*CELL_SIZE + 280, 64*CELL_SIZE + 40);
         setDefaultCloseOperation(EXIT_ON_CLOSE);

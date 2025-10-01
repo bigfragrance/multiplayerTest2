@@ -21,6 +21,9 @@ import javax.swing.*;
 import javax.swing.plaf.FontUIResource;
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.NoninvertibleTransformException;
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Set;
@@ -36,7 +39,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     public static JFrame frame;
     public volatile double camX=0;
     public volatile double camY=0;
-    public static double renderFix=128;
+    public static double renderFix=64;
     public static double defZoom=1.6*renderFix/0.02;
     public volatile double zoom=defZoom;
     public volatile double zoom2=1/renderFix;
@@ -46,7 +49,8 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     public int windowHeight=1000;
     public static int mouseX = 50;
     public static int mouseY = 50;
-    public static volatile Vec2d mousePos=new Vec2d(50,50);
+    public static volatile Vec2d mousePos=new Vec2d(0,0);
+    public static Vec2d mouseOffset=new Vec2d(0,0);
     public static volatile  ConcurrentHashMap<Character,Boolean> keyPressed=new  ConcurrentHashMap<>();
     public static volatile ConcurrentHashMap<Character,Boolean> lastKeyPressed=new  ConcurrentHashMap<>();
     public static char MOUSECHAR=(char)60000;
@@ -59,6 +63,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     public AutoList<AfterCheckTask<Graphics>> renderTasks2=new AutoList<>();
     public String renderString="";
     public GUI currentScreen=null;
+    private Vec2d mouseStart=null;
     public Screen(){
         sc =this;
         frame.addKeyListener(this);
@@ -91,17 +96,17 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
         addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
-                mouseX = e.getX();
-                mouseY = e.getY();
-                mousePos.set(mouseX,mouseY);
+                //mouseX = (int) ((e.getX()-windowWidth/2)*renderFix+windowWidth/2);
+                //mouseY = (int) ((e.getY()-windowHeight/2)*renderFix+windowHeight/2);
+                mousePos.set(screenToGame(e.getX(),e.getY()));
             }
 
         });
         addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
-                mouseX = e.getX();
-                mouseY = e.getY();
-                mousePos.set(mouseX,mouseY);
+
+
+                mousePos.set(screenToGame(e.getX(),e.getY()));
             }
         });
         addMouseWheelListener(new MouseWheelListener() {
@@ -284,6 +289,21 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
                 currentScreen.render(g);
             }
             cs.EVENT_BUS.post(RenderEvent.get(g));
+            g.setColor(Color.RED);
+
+            if(inputManager.isCheckingMouseOffset()){
+                if(mouseStart==null){
+                    mouseStart=mousePos.copy();
+                }
+                Util.renderCube(g,new Box(new Vec2d((double) windowWidth /2,(double) windowHeight /2),10*renderFix));
+                Util.renderCube(g,new Box(mouseStart,10*renderFix));
+            }else if(mouseStart!=null){
+                mouseOffset.offset(mousePos.subtract(mouseStart));
+                mouseStart=null;
+                cs.setting.setMouseOffset(mouseOffset);
+                cs.setting.save();
+                System.out.println(mouseOffset.toJSON());
+            }
         }
         catch (Exception e){
             e.printStackTrace();
@@ -349,5 +369,29 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     }
     public void restoreZoom(){
         zoom=oldZoom;
+    }
+    private AffineTransform getRenderTransform() {
+        int centerX = windowWidth / 2;
+        int centerY = windowHeight / 2;
+
+        AffineTransform at = new AffineTransform();
+        at.translate(centerX, centerY);
+        at.scale(zoom2, zoom2);
+        at.translate(-centerX, -centerY);
+        return at;
+    }
+
+    public Vec2d screenToGame(int screenX, int screenY) {
+        try {
+            AffineTransform at = getRenderTransform();
+            AffineTransform inv = at.createInverse();
+            Point2D.Double src = new Point2D.Double(screenX, screenY);
+            Point2D.Double dst = new Point2D.Double();
+            inv.transform(src, dst);
+            return new Vec2d(dst.x, dst.y).subtract(mouseOffset);
+        } catch (NoninvertibleTransformException e) {
+            e.printStackTrace();
+            return new Vec2d(screenX, screenY).subtract(mouseOffset);
+        }
     }
 }

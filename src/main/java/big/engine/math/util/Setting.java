@@ -1,6 +1,7 @@
 package big.engine.math.util;
 
-import com.formdev.flatlaf.json.Json;
+import big.engine.math.Vec2d;
+
 import org.json.JSONObject;
 
 import java.io.Reader;
@@ -29,6 +30,12 @@ public class Setting {
     }
     public boolean isServer(){
         return data.getBoolean("is_server");
+    }
+    public Vec2d getMouseOffset(){
+        return Vec2d.fromJSON(data.getJSONObject("mouse_offset"));
+    }
+    public void setMouseOffset(Vec2d mouseOffset){
+        data.put("mouse_offset",mouseOffset.toJSON());
     }
     public void setChosenTank(String tank) {
         data.put("chosen_tank", tank);
@@ -88,11 +95,12 @@ public class Setting {
     }
     public static String create(){
         JSONObject o=new JSONObject();
-        o.put("server_address","frp-sea.com");
+        o.put("server_address","frp-run.com");
         o.put("server_port",48887);
         o.put("name","Player-"+Util.random.nextInt(1000));
         o.put("chosen_tank","single");
         o.put("is_server",false);
+        o.put("mouse_offset", Vec2d.zero().toJSON());
         return o.toString();
     }
     public static String createServer(){
