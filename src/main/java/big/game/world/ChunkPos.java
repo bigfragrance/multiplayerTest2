@@ -1,0 +1,19 @@
+package big.game.world;
+
+import big.engine.math.BlockPos;
+
+public class ChunkPos extends BlockPos {
+    public ChunkPos(int x, int y) {
+        super(x, y);
+    }
+    public ChunkPos(BlockPos pos){
+        this(Chunk.toChunk(pos.x),Chunk.toChunk(pos.y));
+    }
+
+    public static long toLong(int chunkX, int chunkZ) {
+        return (long)chunkX & 4294967295L | ((long)chunkZ & 4294967295L) << 32;
+    }
+    public static int[] fromLong(long l){
+        return new int[]{(int)(l&4294967295L),(int)(l>>>32)};
+    }
+}

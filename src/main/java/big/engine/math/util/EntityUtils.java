@@ -2,12 +2,12 @@ package big.engine.math.util;
 
 import big.engine.math.*;
 import big.engine.modules.EngineMain;
-import big.modules.entity.Entity;
-import big.modules.entity.bullet.BulletEntity;
-import big.modules.entity.player.PlayerEntity;
-import big.modules.entity.PolygonEntity;
-import big.modules.world.BlockState;
-import big.modules.world.Blocks;
+import big.game.entity.Entity;
+import big.game.entity.bullet.BulletEntity;
+import big.game.entity.player.PlayerEntity;
+import big.game.entity.PolygonEntity;
+import big.game.world.BlockState;
+import big.game.world.Blocks;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -18,8 +18,8 @@ import java.util.function.Predicate;
 import static big.engine.math.util.Util.round;
 import static big.engine.modules.EngineMain.cs;
 import static big.engine.render.Screen.sc;
-import static big.modules.entity.Entity.collisionMax;
-import static big.modules.entity.Entity.sizeMultiplier;
+import static big.game.entity.Entity.collisionMax;
+import static big.game.entity.Entity.sizeMultiplier;
 
 public class EntityUtils {
     public static Color[] teacsolors={
@@ -123,6 +123,10 @@ public class EntityUtils {
     public static Box smallerBullet(Box box){
         double e=Math.min(0.05,(box.xSize()+box.ySize())/4*0.15);
         return box.expand(-e,-e);
+    }
+    public static double smallerBullet(double size){
+        double e=Math.min(0.05,size*0.15);
+        return size-e;
     }
     public static void render(Graphics g,Box box,Color team){
         g.setColor(ColorUtils.darker(team,0.6));
@@ -264,9 +268,9 @@ public class EntityUtils {
     }
     public static void takeDamage(Entity e1,Entity e2){
         double[] d=getBetterDamage(e1.health,e1.damage,e2.health,e2.damage);
-        e2.addDamage(d[0]);
+        e2.addDamage(d[0],e1);
         e2.storeDamage(e1,d[0]);
-        e1.addDamage(d[1]);
+        e1.addDamage(d[1],e2);
         e1.storeDamage(e2,d[1]);
     }
     public static void updateCollision(Entity entity, Predicate<Entity> neverCheck,Predicate<Entity> check,AfterCheckTask<Entity> task){

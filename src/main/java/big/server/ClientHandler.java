@@ -1,135 +1,176 @@
 package big.server;
 
 import big.engine.math.util.EntityUtils;
-import big.engine.math.util.PercentEncoder;
-import big.modules.entity.player.PlayerData;
-import big.modules.entity.player.PlayerEntity;
-import big.modules.entity.player.ServerPlayerEntity;
-import big.modules.network.ServerNetworkHandler;
-import big.modules.network.packet.Packet;
-import big.modules.network.packet.s2c.MessageS2CPacket;
-import big.modules.network.packet.s2c.TanksDataS2CPacket;
-import big.modules.weapon.GunList;
+import big.game.entity.player.PlayerData;
+import big.game.entity.player.ServerPlayerEntity;
+import big.game.network.JSONNBTConverter;
+import big.game.network.ServerNetworkHandler;
+import big.game.network.packet.Packet;
+import big.game.network.packet.s2c.MessageS2CPacket;
+import big.game.network.packet.s2c.TanksDataS2CPacket;
+import big.game.weapon.GunList;
+import net.querz.nbt.io.*;
+import net.querz.nbt.tag.CompoundTag;
+
+import net.querz.nbt.tag.Tag;
 import org.json.JSONObject;
 
 import java.io.*;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.GZIPOutputStream;
 
 import static big.engine.modules.EngineMain.cs;
 
 public class ClientHandler implements Runnable {
-    private final BlockingQueue<String> broadcastQueue = new LinkedBlockingQueue<>();
-    private final Socket clientSocket;
-    private PrintWriter writer;
 
+    private final Socket clientSocket;
+    private volatile boolean interrupted = false;
+
+    private final BlockingQueue<CompoundTag> broadcastQueue = new LinkedBlockingQueue<>();
     public ServerNetworkHandler serverNetworkHandler;
     public ServerPlayerEntity player;
-    private volatile long lastReceive=0;
+    private volatile long lastReceive = 0;
     private long connectionStartTime;
-    private boolean interrupted=false;
-    private Thread processThread=null;
-    private boolean handshaked=false;
-    public ClientHandler(Socket socket) {
-        this.clientSocket  = socket;
-        lastReceive=System.currentTimeMillis();
-        connectionStartTime=System.currentTimeMillis();
+    private boolean handshaked = false;
+    private Thread sendThread = null;
 
+    public ClientHandler(Socket socket) {
+        this.clientSocket = socket;
+        lastReceive = System.currentTimeMillis();
+        connectionStartTime = System.currentTimeMillis();
     }
-    public void spawnPlayer(){
-        this.player=new ServerPlayerEntity(EntityUtils.getRandomSpawnPosition(cs.getTeam()));
-        this.player.isAlive=true;
-        this.player.team=cs.getTeam();
+
+
+    public void spawnPlayer() {
+        this.player = new ServerPlayerEntity(EntityUtils.getRandomSpawnPosition(cs.getTeam()));
+        this.player.isAlive = true;
+        this.player.team = cs.getTeam();
         cs.addEntity(player);
-        this.serverNetworkHandler=new ServerNetworkHandler(this);
+        this.serverNetworkHandler = new ServerNetworkHandler(this);
+        cs.multiClientHandler.addClient(this);
         this.serverNetworkHandler.sendPlayerSpawn(player);
         this.serverNetworkHandler.send(new TanksDataS2CPacket(GunList.data,GunList.presetData).toJSON());
-        this.player.networkHandler=this.serverNetworkHandler;
-        cs.multiClientHandler.addClient(this);
+        player.networkHandler = serverNetworkHandler;
+        MessageS2CPacket.sendHistory(this);
     }
-    @Override 
+
+    @Override
     public void run() {
-        try (BufferedReader reader = new BufferedReader(
-             new InputStreamReader(clientSocket.getInputStream())))  {
-             
-            writer = new PrintWriter(
-                new OutputStreamWriter(clientSocket.getOutputStream(), StandardCharsets.UTF_8), false);
- 
+        try (DataInputStream dis = new DataInputStream(clientSocket.getInputStream());
+             DataOutputStream dos = new DataOutputStream(clientSocket.getOutputStream())) {
 
-            processThread= new Thread(this::processBroadcasts);
-            processThread.start();
- 
 
-            String inputLine;
-            lastReceive=System.currentTimeMillis();
-            while ((inputLine = reader.readLine())  != null&&System.currentTimeMillis()-lastReceive<6000&&!interrupted&&!Thread.currentThread().isInterrupted()) {
-                if(inputLine.equals("handshake")){
-                    handshaked=true;
-                    //spawnPlayer();
-                    lastReceive=System.currentTimeMillis();
-                    spawnPlayer();
-                    continue;
-                }else if(!handshaked){
-                    disconnect();
-                    return;
+            sendThread = new Thread(() -> processBroadcasts(dos));
+            sendThread.start();
+
+            while (!interrupted) {
+
+                int len;
+                try {
+                    len = dis.readInt();
+                } catch (EOFException e) {
+                    break;
                 }
-                JSONObject msg = new JSONObject(PercentEncoder.decodeChinese(inputLine));
+
+                if (len <= 0) continue;
+
+                byte[] data = new byte[len];
+                dis.readFully(data);
+
+
+                CompoundTag receivedTag;
+                try (GZIPInputStream gzipIn = new GZIPInputStream(new ByteArrayInputStream(data))) {
+                    NBTInput nbtIn = new NBTInputStream(gzipIn);
+                    NamedTag namedTag = nbtIn.readTag(len);
+                    receivedTag = (CompoundTag) namedTag.getTag();
+                }
+
+
+                JSONObject msg = convertCompoundTagToJSONObject(receivedTag);
+                if (!handshaked && msg.optString("type").equals("handshake")) {
+                    handshaked = true;
+                    spawnPlayer();
+                    lastReceive = System.currentTimeMillis();
+                    continue;
+                }
+
+                if (!handshaked) {
+                    disconnect();
+                    break;
+                }
+
                 serverNetworkHandler.apply(msg);
-                lastReceive=System.currentTimeMillis();
+                lastReceive = System.currentTimeMillis();
             }
-            disconnect();
-            Thread.currentThread().interrupt();
-            processThread.interrupt();
+
         } catch (Exception e) {
-            disconnect();
-            System.err.println("Client  error: " );
             e.printStackTrace();
-            Thread.currentThread().interrupt();
-            processThread.interrupt();
-        }
-    }
-    public void checkConnecting(){
-        if(System.currentTimeMillis()-lastReceive>1000||(System.currentTimeMillis()-connectionStartTime>1000&&player.name.equals(PlayerEntity.defName))){
+        } finally {
             disconnect();
         }
     }
-    private void disconnect() {
+
+    private void processBroadcasts(DataOutputStream dos) {
         try {
-            if(handshaked){
-                ServerMain.connectedPlayersEntity.put(player.name.hashCode(),new PlayerData(player));
+            while (!Thread.interrupted() && !interrupted) {
+                CompoundTag tag = broadcastQueue.take();
+
+
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                try (GZIPOutputStream gzipOut = new GZIPOutputStream(baos, true)) {
+                    NBTOutput nbtOut = new NBTOutputStream(gzipOut);
+                    NamedTag named = new NamedTag("root", tag);
+                    nbtOut.writeTag(named, Tag.DEFAULT_MAX_DEPTH);
+                    nbtOut.flush();
+                }
+
+                byte[] bytes = baos.toByteArray();
+
+
+                dos.writeInt(bytes.length);
+                dos.write(bytes);
+                dos.flush();
             }
-            cs.removeEntity(player.id);
+        } catch (InterruptedException | IOException e) {
+            Thread.currentThread().interrupt();
+        }
+    }
+
+
+    public void send(JSONObject obj) {
+        CompoundTag tag = convertJSONObjectToCompoundTag(obj);
+        broadcastQueue.offer(tag);
+    }
+
+    public void send(Packet<?> packet) {
+        send(packet.toJSON());
+    }
+
+    private void disconnect() {
+        interrupted = true;
+        try {
+            if (handshaked && player != null) {
+
+                ServerMain.connectedPlayersEntity.put(player.name.hashCode(), new PlayerData(player));
+                cs.removeEntity(player.id);
+            }
             clientSocket.close();
-            ServerMain.connectedPlayers.remove(clientSocket.getInetAddress().hashCode());
             cs.multiClientHandler.removeClient(this);
         } catch (IOException e) {
             System.err.println("Error closing client socket: " + e.getMessage());
         }
-        interrupted=true;
+        if (sendThread != null) sendThread.interrupt();
     }
 
-    public void send(JSONObject o){
-        broadcastQueue.offer(o.toString());
+
+    private CompoundTag convertJSONObjectToCompoundTag(JSONObject obj) {
+        return JSONNBTConverter.toCompound(obj);
     }
-    public void send(Packet<?> packet){
-        send(packet.toJSON());
-    }
-    private int sent=0;
-    private void processBroadcasts() {
-        try {
-            while (!Thread.interrupted())  {
-                String msg = broadcastQueue.take(); 
-                writer.println(PercentEncoder.encodeChinese(msg));
-                sent++;
-                if(broadcastQueue.isEmpty()||sent>50){
-                    writer.flush();
-                    sent=0;
-                }
-            }
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt(); 
-        }
+
+    private JSONObject convertCompoundTagToJSONObject(CompoundTag tag) {
+        return JSONNBTConverter.toJSON(tag);
     }
 }

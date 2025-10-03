@@ -8,25 +8,25 @@ import big.engine.math.util.AvgCounter;
 import big.engine.math.util.Util;
 import big.engine.render.Screen;
 import big.events.TickEvent;
-import big.modules.entity.RockEntity;
-import big.modules.network.packet.s2c.MessageS2CPacket;
-import big.modules.screen.DebugScreen;
+import big.game.entity.RockEntity;
+import big.game.network.packet.s2c.MessageS2CPacket;
+import big.game.screen.DebugScreen;
 import meteordevelopment.orbit.EventBus;
 import meteordevelopment.orbit.IEventBus;
-import big.modules.ChunkMap;
-import big.modules.entity.BlockEntity;
-import big.modules.entity.player.ClientPlayerEntity;
-import big.modules.entity.Entity;
-import big.modules.entity.player.PlayerEntity;
-import big.modules.entity.PolygonEntity;
-import big.modules.network.ClientNetworkHandler;
-import big.modules.particle.Particle;
-import big.modules.screen.ChatMessageScreen;
-import big.modules.server.ServerController;
-import big.modules.weapon.GunList;
-import big.modules.world.ClientWorld;
-import big.modules.world.ServerWorld;
-import big.modules.world.World;
+import big.game.ChunkMap;
+import big.game.entity.BlockEntity;
+import big.game.entity.player.ClientPlayerEntity;
+import big.game.entity.Entity;
+import big.game.entity.player.PlayerEntity;
+import big.game.entity.PolygonEntity;
+import big.game.network.ClientNetworkHandler;
+import big.game.particle.Particle;
+import big.game.screen.ChatMessageScreen;
+import big.game.server.ServerController;
+import big.game.weapon.GunList;
+import big.game.world.ClientWorld;
+import big.game.world.ServerWorld;
+import big.game.world.World;
 import big.server.MultiClientHandler;
 import big.server.ServerMain;
 
@@ -292,7 +292,7 @@ public class EngineMain implements Runnable{
     }
     public void sendMessageServer(String str){
         if(isServer){
-            multiClientHandler.clients.forEach(c->c.send(new MessageS2CPacket("<server> "+str)));
+            multiClientHandler.clients.forEach(c->c.send(new MessageS2CPacket("<server> "+str).addHistory()));
         }
     }
     public void addParticle(Entity particle){

@@ -1,7 +1,7 @@
 package big.server;
 
 import big.engine.math.util.AvgCounter;
-import big.modules.entity.player.PlayerData;
+import big.game.entity.player.PlayerData;
 
 import java.net.ServerSocket;
 import java.net.Socket;

@@ -6,22 +6,21 @@ import big.engine.math.BlockPos;
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
 import big.engine.modules.EngineMain;
-import big.modules.entity.Entity;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.awt.*;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.management.ManagementFactory;
 import java.lang.management.MemoryMXBean;
 import java.lang.management.MemoryUsage;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -357,6 +356,11 @@ public class Util {
     }
     public static int ceil(double d) {
         return (int) Math.ceil(d);
+    }
+    public static String timeString(){
+        LocalTime now = LocalTime.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+        return now.format(formatter);
     }
     public static void memory() {
 

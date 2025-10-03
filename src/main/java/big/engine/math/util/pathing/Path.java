@@ -2,11 +2,10 @@ package big.engine.math.util.pathing;
 
 import big.engine.math.Vec2d;
 import big.engine.math.util.Util;
-import big.modules.entity.Entity;
+import big.game.entity.Entity;
 
 
 import java.util.*;
-import java.util.concurrent.*;
 
 import static big.engine.modules.EngineMain.cs;
 

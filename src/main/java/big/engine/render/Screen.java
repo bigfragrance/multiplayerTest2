@@ -9,12 +9,12 @@ import big.engine.math.util.timer.AutoList;
 import big.engine.modules.EngineMain;
 import big.events.RenderEvent;
 import big.events.TickEvent;
-import big.modules.ctrl.InputManager;
-import big.modules.entity.Entity;
-import big.modules.entity.bullet.BulletEntity;
-import big.modules.particle.Particle;
-import big.modules.screen.ChatMessageScreen;
-import big.modules.screen.GUI;
+import big.game.ctrl.InputManager;
+import big.game.entity.Entity;
+import big.game.entity.bullet.BulletEntity;
+import big.game.particle.Particle;
+import big.game.screen.ChatMessageScreen;
+import big.game.screen.GUI;
 import meteordevelopment.orbit.EventHandler;
 
 import javax.swing.*;
@@ -113,7 +113,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
             @Override
             public void mouseWheelMoved(MouseWheelEvent e) {
                 if(cs.isServer) {
-                    double[] d = Util.zoom(-e.getPreciseWheelRotation() * getRealZoom() / 10, mousePos.switchToGame());
+                    double[] d = Util.zoom(-e.getPreciseWheelRotation() * getRealZoom() / 10,Vec2d.zero());
                     if (d != null) {
                         cs.camPos=new Vec2d(d[0],d[1]);
                         cs.prevCamPos=cs.camPos;

@@ -1,6 +1,6 @@
 package big.engine.math;
 
-import big.modules.world.ChunkPos;
+import big.game.world.ChunkPos;
 
 public class BlockPos {
     public final int x;

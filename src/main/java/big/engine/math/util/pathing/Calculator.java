@@ -3,14 +3,10 @@ package big.engine.math.util.pathing;
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
 import big.engine.math.util.EntityUtils;
-import big.modules.entity.Entity;
+import big.game.entity.Entity;
 
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-
-import static big.engine.modules.EngineMain.cs;
 
 
 public class Calculator {

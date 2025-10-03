@@ -15,7 +15,9 @@ public class AutoList<T>{
     public void add(T t) {
         list.put(t, System.currentTimeMillis());
     }
-
+    public void add(T t,int c) {
+        list.put(t,System.currentTimeMillis()-c);
+    }
     public void remove(T t) {
         list.remove(t);
     }

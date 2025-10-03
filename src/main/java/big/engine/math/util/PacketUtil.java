@@ -2,19 +2,16 @@ package big.engine.math.util;
 
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
-import big.modules.network.ClientNetworkHandler;
-import big.modules.network.ServerNetworkHandler;
-import big.modules.network.packet.Packet;
-import big.modules.network.packet.c2s.*;
-import big.modules.network.packet.s2c.*;
+import big.game.network.ClientNetworkHandler;
+import big.game.network.ServerNetworkHandler;
+import big.game.network.packet.Packet;
+import big.game.network.packet.c2s.*;
+import big.game.network.packet.s2c.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-
-import static big.engine.math.util.PacketName.player_data;
-import static big.engine.math.util.PacketName.player_input;
 
 public class PacketUtil {
 
