@@ -137,6 +137,9 @@ public class PacketUtil {
             case("tick")->{
                 return new TickS2CPacket(o);
             }
+            case("array_packet")->{
+                return new ArrayPacket(o);
+            }
 
         }
         return null;

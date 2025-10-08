@@ -20,4 +20,5 @@ public class PacketName {
     public static String tanks_data="q";
     public static String message="r";
     public static String tick="s";
+    public static String array_packet="t";
 }

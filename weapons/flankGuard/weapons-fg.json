@@ -1,0 +1,161 @@
+{
+    "FlankGuard":{
+        "data":[
+            {
+                "type":"GunArray",
+                "count": 3,
+                "offsetRotation":0,
+                "offset":{
+                    "x":0,
+                    "y":0
+                },
+                "reloadMultiplier":1.5,
+                "layer":1,
+                "startDelay":0,
+                "size":[0.35,0.08,0.08],
+                "bulletType":{
+                    "type":0,
+                    "sharp":false,
+                    "sharpFactor":1,
+                    "multipliers":[2.5,3,1.5,1]
+                }
+            }
+        ],
+        "extraData":{
+            "stopFollow":1.5
+        }
+    },
+    "TripleTwin":{
+        "data":[
+            {
+                "type":"GunArray",
+                "count": 3,
+                "offsetRotation":0,
+                "offset":{
+                    "x":0,
+                    "y":0.1
+                },
+                "reloadMultiplier":0.8,
+                "layer":1,
+                "startDelay":0,
+                "size":[0.35,0.08,0.08],
+                "bulletType":{
+                    "type":0,
+                    "sharp":false,
+                    "sharpFactor":1,
+                    "multipliers":[1.5,3,1.5,1]
+                }
+            },
+            {
+                "type":"GunArray",
+                "count": 3,
+                "offsetRotation":0,
+                "offset":{
+                    "x":0,
+                    "y":-0.1
+                },
+                "reloadMultiplier":0.8,
+                "layer":1,
+                "startDelay":4,
+                "size":[0.35,0.08,0.08],
+                "bulletType":{
+                    "type":0,
+                    "sharp":false,
+                    "sharpFactor":1,
+                    "multipliers":[1.5,3,1.5,1]
+                }
+            },
+            {
+                "preset": ["AutoTurret"]
+            }
+        ],
+        "parent": ["FlankGuard","DoubleTwin"],
+        "extraData":{
+            "stopFollow":2
+        }
+    },
+    "HexaTank":{
+        "data":[
+            {
+                "type":"GunArray",
+                "startDelays": [0,1,2,3,4,5],
+                "count": 6,
+                "offsetRotation":0,
+                "offset":{
+                    "x":0,
+                    "y":0
+                },
+                "reloadMultiplier":1.2,
+                "layer":1,
+                "startDelay":0,
+                "size":[0.35,0.08,0.08],
+                "bulletType":{
+                    "type":0,
+                    "sharp":false,
+                    "sharpFactor":1,
+                    "multipliers":[2.5,2,1.5,1]
+                }
+            }
+        ],
+        "parent": ["FlankGuard","Twin"],
+        "extraData":{
+            "stopFollow":1
+        }
+    },
+    "OctoTank":{
+        "data":[
+            {
+                "type":"GunArray",
+                "startDelays": [0,4],
+                "count": 8,
+                "offsetRotation":0,
+                "offset":{
+                    "x":0,
+                    "y":0
+                },
+                "reloadMultiplier":1.2,
+                "layer":1,
+                "startDelay":0,
+                "size":[0.35,0.08,0.08],
+                "bulletType":{
+                    "type":0,
+                    "sharp":false,
+                    "sharpFactor":1,
+                    "multipliers":[1.8,2,1.5,1]
+                }
+            }
+        ],
+        "parent": ["HexaTank"],
+        "extraData":{
+            "stopFollow":0
+        }
+    },
+    "Cyclone":{
+        "data":[
+            {
+                "type":"GunArray",
+                "startDelays": [0,2],
+                "count": 12,
+                "offsetRotation":0,
+                "offset":{
+                    "x":0.18,
+                    "y":0
+                },
+                "reloadMultiplier":1.5,
+                "layer":1,
+                "startDelay":0,
+                "size":[0.1,0.04,0.04],
+                "bulletType":{
+                    "type":0,
+                    "sharp":false,
+                    "sharpFactor":1,
+                    "multipliers":[1.5,2.5,1.2,0.4]
+                }
+            }
+        ],
+        "parent": ["HexaTank"],
+        "extraData":{
+            "stopFollow":0
+        }
+    }
+}

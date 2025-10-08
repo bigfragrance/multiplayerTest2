@@ -12,8 +12,8 @@ public class BlockState {
         init();
     }
     public void init(){
-        data.put("spawnMobRarity",0.1);
-        data.put("team",-1);
+        PacketUtil.put(data,"spawnMobRarity",0.1);
+        PacketUtil.put(data,"team",-1);
     }
     public Block getBlock(){
         return block;

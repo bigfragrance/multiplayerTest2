@@ -99,6 +99,7 @@ public class EngineMain implements Runnable{
             }
             multiClientHandler=new MultiClientHandler();
         }else {
+            TPS+=0.01;
             world=new ClientWorld();
             try {
                 networkHandler = new ClientNetworkHandler(ip, port);
@@ -153,7 +154,7 @@ public class EngineMain implements Runnable{
             }*/
         };
 
-        scheduler.scheduleAtFixedRate(task, 0, (long)Math.floor(1000/TPS), TimeUnit.MILLISECONDS);
+        scheduler.scheduleAtFixedRate(task, 0, (long)Math.floor(1000000000/TPS), TimeUnit.NANOSECONDS);
     }
     public static double getTickDelta(){
         return  Math.max(0,Math.min(TPS*((double)(System.currentTimeMillis() - lastTick)) / 1000d,1));

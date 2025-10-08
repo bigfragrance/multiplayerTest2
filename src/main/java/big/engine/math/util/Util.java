@@ -5,6 +5,7 @@ package big.engine.math.util;
 import big.engine.math.BlockPos;
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
+import big.engine.math.interfaces.FInt2Int;
 import big.engine.modules.EngineMain;
 
 import org.json.JSONArray;
@@ -24,6 +25,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.function.IntToDoubleFunction;
 
 import static big.engine.modules.EngineMain.cs;
 import static big.engine.render.Screen.sc;
@@ -47,9 +49,26 @@ public class Util {
     public static boolean withIn(double min,double max,double d,boolean leftInclusive,boolean rightInclusive){
         return (leftInclusive?d>=min:d>min)&&(rightInclusive?d<=max:d<max);
     }
+    public static double log(double d,double base){
+        return Math.log(d)/Math.log(base);
+    }
     public static double[] createDoubles(double def,int c){
         double[] d=new double[c];
         Arrays.fill(d,def);
+        return d;
+    }
+    public static double[] createDoubles(int len, IntToDoubleFunction f){
+        double[] d=new double[len];
+        for(int i=0;i<len;i++){
+            d[i]=f.applyAsDouble(i);
+        }
+        return d;
+    }
+    public static int[] createInts(int len, FInt2Int f){
+        int[] d=new int[len];
+        for(int i=0;i<len;i++){
+            d[i]=f.apply(i);
+        }
         return d;
     }
     public static double[] multiply(double[] d,double m){

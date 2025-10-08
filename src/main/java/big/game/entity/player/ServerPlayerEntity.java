@@ -30,7 +30,8 @@ import static java.lang.Math.floor;
 public class ServerPlayerEntity extends PlayerEntity implements Attackable, Controllable {
 
     public static double drag=0.67;
-    public static double initScore=50001;
+    public static double scorePow=1.03;
+    public static double initScore=Math.pow(scorePow,30)/scoreMultiplier+1;
     public ServerInputManager inputManager=null;
     public int upgradeTimer=0;
     public int skillPointNow=0;
@@ -45,7 +46,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
         this.score=initScore;
     }
     public void tick(){
-        skillPointNow=(int)floor(score*scoreMultiplier);
+
         this.targetingPos=inputManager.aimPos;
         this.updateSkillPoint();
         if(World.gravityEnabled){
@@ -82,10 +83,17 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
             }
         }
     }
+    private int getSkillPointNow(){
+        double pow=score*scoreMultiplier;
+        double now=Util.log(pow,scorePow);
+        return Util.floor(now);
+    }
     private void sendData(){
         double[] skillPoints=this.skillPoints.clone();
         skillPoints[9]=getFov();
-        sendPacket(new PlayerDataS2CPacket(skillPoints,skillPointNow-skillPointUsed));
+        int nextNeed= (int) ((Math.pow(scorePow,skillPointNow+1)-Math.pow(scorePow,skillPointNow))/scoreMultiplier);
+        int nowHave= (int) ((score*scoreMultiplier-Math.pow(scorePow,skillPointNow))/scoreMultiplier);
+        sendPacket(new PlayerDataS2CPacket(skillPoints,skillPointNow-skillPointUsed,String.format("%d/%d",nowHave,nextNeed)));
     }
     public void whenAlive(){
         if(!this.isAlive) return;
@@ -142,7 +150,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
         int skillPointNow=Util.floor(score*scoreMultiplier);
         if(skillPointNow<this.skillPointUsed){
             int m=skillPointUsed-skillPointNow;
-            int[] arr={0,1,2,3,4,5,6,7,8,9};
+            int[] arr=Util.createInts(10,i->i);
             for(int i=0;i<m;i++){
                 int[] random=arr.clone();
                 shuffle(random);
@@ -166,19 +174,19 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
         networkHandler.send(packet.toJSON());
     }
     private void updateSkillPoint(){
-        skillPointNow= (int)floor(score*scoreMultiplier);
+        skillPointNow=getSkillPointNow();
         for(int i=0;i<skillPoints.length;i++){
             if(skillPointUsed>=skillPointNow){
                 break;
             }
             if(inputManager.upgradingSkill==i){
-                if(skillPointUsed>=50){
+                if(skillPointUsed>=80*80){
                     /*if(Util.random(0,10)<2)instantRegen();
                     upgradeTimer=2;
                     skillPointUsed++;*/
                     break;
                 }
-                if(skillPointLevels[i]>=10){
+                if(skillPointLevels[i]>=10*80){
                     break;
                 }
                 skillPointLevels[i]+=1;

@@ -6,6 +6,7 @@ import big.game.entity.player.ServerPlayerEntity;
 import big.game.network.JSONNBTConverter;
 import big.game.network.ServerNetworkHandler;
 import big.game.network.packet.Packet;
+import big.game.network.packet.s2c.ArrayPacket;
 import big.game.network.packet.s2c.MessageS2CPacket;
 import big.game.network.packet.s2c.TanksDataS2CPacket;
 import big.game.weapon.GunList;
@@ -13,6 +14,8 @@ import net.querz.nbt.io.*;
 import net.querz.nbt.tag.CompoundTag;
 
 import net.querz.nbt.tag.Tag;
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.*;
@@ -29,7 +32,7 @@ public class ClientHandler implements Runnable {
     private final Socket clientSocket;
     private volatile boolean interrupted = false;
 
-    private final BlockingQueue<CompoundTag> broadcastQueue = new LinkedBlockingQueue<>();
+    private final BlockingQueue<JSONObject> broadcastQueue = new LinkedBlockingQueue<>();
     public ServerNetworkHandler serverNetworkHandler;
     public ServerPlayerEntity player;
     private volatile long lastReceive = 0;
@@ -41,6 +44,8 @@ public class ClientHandler implements Runnable {
         this.clientSocket = socket;
         lastReceive = System.currentTimeMillis();
         connectionStartTime = System.currentTimeMillis();
+        System.out.println("Client " + clientSocket.getInetAddress() + " connected");
+        //spawnPlayer();
     }
 
 
@@ -96,13 +101,19 @@ public class ClientHandler implements Runnable {
                     lastReceive = System.currentTimeMillis();
                     continue;
                 }
-
                 if (!handshaked) {
                     disconnect();
                     break;
                 }
+                try {
+                    serverNetworkHandler.apply(msg);
+                }catch (JSONException e){
+                    break;
+                }catch (Exception e){
+                    disconnect();
+                    break;
+                }
 
-                serverNetworkHandler.apply(msg);
                 lastReceive = System.currentTimeMillis();
             }
 
@@ -115,9 +126,18 @@ public class ClientHandler implements Runnable {
 
     private void processBroadcasts(DataOutputStream dos) {
         try {
+            long lastSend=System.currentTimeMillis();
+            int sent=0;
+            JSONArray packetArray=new JSONArray();
             while (!Thread.interrupted() && !interrupted) {
-                CompoundTag tag = broadcastQueue.take();
 
+                JSONObject obj = broadcastQueue.take();
+                System.out.println(broadcastQueue.size());
+
+                JSONObject packet=obj;//new ArrayPacket(packetArray).toJSON();
+                CompoundTag tag=convertJSONObjectToCompoundTag(packet);
+                packetArray=new JSONArray();
+                //lastSend=System.currentTimeMillis();
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 try (GZIPOutputStream gzipOut = new GZIPOutputStream(baos, true)) {
@@ -132,7 +152,18 @@ public class ClientHandler implements Runnable {
 
                 dos.writeInt(bytes.length);
                 dos.write(bytes);
-                dos.flush();
+                sent++;
+                if(sent>50||System.currentTimeMillis()-lastSend>5) {
+                    dos.flush();
+                    sent=0;
+                    lastSend=System.currentTimeMillis();
+                }
+
+                /*if(packetArray.length()<50&&System.currentTimeMillis()-lastSend<1) {
+                    packetArray.put(obj);
+                }else {
+
+                }*/
             }
         } catch (InterruptedException | IOException e) {
             Thread.currentThread().interrupt();
@@ -141,8 +172,7 @@ public class ClientHandler implements Runnable {
 
 
     public void send(JSONObject obj) {
-        CompoundTag tag = convertJSONObjectToCompoundTag(obj);
-        broadcastQueue.offer(tag);
+        broadcastQueue.offer(obj);
     }
 
     public void send(Packet<?> packet) {

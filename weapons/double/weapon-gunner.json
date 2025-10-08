@@ -1,0 +1,85 @@
+{
+  "Gunner":{
+    "data":[
+      {
+        "preset": ["Gunner"]
+      }
+    ],
+    "extraData":{
+      "stopFollow":3,
+      "fov": 1.1
+    },
+    "parent": ["Twin"]
+  },
+  "MachineGunner":{
+    "data":[
+      {
+        "type":"GunLineList",
+        "startDelays": [0,2,4],
+        "count": 3,
+        "oOffset":{
+          "x":0.1,
+          "y":0
+        },
+        "data": [
+          {
+            "preset": ["MachineGunner"]
+          }
+        ]
+      }
+    ],
+    "extraData":{
+      "stopFollow":3,
+      "fov": 1.1
+    },
+    "parent": ["Gunner"]
+  },
+  "Auto-Gunner":{
+    "data":[
+      {
+        "preset": ["Gunner","AutoTurret"]
+      }
+    ],
+    "extraData":{
+      "stopFollow":3,
+      "fov": 1.1
+    },
+    "parent": ["Gunner"]
+  },
+  "Defend-Gunner":{
+    "data":[
+      {
+        "preset": ["Gunner","FullDefend"]
+      }
+    ],
+    "extraData":{
+      "stopFollow":3,
+      "fov": 1.1
+    },
+    "parent": ["Gunner"]
+  },
+  "GunnerTrapper":{
+    "data":[
+      {
+        "preset": ["MiniGunner","BigTrapBehind"]
+      }
+    ],
+    "extraData":{
+      "stopFollow":3,
+      "fov": 1.2
+    },
+    "parent": ["Gunner","TrapGuard"]
+  },
+  "OverGunner":{
+    "data":[
+      {
+        "preset": ["MiniGunner","2DirectorBehind"]
+      }
+    ],
+    "extraData":{
+      "stopFollow":3,
+      "fov": 1.2
+    },
+    "parent": ["Gunner"]
+  }
+}

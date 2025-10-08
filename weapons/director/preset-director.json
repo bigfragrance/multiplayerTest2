@@ -1,0 +1,190 @@
+{
+  "2DirectorBehind":{
+    "data":[
+      {
+        "type":"Mirror",
+        "mode": 0,
+        "offsetRotation":135,
+        "offset":{
+          "x":0,
+          "y":0
+        },
+        "reloadMultiplier":0.5,
+        "layer":2,
+        "startDelay":1,
+        "startDelays":[0,2],
+        "size":[0.3,0.1,0.15],
+        "bulletType":{
+          "type":1,
+          "renderType": 1,
+          "sharp":false,
+          "sharpFactor":0,
+          "multipliers":[2.5,3,3,1,1000000]
+        },
+        "extraData": {
+          "maxCount": 4
+        }
+      }
+    ]
+  },
+  "DriveTurret": {
+    "data": [
+      {
+        "type":"AutoGunArray",
+        "count": 1,
+        "info": {
+          "offsetRotation":0,
+          "offset":{
+            "x":0,
+            "y":0
+          },
+          "layer":15,
+          "size":0.05,
+          "fov":1000
+        },
+        "data":[
+          {
+            "type":"Gun",
+            "mode": 0,
+            "offsetRotation":0,
+            "offset":{
+              "x":0.05,
+              "y":0
+            },
+            "reloadMultiplier":0.8,
+            "layer":1,
+            "startDelay":0,
+            "size":[0.08,0.025,0.025],
+            "bulletType":{
+              "type":0,
+              "sharp":false,
+              "sharpFactor":1,
+              "multipliers":[0.5,3,1,0.35]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "DriveMark": {
+    "data": [
+      {
+        "type":"Gun",
+        "offsetRotation":0,
+        "offset":{
+          "x":-0.05,
+          "y":0
+        },
+        "reloadMultiplier":0,
+        "layer":100,
+        "startDelay":10000000,
+        "size":[0.15,0.0866,0],
+        "bulletType":{
+          "type":0,
+          "sharp":false,
+          "sharpFactor":1,
+          "multipliers":[0,1,0.1,0,0]
+        }
+      }
+    ]
+  },
+  "SpawnerTurret":{
+    "data":[
+      {
+        "type":"Gun",
+        "offsetRotation":0,
+        "offset":{
+          "x":0.1,
+          "y":0
+        },
+        "reloadMultiplier":2,
+        "layer":2,
+        "startDelay":1,
+        "size":[0.2,0.05,0.05],
+        "bulletType":{
+          "type":0,
+          "renderType": 0,
+          "sharp":false,
+          "sharpFactor":0,
+          "multipliers":[1,2,1.5,0.5,0.3]
+        }
+      }
+    ]
+  },
+  "Spawner":{
+    "data":[
+      {
+        "type":"Gun",
+        "offsetRotation":0,
+        "offset":{
+          "x":0.1,
+          "y":0
+        },
+        "reloadMultiplier":0.3,
+        "layer":1,
+        "startDelay":0,
+        "size":[0.15,0.15,0.15,0.05,0.12,0.12,0.1,0.15,0.15],
+        "bulletType":{
+          "type":1,
+          "renderType": 0,
+          "sharp":false,
+          "sharpFactor":1,
+          "multipliers":[0.5,1.5,20,1.3,1000000],
+          "weapon": {
+            "data": [
+              {
+                "preset": ["SpawnerTurret"]
+              }
+            ]
+          },
+          "tags":{
+            "followDistance": 1,
+            "surroundRange": 0.3
+          }
+        },
+        "extraData":{
+          "maxCount":4,
+          "autoFire": true
+        }
+      }
+    ]
+  },
+  "Factory":{
+    "data":[
+      {
+        "type":"Gun",
+        "offsetRotation":0,
+        "offset":{
+          "x":0.1,
+          "y":0
+        },
+        "reloadMultiplier":0.9,
+        "layer":1,
+        "startDelay":0,
+        "size":[0.15,0.15,0.15,0.05,0.12,0.12,0.1,0.15,0.15],
+        "bulletType":{
+          "type":1,
+          "renderType": 0,
+          "sharp":false,
+          "sharpFactor":1,
+          "multipliers":[0.5,1.5,20,1.3,1000000],
+          "weapon": {
+            "data": [
+              {
+                "preset": ["SpawnerTurret"]
+              }
+            ]
+          },
+          "tags":{
+            "followDistance": 1,
+            "surroundRange": 0.3
+          }
+        },
+        "extraData":{
+          "maxCount":30,
+          "autoFire": true
+        }
+      }
+    ]
+  }
+}

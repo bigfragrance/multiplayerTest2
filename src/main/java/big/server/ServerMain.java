@@ -30,10 +30,10 @@ public class ServerMain {
                     client.close();
                     continue;
                 }*/
-                if(connectSpeed.getAvg()<minAvgDelay){
+                /*if(connectSpeed.getAvg()<minAvgDelay){
                     client.close();
                     continue;
-                }
+                }*/
 
                 pool.execute(new  ClientHandler(client));
                 connectedPlayers.put(client.getInetAddress().hashCode(),true);

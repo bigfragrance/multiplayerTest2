@@ -1,0 +1,97 @@
+{
+  "Sniper": {
+    "data": [
+      {
+        "preset": ["Sniper"]
+      }
+    ],
+    "extraData":{
+      "stopFollow":4,
+      "fov": 1.2
+    }
+  },
+  "Auto-Sniper": {
+    "data": [
+      {
+        "preset": ["Sniper","AutoTurret"]
+      }
+    ],
+    "extraData":{
+      "stopFollow":4,
+      "fov": 1.2
+    },
+    "parent": ["Sniper"]
+  },
+  "Boost-Sniper": {
+    "data": [
+      {
+        "preset": ["Sniper","Boost"]
+      }
+    ],
+    "extraData":{
+      "stopFollow":4,
+      "fov": 1.2
+    },
+    "parent": ["Sniper"]
+  },
+  "Auto-Boost-Sniper": {
+    "data": [
+      {
+        "preset": ["Sniper","AutoTurret","Boost"]
+      }
+    ],
+    "extraData":{
+      "stopFollow":4,
+      "fov": 1.2
+    },
+    "parent": ["Auto-Sniper","Boost-Sniper"]
+  },
+  "Assassin":{
+    "data":[
+      {
+        "preset": ["Assassin"]
+      }
+    ],
+    "parent": ["Sniper"],
+    "extraData":{
+      "stopFollow":4.5,
+      "fov": 1.4
+    }
+  },
+  "Boost-Assassin":{
+    "data":[
+      {
+        "preset": ["Assassin","Boost"]
+      }
+    ],
+    "parent": ["Assassin","Boost-Sniper"],
+    "extraData":{
+      "stopFollow":3,
+      "fov": 1.4
+    }
+  },
+  "Auto-Assassin":{
+    "data":[
+      {
+        "preset": ["Assassin","AutoTurret"]
+      }
+    ],
+    "parent": ["Assassin","Auto-Sniper"],
+    "extraData":{
+      "stopFollow":3,
+      "fov": 1.4
+    }
+  },
+  "Ranger":{
+    "data":[
+      {
+        "preset": ["Ranger"]
+      }
+    ],
+    "parent": ["Assassin"],
+    "extraData":{
+      "stopFollow":5,
+      "fov": 1.6
+    }
+  }
+}

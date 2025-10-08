@@ -72,6 +72,7 @@ public class ServerNetworkHandler {
         return e instanceof ServerPlayerEntity|| (e instanceof BlockEntity?distance<updateRangeBlocks:distance<updateRange);
     }
     public void sendEntityRemove(long id){
+        if(sentRemove.getOrDefault(id,false)) return;
         JSONObject o2=new JSONObject();
         o2.put(PacketUtil.getShortVariableName("type"),entity_remove);
         o2.put(PacketUtil.getShortVariableName("id"),id);

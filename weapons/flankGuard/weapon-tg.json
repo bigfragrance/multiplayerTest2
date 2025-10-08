@@ -1,0 +1,24 @@
+{
+  "TrapGuard":{
+    "data":[
+      {
+        "preset":["BigTrapBehind","Sniper"]
+      }
+    ],
+    "parent": ["FlankGuard","Sniper"],
+    "extraData":{
+      "stopFollow":1
+    }
+  },
+  "Bushwhacker":{
+    "data":[
+      {
+        "preset":["BigTrapBehind","Assassin"]
+      }
+    ],
+    "parent": ["TrapGuard","Assassin"],
+    "extraData":{
+      "stopFollow":3
+    }
+  }
+}

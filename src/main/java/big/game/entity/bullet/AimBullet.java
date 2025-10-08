@@ -26,7 +26,6 @@ public class AimBullet extends BulletEntity{
     public boolean isDefend=false;
     public double dragFactor=dragFactorDef;
     private Calculator calculator=null;
-    public double attackDistance=0;
     private boolean shouldAutoAim;
     public AimBullet(Vec2d position, Vec2d velocity,int team,BulletType type) {
         super(position, velocity,team,type);
@@ -59,6 +58,8 @@ public class AimBullet extends BulletEntity{
     }
     public void updateAim(){
         Vec2d target=null;
+        Vec2d rotationAimPos=null;
+        boolean surroundMoving=false;
         if(owner!=null){
             if(this.isDefend){
                 target=getDefendPosition();
@@ -68,19 +69,26 @@ public class AimBullet extends BulletEntity{
             }else{
                 Vec2d sub=this.position.subtract(owner.getPosition());
                 double r=sub.angle();
-                target=owner.getPosition().add(new Vec2d(r+30).limit(flyRange));
-                target= Util.secondIfNull(getAutoAimPos(3*getFov()),target);
+                target=owner.getPosition().add(new Vec2d(r+30).limit(type.getSurroundRange()));
+                Vec2d old=target;
+                target= Util.secondIfNull(getAutoAimPos(2*getFov()),target);
+                if(old.equals(target)){
+                    surroundMoving=true;
+                }
             }
         }
         if(aimPos!=null) {
             target=aimPos;
+            surroundMoving=false;
         }
         if(shouldAutoAim){
-            target= Util.secondIfNull(getAutoAimPos(5*getFov()),target);
+            target= Util.secondIfNull(getAutoAimPos(5*getFov()),this.position.add(this.velocity.multiply(10)));
+            surroundMoving=false;
         }
         if(target!=null){
             Vec2d sub=target.subtract(this.position);
-            sub=sub.limit(sub.length()-attackDistance);
+            rotationAimPos=target;
+            sub=sub.limit(sub.length()-(surroundMoving?0:type.getFollowDistance()));
             target=this.position.add(sub);
             if(pathing){
                 Vec2d pathPos=getPathPos(target);
@@ -92,7 +100,7 @@ public class AimBullet extends BulletEntity{
         if(target!=null) {
             Vec2d offVel = target.subtract(this.position).limitOnlyOver(speedAdd * 5).multiply(0.2);
             this.velocity.offset(offVel);
-            if(!type.shouldCustomRotation())this.rotation = offVel.angle();
+            if(!type.shouldCustomRotation())this.rotation = rotationAimPos.subtract(this.position).angle();
         }
     }
 
@@ -122,7 +130,7 @@ public class AimBullet extends BulletEntity{
                         player=(PlayerEntity) e;
                     }
                     else{
-                        if(e.score>500) {
+                        if(e.score>1) {
                             minDistanceMob = distance;
                             mob = e;
                         }

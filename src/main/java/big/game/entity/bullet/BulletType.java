@@ -11,6 +11,7 @@ import org.json.JSONObject;
 import java.awt.*;
 
 import static big.engine.math.util.EntityUtils.smallerBullet;
+import static big.engine.modules.EngineMain.cs;
 
 public class BulletType {
     public static double[] baseMultipliers={1,1,1,1,1,1,1,1};
@@ -87,13 +88,16 @@ public class BulletType {
     }
     public void render(Graphics g,BulletEntity e,Color team){
         if(renderType==0) {
-            //Util.render(g, Util.lerp(e.prevBoundingBox, e.boundingBox, e.getTickDelta()).switchToJFrame());
-            Box b=Util.lerp(e.prevBoundingBox, e.boundingBox, e.getTickDelta()).switchToJFrame();
-            Vec2d vel=e.boundingBox.getCenter().switchToJFrame().subtract(e.prevBoundingBox.getCenter().switchToJFrame()).multiply(0.05);
-            BulletRenderer.drawBullet((Graphics2D) g,b.getCenter(),vel,b.avgSize()/2,team);
-            //g.setColor(team);
-            //BulletRenderer.drawBullet((Graphics2D) g,b.getCenter(),vel,b.avgSize()/2,team);
-            //Util.render(g,smallerBullet(Util.lerp(e.prevBoundingBox, e.boundingBox, e.getTickDelta())).switchToJFrame());
+            if(cs.isServer){
+                g.setColor(ColorUtils.darker(team, 0.6));
+                Util.render(g, Util.lerp(e.prevBoundingBox, e.boundingBox, e.getTickDelta()).switchToJFrame());
+                g.setColor(team);
+                Util.render(g,smallerBullet(Util.lerp(e.prevBoundingBox, e.boundingBox, e.getTickDelta())).switchToJFrame());
+            }else {
+                Box b = Util.lerp(e.prevBoundingBox, e.boundingBox, e.getTickDelta()).switchToJFrame();
+                Vec2d vel = e.velocity.switchToJFrame().subtract(Vec2d.zero().switchToJFrame()).multiply(0.05);
+                BulletRenderer.drawBullet((Graphics2D) g, b.getCenter(), vel, b.avgSize() / 2, team);
+            }
         }else{
             double[] sharpFactors=getSharpFactors();
             g.setColor(ColorUtils.darker(team, 0.6));
@@ -116,6 +120,12 @@ public class BulletType {
     }
     public double getCustomRotation(){
         return PacketUtil.getDouble(tags,"rotation");
+    }
+    public double getFollowDistance(){
+        return PacketUtil.contains(tags,"followDistance")?PacketUtil.getDouble(tags,"followDistance"):0;
+    }
+    public double getSurroundRange(){
+        return PacketUtil.contains(tags,"surroundRange")?PacketUtil.getDouble(tags,"surroundRange"):AimBullet.flyRange;
     }
     public boolean shouldAutoAim(double random){
         return PacketUtil.contains(tags,"autoAim")&&PacketUtil.getDouble(tags,"autoAim")>=random;

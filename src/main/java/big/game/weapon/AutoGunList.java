@@ -117,7 +117,8 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
         Util.render(g,box.switchToJFrame());
         Color dark= ColorUtils.darker(color,0.6);
         g.setColor(dark);
-        Util.renderPolygon(g,getRenderPos(),64,size*sizeMultiplier,getRenderRotation(),true,false);
+        Util.renderCLine(g,box.switchToJFrame());
+        //Util.renderPolygon(g,getRenderPos(),64,size*sizeMultiplier,getRenderRotation(),true,false);
     }
     public Vec2d getRenderPos(){
         return getRenderStartPos().add(offset.multiply(sizeMultiplier).rotate(Util.lerpRotation(offsetRotationAll.getPrev(),offsetRotationAll.get(), Screen.tickDelta)));

@@ -185,16 +185,18 @@ public class Gun extends CanAttack {
             case 1->{
                 b=new AimBullet(pos, vel, owner.team, bulletType);
                 ((AimBullet)b).speedAdd=bulletType.getMultiplier(1)*baseValues[1]*0.2;
-                if(owner instanceof Attackable a){
-                    ((AimBullet)b).owner=a;
+                Attackable o=getOwner(owner);
+                if(o!=null){
+                    ((AimBullet)b).owner=o;
                 }
             }
             case 2->{
                 b=new AimBullet(pos, vel, owner.team, bulletType);
                 ((AimBullet)b).speedAdd=bulletType.getMultiplier(1)*baseValues[1]*0.5;
                 ((AimBullet) b).dragFactor=0.5;
-                if(owner instanceof Attackable a){
-                    ((AimBullet) b).aimPos=a.getAimPos();
+                Attackable o=getOwner(owner);
+                if(o!=null){
+                    ((AimBullet)b).owner=o;
                 }
             }
             case 3->{
@@ -204,8 +206,9 @@ public class Gun extends CanAttack {
             case 4->{
                 b=new AimBullet(pos, vel, owner.team, bulletType);
                 ((AimBullet)b).speedAdd=bulletType.getMultiplier(1)*baseValues[1]*0.2;
-                if(owner instanceof Attackable a){
-                    ((AimBullet)b).owner=a;
+                Attackable o=getOwner(owner);
+                if(o!=null){
+                    ((AimBullet)b).owner=o;
                 }
                 ((AimBullet) b).isDefend=true;
             }
@@ -213,6 +216,15 @@ public class Gun extends CanAttack {
         if(b==null) return null;
         b.ownerId=owner.getOwnerID();
         return b;
+    }
+    public Attackable getOwner(Entity e){
+        if(e instanceof Attackable a){
+            return a;
+        }
+        if(e instanceof BulletEntity bullet){
+            return getOwner(bullet.owner);
+        }
+        return null;
     }
     public JSONObject getUpdate(){
         JSONObject obj=new JSONObject();

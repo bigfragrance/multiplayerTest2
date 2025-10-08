@@ -16,27 +16,136 @@ import static big.engine.modules.EngineMain.cs;
 
 public class PolygonEntity extends MobEntity{
     public static Color[] sidesColors={
-            new Color(255, 115, 58),
-            new Color(255, 211, 100),
-            new Color(182, 78, 255),
-            new Color(100, 255, 255),
-            new Color(100, 255, 100),
-            new Color(255, 100, 255),
-            new Color(255, 100, 100),
-            new Color(100, 100, 255),
-            new Color(100, 255, 100),
-            new Color(255, 100, 255),
-            new Color(255, 100, 100),
-            new Color(100, 100, 255),
-            new Color(100, 255, 100),
-            new Color(255, 100, 255),
+            new Color(255, 115, 58),//0
+            new Color(255, 211, 100),//1
+            new Color(182, 78, 255),//2
+            new Color(100, 255, 255),//3
+            new Color(100, 255, 100),//4
+            new Color(255, 100, 255),//5
+            new Color(255, 100, 100),//6
+            new Color(100, 100, 255),//7
+            new Color(175, 100, 255),//8
+            new Color(253, 192, 192),//9
+            new Color(255, 249, 188),//10
+            new Color(171, 255, 124),//11
+            new Color(132, 237, 255),//12
+            new Color(221, 176, 251),//13
+            new Color(255, 255, 194),//14
+            new Color(200,200,200),//15
+            new Color(150,150,150),//16
+            new Color(100,100,100),//17
+            new Color(75,75,75),//18
+            new Color(50,50,50),//19
+            new Color(35, 35, 35),//20
     };
-    public static double[] healths={100,20,200,300,500,600,700,800,900,1000};
-    public static double[] healthMultipliers={0.5,2,4,7,10,14,18,23,28,35};
-    public static double[] sizeMultipliers={0.7,1,1.5,2.2,2.9,3.8,4.5,5,5.4,5.6};
-    public static double[] sizeMultipliers2={0.8,0.9,1,1.1,1.2,1.3,1.4,1.5,1.6,1.7};
-    public static double[] damageMultipliers={1,0.5,2,2.5,3,3.5,4,4.5,5,5.5};
-    public static double[] damageMultipliers2={0.5,0.7,1,1.2,1.3,1.4,1.45,1.5,1.55,1.6};
+    public static double[] healths={100,//0
+            20,//1
+            200,//2
+            300,//3
+            500,//4
+            600,//5
+            700,//6
+            800,//7
+            900,//8
+            1000,//9
+            1200,//10
+            1400,//11
+            1600,//12
+            1800,//13
+            2000,//14
+            2300,//15
+            2600,//16
+            3000,//17
+            3400,//18
+            3800,//19
+            4200};//20
+    public static double[] healthMultipliers={0.5,//0
+            2,//1
+            4,//2
+            7,//3
+            10,//4
+            14,//5
+            18,//6
+            23,//7
+            28,//8
+            35,//9
+            42,//10
+            48,//11
+            55,//12
+            60,//13
+            75,//14
+            80,//15
+            85,//16
+            90,//17
+            95,//18
+            100,//19
+            120};//20
+    public static double[] sizeMultipliers={0.7,//0
+            1,//1
+            1.5,//2
+            2.2,//3
+            2.9,//4
+            3.8,//5
+            4.5,//6
+            5,//7
+            5.2,//8
+            5.3,//9
+            5.4,//10
+            5.4,//11
+            5.4,//12
+            5.4,//13
+            5.4,//14
+            5.4,//15
+            5.2,//16
+            5.2,//17
+            5.2,//18
+            5.2,//19
+            5.2};//20
+    public static double[] sizeMultipliers2={0.8,//0
+            0.9,//1
+            1, //2
+            1.1,//3
+            1.2,//4
+            1.3,//5
+            1.4,//6
+            1.5,//7
+            1.6,//8
+            1.7,//9
+            1.7,//10
+            1.7,//11
+            1.7,//12
+            1.7,//13
+            1.7,//14
+            1.7,//15
+            1.7,//16
+            1.7,//17
+            1.7,//18
+            1.7,//19
+            1.7//20
+    };
+    public static double[] damageMultipliers2 ={1,//0
+            0.2,//1
+            2,//2
+            2.5,//3
+            3,//4
+            3.5,//5
+            4,//6
+            4.5,//7
+            5,//8
+            5.5,//9
+            6,//10
+            6.5,//11
+            7,//12
+            7.8,//13
+            8.5,//14
+            9.5,//15
+            10.5,//16
+            11.5,//17
+            13,//18
+            15,//19
+            20//20
+    };
+    public static double[] damageMultipliers ={0.5,0.7,1,1.2,1.3,1.4,1.45,1.5,1.55,1.6};
     public static double[] spawnAreas={1,1,0.4,0.4,0.4,0.3,0.3,0.3,0.3,0.3};
     public static double sizeBase=12*sizeMultiplier;
     public static double damageBase=8;
@@ -47,14 +156,17 @@ public class PolygonEntity extends MobEntity{
     public int sides;
     public int type;
     public double size;
-    public double scoreBase=0.3;
+    public double scoreBase=0.1;
 
     public PolygonEntity(Vec2d position,int sides,int type){
         super();
         this.position=position;
         this.prevPosition=position.copy();
-        if(sides<3||sides>12) {
+        if(sides<3) {
             sides=3;
+        }
+        if(sides>=21+3){
+            sides=23;
         }
         if(type<0||type>9) {
             type=0;
@@ -71,9 +183,9 @@ public class PolygonEntity extends MobEntity{
         this.boundingBox=new Box(position,size,size);
         this.prevBoundingBox=boundingBox.copy();
         this.health=healths[sides-3]*healthMultipliers[type];
-        this.damage=damageBase*damageMultipliers[sides-3]*damageMultipliers2[type];
+        this.damage=damageBase* damageMultipliers2[sides-3]* damageMultipliers[type];
         this.velocity=new Vec2d(0,0);
-        this.score=this.health*Math.pow(this.damage,1.1)*scoreBase;
+        this.score=this.health*Math.pow(this.damage,2)*scoreBase;
     }
     public void tick(){
         if(!cs.isServer) {
@@ -206,10 +318,26 @@ public class PolygonEntity extends MobEntity{
     private static double getSizeSmallerMultiplier(int sides){
         return Math.sqrt(0.25+0.25-0.5*(Util.cos(180-(360d/sides))));
     }
-    public static double getSpawnArea(int sides){
-        if(sides<3||sides>12) {
-            sides=3;
-        }
-        return spawnAreas[sides-3];
-    }
+
+    //0
+    //1
+    //2
+    //3
+    //4
+    //5
+    //6
+    //7
+    //8
+    //9
+    //10
+    //11
+    //12
+    //13
+    //14
+    //15
+    //16
+    //17
+    //18
+    //19
+    //20
 }

@@ -24,6 +24,7 @@ public class ClientPlayerEntity extends PlayerEntity {
     public InputManager inputManager= sc.inputManager;
     protected int playerDataUpdateTimer=10;
     public int skillPointCanUse=0;
+    public String skillPointNext="0/0";
     public String currentWeapon="none";
     public int lastAutoFire=0;
     public boolean autoFire=false;
@@ -92,7 +93,7 @@ public class ClientPlayerEntity extends PlayerEntity {
 
     public void render(Graphics g){
         super.render(g);
-        EntityUtils.renderSkillPoints(getSkillPointRenderPosition(),skillPoints,skillPointCanUse);
+        EntityUtils.renderSkillPoints(getSkillPointRenderPosition(),skillPoints,skillPointCanUse,skillPointNext);
         //renderMouse(g);
     }
     private void renderMouse(Graphics g){

@@ -14,6 +14,8 @@ import big.engine.modules.EngineMain;
 import big.game.ctrl.InputManager;
 import big.game.entity.Entity;
 import big.game.entity.RockEntity;
+import big.game.entity.bullet.BulletEntity;
+import big.game.entity.bullet.BulletType;
 import big.game.network.packet.s2c.TanksDataS2CPacket;
 import big.game.weapon.GunList;
 import big.game.world.blocks.Block;
@@ -134,10 +136,10 @@ public class ServerController {
             lastMousePos = mousePos;
         }
         if(inputManager.isSpawningBullet()){
-            /*for(int i=0;i<10;i++) {
+            for(int i=0;i<10;i++) {
                 cs.addEntity(new BulletEntity(mousePos, Util.randomVec().limit(0.5), 5, BulletType.KILLER));
-            }*/
-            cs.addEntity(new RockEntity(mousePos,currentPlaceRadius));
+            }
+            //cs.addEntity(new RockEntity(mousePos,currentPlaceRadius));
         }
         int[] in=inputManager.getPlayerInput();
         cs.prevCamPos.set(cs.camPos);

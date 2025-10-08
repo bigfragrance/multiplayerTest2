@@ -11,12 +11,14 @@ import static big.engine.modules.EngineMain.cs;
 public class PlayerDataS2CPacket implements Packet<ClientNetworkHandler> {
     public double[] skillPoints;
     public int skillPointCount;
-    public PlayerDataS2CPacket(double[] skillPoints, int skillPointCount) {
+    public String skillPointNext;
+    public PlayerDataS2CPacket(double[] skillPoints, int skillPointCount,String skillPointNext) {
         this.skillPoints = skillPoints;
         this.skillPointCount = skillPointCount;
+        this.skillPointNext=skillPointNext;
     }
     public PlayerDataS2CPacket(JSONObject o) {
-        this(Util.getDoubles(PacketUtil.getJSONArray(o, "skillPoints")),PacketUtil.getInt(o,"skillPointCount"));
+        this(Util.getDoubles(PacketUtil.getJSONArray(o, "skillPoints")),PacketUtil.getInt(o,"skillPointCount"),PacketUtil.getString(o,"skillPointNext"));
     }
     @Override
     public JSONObject toJSON() {
@@ -24,6 +26,7 @@ public class PlayerDataS2CPacket implements Packet<ClientNetworkHandler> {
         PacketUtil.putPacketType(o,getType());
         PacketUtil.put(o,"skillPoints",skillPoints);
         PacketUtil.put(o,"skillPointCount",skillPointCount);
+        PacketUtil.put(o,"skillPointNext",skillPointNext);
         return o;
     }
 
@@ -32,7 +35,7 @@ public class PlayerDataS2CPacket implements Packet<ClientNetworkHandler> {
         if(cs.player!=null){
             cs.player.skillPoints=skillPoints;
             cs.player.skillPointCanUse=skillPointCount;
-            System.out.println("aaa");
+            cs.player.skillPointNext=skillPointNext;
         }
     }
 

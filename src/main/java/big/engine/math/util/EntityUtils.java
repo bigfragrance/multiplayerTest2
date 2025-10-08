@@ -36,7 +36,7 @@ public class EntityUtils {
     public static int scoreSize=7;
     public static double intersectCheckStep=0.5;
     public static double extrapolateBase=1.5;
-    public static double extrapolateCheckMax=50;
+    public static double extrapolateCheckMax=400;
     public static double extrapolateCheckStep=0.5;
     public static boolean intersects(Box pb1,Box b1,Box pb2,Box b2) {
         if(pb1==null) pb1=b1;
@@ -187,12 +187,14 @@ public class EntityUtils {
         Vec2d renderPos=e.getRenderPosition().add(0,40*sizeMultiplier*e.getSizeMultiplier());
         Util.renderString(g, String.valueOf(round(e.score)),renderPos.switchToJFrame(),round(scoreSize* sc.zoom*sizeMultiplier*e.getSizeMultiplier()));
     }
-    public static void renderSkillPoints(Vec2d pos,double[] skillPoints,int left){
+    public static void renderSkillPoints(Vec2d pos,double[] skillPoints,int left,String skillPointNext){
         sc.renderAtLast(g->{
             sc.storeAndSetDef();
             g.setColor(Color.DARK_GRAY);
 
             Util.renderString(g,("Skill Points: "+left),pos,round(scoreSize* sc.zoom*sizeMultiplier));
+            pos.offset(0,-15/sc.zoom2);
+            Util.renderString(g,("Upgrade Need: "+skillPointNext),pos,round(scoreSize* sc.zoom*sizeMultiplier));
             pos.offset(0,-15/sc.zoom2);
             for(int i=0;i<skillPoints.length;i++){
                 Util.renderString(g,PlayerEntity.skillNames[i]+": "+Util.formatDouble(skillPoints[i]),pos,round(scoreSize* sc.zoom*sizeMultiplier));
@@ -709,7 +711,7 @@ public class EntityUtils {
 
     public static Vec2d extrapolate2(Vec2d targetPos,Vec2d targetVel,Vec2d shootPos, double bulletSpeed,Vec2d addVel){
         Vec2d bestPos=null;
-        double minDiff=1000;
+        double minDiff=100000;
         if(addVel!=null)addVel=addVel.multiply(-1);
         for(double i=0;i<extrapolateCheckMax;i+=extrapolateCheckStep){
             Vec2d pos=extrapolate(targetPos,targetVel,i,addVel);
@@ -718,6 +720,9 @@ public class EntityUtils {
             if(diff<minDiff){
                 minDiff=diff;
                 bestPos=pos;
+            }
+            if(diff>minDiff){
+                break;
             }
         }
         return bestPos==null?targetPos:bestPos;

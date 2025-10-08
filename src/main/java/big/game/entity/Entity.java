@@ -19,6 +19,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static big.engine.math.util.PacketVariable.basic;
@@ -40,8 +41,10 @@ public abstract class Entity implements NetworkItem {
     public Vec2d extraVelocity=new Vec2d(0,0);
     public long id;
     public boolean isAlive=true;
-    public Vec2d nextPosition=null;
-    public Box nextBoundingBox=null;
+    public Queue<Vec2d> nextPosition=new java.util.LinkedList<>();
+    public Queue<Box> nextBoundingBox=new java.util.LinkedList<>();
+    //public Vec2d nnextPosition=null;
+    //public Box nnextBoundingBox=null;
     public double health;
     public double prevHealth;
     public double shield=0;
@@ -75,16 +78,10 @@ public abstract class Entity implements NetworkItem {
             JSONObject basic = o.getJSONObject(PacketVariable.basic);
             basic.keys().forEachRemaining(key -> {
                 if(PacketUtil.getShortVariableName("position").equals(key)){
-                    Vec2d last=this.position.copy();
-                    this.nextPosition =PacketUtil.getVec2d(basic,"position");
-                    this.velocity=this.nextPosition.subtract(last);
-                    this.nextBoundingBox=new Box(nextPosition,this.boundingBox.xSize()/2,this.boundingBox.ySize()/2);
+                    nextPosition.offer(PacketUtil.getVec2d(basic,"position"));
                 } else if (PacketUtil.getShortVariableName("boundingBox").equals(key)) {
                     JSONObject boundingBox = basic.getJSONObject(PacketUtil.getShortVariableName("boundingBox"));
-                    Box last=this.boundingBox.copy();
-                    this.nextBoundingBox  = Box.fromJSON(boundingBox);
-                    this.nextPosition =nextBoundingBox.getCenter();
-                    this.velocity=this.nextBoundingBox.getCenter().subtract(last.getCenter());
+                    nextBoundingBox.offer(Box.fromJSON(boundingBox));
                 } else if (PacketUtil.getShortVariableName("health").equals(key)) {
                     this.health  = basic.getDouble(PacketUtil.getShortVariableName("health"));
                 } else if (PacketUtil.getShortVariableName("damage").equals(key)) {
@@ -153,13 +150,17 @@ public abstract class Entity implements NetworkItem {
             this.prevHealth=health;
 
         }else{
-            if(this.nextPosition!=null){
-                this.position.set(this.nextPosition);
-                this.nextPosition=null;
+            //if(this.nextPosition==null) this.nextPosition=this.nnextPosition;
+            //if(this.nextBoundingBox==null) this.nextBoundingBox=this.nnextBoundingBox;
+            if(!this.nextPosition.isEmpty()){
+                if(this.nextPosition.size()>2)this.nextPosition.poll();
+                this.position.set(this.nextPosition.poll());
+                this.velocity.set(this.position.subtract(this.prevPosition));
             }
-            if(this.nextBoundingBox!=null){
-                this.boundingBox=this.nextBoundingBox.copy();
-                this.nextBoundingBox=null;
+            if(!this.nextBoundingBox.isEmpty()){
+                if(this.nextBoundingBox.size()>2)this.nextBoundingBox.poll();
+                this.boundingBox=this.nextBoundingBox.poll();
+                this.velocity.set(this.boundingBox.getCenter().subtract(this.prevBoundingBox.getCenter()));
             }
             this.rotation=nextRotation;
             if(Math.abs(rotation-prevRotation)>180){
@@ -242,6 +243,7 @@ public abstract class Entity implements NetworkItem {
     public JSONObject addSmallJSON(JSONObject o){
         JSONObject basic = new JSONObject();
         basic.put(PacketUtil.getShortVariableName("boundingBox"), this.boundingBox.toJSON());
+        basic.put(PacketUtil.getShortVariableName("position"), this.position.toJSON());
         basic.put(PacketUtil.getShortVariableName("id"), this.id);
         basic.put(PacketUtil.getShortVariableName("isAlive"),this.isAlive);
         basic.put(PacketUtil.getShortVariableName("rotation"),(int)this.rotation);
@@ -251,6 +253,7 @@ public abstract class Entity implements NetworkItem {
     public JSONObject addMediumJSON(JSONObject o){
         JSONObject basic = new JSONObject();
         basic.put(PacketUtil.getShortVariableName("boundingBox"), this.boundingBox.toJSON());
+        basic.put(PacketUtil.getShortVariableName("position"), this.position.toJSON());
         basic.put(PacketUtil.getShortVariableName("id"), this.id);
         basic.put(PacketUtil.getShortVariableName("isAlive"),this.isAlive);
         basic.put(PacketUtil.getShortVariableName("rotation"),(int)this.rotation);

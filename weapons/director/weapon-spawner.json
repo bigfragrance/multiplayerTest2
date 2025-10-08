@@ -1,0 +1,38 @@
+{
+  "Spawner":{
+    "data":[
+      {
+        "preset": ["Spawner"]
+      }
+    ],
+    "extraData":{
+      "stopFollow":3,
+      "fov": 1.2
+    },
+    "parent": ["Director"]
+  },
+  "Auto-Spawner":{
+    "data":[
+      {
+        "preset": ["Spawner","AutoTurret"]
+      }
+    ],
+    "extraData":{
+      "stopFollow":3,
+      "fov": 1.2
+    },
+    "parent": ["Spawner"]
+  },
+  "Factory":{
+    "data":[
+      {
+        "preset": ["Factory"]
+      }
+    ],
+    "extraData":{
+      "stopFollow":3,
+      "fov": 1.2
+    },
+    "parent": ["Spawner"]
+  }
+}

@@ -29,12 +29,12 @@ public class PlayerEntity extends Entity {
     public static int maxSkillPoints=50;
     //                                                  0           1          2           3          4            5               6                7                 8             9
     public static String[] skillNames=              {"BulletDamage[z]","BulletSpeed[x]","BulletHealth[c]","Size[v]","Reload[b]","MoveSpeed[n]","DamageAbsorb[m]","ShieldRegen[,]","HealthRegen[.]","Fov[/]"};
-    public static double[] skillPointMultipliersMax={0.4                ,0.4           ,0.4              ,0.75     ,1            ,1           ,0.8              ,1              ,1            ,0.1};
+    public static double[] skillPointMultipliersMax={0.8                ,0.9           ,0.8              ,0.75     ,1            ,1           ,0.8              ,1              ,1            ,0.2};
     public static double SPEED=1*sizeMultiplier;
     public static double SIZE=10*sizeMultiplier;
     public static String noEnemyID="God";
     public String name=defName;
-    public static double[] skillPointDefaults={0.8,0.8,0.8,0.5,0.625,0.625,0.8,0.5,0.8,1};
+    public static double[] skillPointDefaults={0.6,0.6,0.6,0.5,0.625,0.625,0.8,0.5,0.8,0.8};
     public double[] skillPoints= skillPointDefaults.clone();
     public double[] skillPointLevels=Util.createDoubles(0,10);
     public int noEnemyTimer=0;
@@ -134,10 +134,6 @@ public class PlayerEntity extends Entity {
     }
     public void updateStatus(JSONObject o){
         super.update(o);
-        this.position.set(this.nextPosition);
-        this.boundingBox=this.nextBoundingBox.copy();
-        this.prevPosition.set(this.nextPosition);
-        this.prevBoundingBox=this.nextBoundingBox.copy();
     }
 
     public void render(Graphics g){

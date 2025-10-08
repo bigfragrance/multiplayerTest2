@@ -48,7 +48,7 @@ public class ColorUtils {
     }
     public static Color getRainbowColor(double value) {
         if (value < 0) value = 0;
-        if (value > 1) value = 1;
+        if (value > 1) value = value%1;
         double hue = value * 360;
 
         if (hue < 60) {
