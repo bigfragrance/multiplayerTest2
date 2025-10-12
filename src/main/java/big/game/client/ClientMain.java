@@ -1,6 +1,6 @@
 package big.game.client;
 
-import big.engine.math.util.Setting;
+import big.engine.util.Setting;
 import big.engine.modules.EngineMain;
 import big.engine.render.Screen;
 
@@ -30,6 +30,7 @@ public class ClientMain {
             new EngineMain(o.getServerAddress(),o.getServerPort(),o.isServer());
             cs.setting=o;
             Screen.mouseOffset=o.getMouseOffset();
+            Screen.TARGET_FPS=o.getFps();
             //new EngineMain("localhost",8088,false);
             new Thread(()->{
                 cs.run();

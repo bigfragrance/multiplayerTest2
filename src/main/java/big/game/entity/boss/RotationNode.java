@@ -1,8 +1,8 @@
 package big.game.entity.boss;
 
 import big.engine.math.Vec2d;
-import big.engine.math.util.NNPRecorder;
-import big.engine.math.util.Util;
+import big.engine.util.NNPRecorder;
+import big.engine.util.Util;
 import big.engine.render.Screen;
 import big.game.entity.Entity;
 import big.game.weapon.Node;

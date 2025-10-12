@@ -1,9 +1,9 @@
 package big.game.weapon;
 
 import big.engine.math.Vec2d;
-import big.engine.math.util.NNPRecorder;
-import big.engine.math.util.PacketUtil;
-import big.engine.math.util.Util;
+import big.engine.util.NNPRecorder;
+import big.engine.util.PacketUtil;
+import big.engine.util.Util;
 import big.game.entity.Entity;
 import org.json.JSONObject;
 

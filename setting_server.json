@@ -1,4 +1,4 @@
-{"visitor_spawn_delay":50,
+{"visitor_spawn_delay":5,
 "polygon_random_pow":2,
 "visitor_spawn_time":1000,
 "maze_bullet_break":true,
@@ -8,9 +8,9 @@
 "maze_bullet_rebound":false,
 "polygon_side":7,
 "polygon_type":2,
-"visitor_spawn_possibility":0.00004,
+"visitor_spawn_possibility":0.004,
 "damage_exchange_speed":0.75,
 "max_polygon":200,
-"max_visitor":1,
+"max_visitor":3,
 "polygon_split":0,
 "bot_count":0}

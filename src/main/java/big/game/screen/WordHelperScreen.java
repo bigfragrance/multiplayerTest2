@@ -1,7 +1,7 @@
 package big.game.screen;
 
 import big.engine.math.Vec2d;
-import big.engine.math.util.Util;
+import big.engine.util.Util;
 import big.engine.render.Screen;
 import big.game.entity.player.PlayerEntity;
 import org.json.JSONObject;

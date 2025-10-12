@@ -1,13 +1,12 @@
 package big.game.world;
 
-import big.engine.math.BlockPos;
+import big.engine.math.Vec2i;
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
-import big.engine.math.util.SegmentBoxIntersectionChecker;
-import big.engine.math.util.Util;
+import big.engine.util.SegmentBoxIntersectionChecker;
+import big.engine.util.Util;
 import big.events.TickEvent;
 import big.game.entity.Entity;
-import big.game.world.blocks.Block;
 import meteordevelopment.orbit.EventHandler;
 import org.json.JSONObject;
 
@@ -47,7 +46,7 @@ public class World {
         Chunk chunk=getChunk(Chunk.toChunk(x),Chunk.toChunk(y));
         return chunk.getBlockState(xc,yc);
     }
-    public BlockState getBlockState(BlockPos pos){
+    public BlockState getBlockState(Vec2i pos){
         return getBlockState(pos.x,pos.y);
     }
     public void setBlockState(int x,int y,BlockState blockState){
@@ -59,7 +58,7 @@ public class World {
     public Block getBlock(int x, int y){
         return getBlockState(x,y).getBlock();
     }
-    public Block getBlock(BlockPos pos){
+    public Block getBlock(Vec2i pos){
         return getBlockState(pos.x,pos.y).getBlock();
     }
     public JSONObject toJSON(){

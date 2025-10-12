@@ -1,7 +1,7 @@
 package big.engine.math;
 
 
-import big.engine.math.util.Util;
+import big.engine.util.Util;
 import big.engine.render.Screen;
 import org.json.JSONObject;
 
@@ -24,6 +24,8 @@ public class Vec2d {
         return new Vec2d(0, 0);
     }
 
+
+
     public Vec2d add(double x, double y) {
         return new Vec2d(this.x + x, this.y + y);
     }
@@ -32,6 +34,7 @@ public class Vec2d {
         if(v==null) return this;
         return add(v.x, v.y);
     }
+
     public Vec2d add(double len){
         double length=length();
         if(length<1E-7) return this;
@@ -51,6 +54,9 @@ public class Vec2d {
     }
     public Vec2d multiply(double a,double b) {
         return new Vec2d(x * a, y * b);
+    }
+    public Vec2d multiply(Vec2d vec){
+        return new Vec2d(x*vec.x,y*vec.y);
     }
     public void multiply1(double a) {
         set(x * a, y * a);
@@ -164,8 +170,8 @@ public class Vec2d {
         json.put("y",Util.getRoundedDouble(y,1));
         return json;
     }
-    public BlockPos ofFloor(){
-        return BlockPos.ofFloor(this);
+    public Vec2i ofFloor(){
+        return Vec2i.ofFloor(this);
     }
     public static Vec2d fromJSON(JSONObject json) {
         return new Vec2d(json.getDouble("x"), json.getDouble("y"));
@@ -175,6 +181,9 @@ public class Vec2d {
         long bitsB = Double.doubleToLongBits(y);
         long combined = bitsA * 31 + bitsB;
         return Long.hashCode(combined);
+    }
+    public static Vec2d center(int x,int y) {
+        return new Vec2d(x+0.5,y+0.5);
     }
 
     public Vec2d opposite() {

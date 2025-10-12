@@ -1,7 +1,7 @@
 package big.game.weapon;
 
 
-import big.engine.math.util.PacketUtil;
+import big.engine.util.PacketUtil;
 import big.game.entity.Entity;
 import org.json.JSONArray;
 import org.json.JSONObject;

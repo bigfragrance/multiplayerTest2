@@ -1,8 +1,8 @@
 package big.game.entity;
 
 import big.engine.math.Vec2d;
-import big.engine.math.util.EntityUtils;
-import big.engine.math.util.timer.IntTimer;
+import big.engine.util.EntityUtils;
+import big.engine.util.timer.IntTimer;
 import big.game.entity.bullet.BulletEntity;
 import big.game.entity.player.PlayerEntity;
 

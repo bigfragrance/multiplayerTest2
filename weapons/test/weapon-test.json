@@ -29,7 +29,7 @@
             "stopFollow":3
         }
     },
-    "All":{
+    "Alltest":{
         "data":[
             {
                 "preset": ["Gunner","MachineGunner","Ranger","2DirectorBehind","MiniGunner","DriveTurret","Factory","AutoTurret","Tri-AutoTurret","Wrench","Destroyer","BigTrapBehind","Ranger","2DirectorBehind","Factory","AutoTurret","Tri-AutoTurret","Destroyer","BigTrapBehind","Boost","Boost","Boost","Boost"]

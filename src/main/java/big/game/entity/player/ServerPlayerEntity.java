@@ -2,11 +2,12 @@ package big.game.entity.player;
 
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
-import big.engine.math.util.EntityUtils;
-import big.engine.math.util.Util;
+import big.engine.util.EntityUtils;
+import big.engine.util.Util;
 import big.game.ctrl.ServerInputManager;
 import big.game.entity.Attackable;
 import big.game.entity.Controllable;
+import big.game.entity.DamageSource;
 import big.game.entity.Entity;
 import big.game.entity.bullet.AimBullet;
 import big.game.entity.bullet.BulletEntity;
@@ -31,7 +32,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
 
     public static double drag=0.67;
     public static double scorePow=1.03;
-    public static double initScore=Math.pow(scorePow,30)/scoreMultiplier+1;
+    public static double initScore=Math.pow(scorePow,40)/scoreMultiplier+1;
     public ServerInputManager inputManager=null;
     public int upgradeTimer=0;
     public int skillPointNow=0;
@@ -124,13 +125,30 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
         }
     }
     public void addScore(){
-        super.addScore();
+        double total=0;
+        for(DamageSource ds:damageTaken.values()){
+            total+=ds.damage;
+        }
+        if(total<0.001) return;
+        Entity biggestDamage=null;
+        double biggestDamageTaken=0;
+        for(DamageSource ds:damageTaken.values()){
+            Entity e=cs.entities.get(ds.id);
+            if(e!=null){
+                if(ds.damage>biggestDamageTaken){
+                    biggestDamageTaken=ds.damage;
+                    biggestDamage=e;
+                }
+                e.addScore(this.id,this.score*0.3*ds.damage/total);
+            }
+        }
+        lastHurtBy=biggestDamage;
         sendDeathMsg();
     }
     private void sendDeathMsg(){
         String msg;
         if(lastHurtBy instanceof PlayerEntity player){
-            msg=player.name+" killed"+this.name;
+            msg=player.name+" killed "+this.name;
         }
         else{
             msg=this.name+" have a stupid death";
@@ -147,7 +165,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
         this.networkHandler.send(new PlayerWeaponUpdateS2CPacket(this.id,null).toJSON());
         this.score*=0.5;
         if(this.score<initScore) this.score=initScore;
-        int skillPointNow=Util.floor(score*scoreMultiplier);
+        int skillPointNow=getSkillPointNow();
         if(skillPointNow<this.skillPointUsed){
             int m=skillPointUsed-skillPointNow;
             int[] arr=Util.createInts(10,i->i);

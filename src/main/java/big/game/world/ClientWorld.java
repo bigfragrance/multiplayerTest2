@@ -1,10 +1,9 @@
 package big.game.world;
 
-import big.engine.math.BlockPos;
+import big.engine.math.Vec2i;
 import big.engine.math.Box;
 import big.game.entity.Entity;
 import big.game.network.packet.c2s.WantChunkC2SPacket;
-import big.game.world.blocks.Block;
 
 import java.awt.*;
 
@@ -17,7 +16,7 @@ public class ClientWorld extends World{
         int s= (int) (10*(cs.player==null?1:cs.player.getFov()));
         for(int x=-s;x<=s;x++){
             for(int y=-s;y<=s;y++){
-                BlockPos pos=cs.player.getBlockPos().add(x,y);
+                Vec2i pos=cs.player.getBlockPos().add(x,y);
                 BlockState b=cs.world.getBlockState(pos);
                 if(b!=null){
                     b.getBlock().render(g,b,pos.x,pos.y);
@@ -28,7 +27,7 @@ public class ClientWorld extends World{
         int s2=s*6;
         for(int x=-s2;x<=s2;x++){
             for(int y=-s2;y<=s2;y++){
-                BlockPos pos=cs.player.getBlockPos().add(x,y);
+                Vec2i pos=cs.player.getBlockPos().add(x,y);
                 BlockState b=cs.world.getBlockState(pos);
                 if(b!=null){
                     b.getBlock().renderMini(g,b,pos.x,pos.y);

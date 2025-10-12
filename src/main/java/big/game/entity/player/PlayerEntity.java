@@ -1,11 +1,11 @@
 package big.game.entity.player;
 
-import big.engine.math.BlockPos;
+import big.engine.math.Vec2i;
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
-import big.engine.math.util.EntityUtils;
-import big.engine.math.util.PacketUtil;
-import big.engine.math.util.Util;
+import big.engine.util.EntityUtils;
+import big.engine.util.PacketUtil;
+import big.engine.util.Util;
 import big.game.entity.bullet.BulletEntity;
 import big.game.entity.Entity;
 import big.game.entity.bullet.BulletType;
@@ -14,7 +14,7 @@ import org.json.JSONObject;
 
 import java.awt.*;
 
-import static big.engine.math.util.Util.random;
+import static big.engine.util.Util.random;
 import static big.engine.modules.EngineMain.cs;
 import static big.engine.render.Screen.sc;
 
@@ -34,7 +34,7 @@ public class PlayerEntity extends Entity {
     public static double SIZE=10*sizeMultiplier;
     public static String noEnemyID="God";
     public String name=defName;
-    public static double[] skillPointDefaults={0.6,0.6,0.6,0.5,0.625,0.625,0.8,0.5,0.8,0.8};
+    public static double[] skillPointDefaults=Util.multiply(new double[]{0.6, 0.6, 0.6, 0.5, 0.625, 0.625, 0.8, 0.5, 0.8, 0.8}, new double[]{1,1,1,1,1,1,1,1,1,1});
     public double[] skillPoints= skillPointDefaults.clone();
     public double[] skillPointLevels=Util.createDoubles(0,10);
     public int noEnemyTimer=0;
@@ -56,7 +56,6 @@ public class PlayerEntity extends Entity {
     }
     public void tick() {
         super.tick();
-
     }
 
     protected void updateCollision(){
@@ -187,8 +186,8 @@ public class PlayerEntity extends Entity {
         return false;
     }
 
-    public BlockPos getBlockPos() {
-        return BlockPos.ofFloor(this.position);
+    public Vec2i getBlockPos() {
+        return Vec2i.ofFloor(this.position);
     }
     public double getFovMultiplier(){
         return getFov();

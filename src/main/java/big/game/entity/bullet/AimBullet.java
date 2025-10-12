@@ -1,11 +1,11 @@
 package big.game.entity.bullet;
 
-import big.engine.math.BlockPos;
+import big.engine.math.Vec2i;
 import big.engine.math.Vec2d;
-import big.engine.math.util.EntityUtils;
-import big.engine.math.util.Util;
-import big.engine.math.util.pathing.Calculator;
-import big.engine.math.util.pathing.Path;
+import big.engine.util.EntityUtils;
+import big.engine.util.Util;
+import big.engine.util.pathing.Calculator;
+import big.engine.util.pathing.Path;
 import big.game.entity.Attackable;
 import big.game.entity.Entity;
 import big.game.entity.MobEntity;
@@ -157,7 +157,7 @@ public class AimBullet extends BulletEntity{
 
     private Vec2d getPathPos(Vec2d target){
         if(calculator==null) calculator=new Calculator(this);
-        Path p=calculator.getPath(BlockPos.ofFloor(this.position).toCenterPos(),target.copy());
+        Path p=calculator.getPath(Vec2i.ofFloor(this.position).toCenterPos(),target.copy());
         if(p==null) return null;
         p.update();
         return p.getMoveToNow();

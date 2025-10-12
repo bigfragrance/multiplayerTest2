@@ -1,8 +1,8 @@
 package big.game.screen;
 
 import big.engine.math.Vec2d;
-import big.engine.math.util.Util;
-import big.engine.math.util.timer.AutoList;
+import big.engine.util.Util;
+import big.engine.util.timer.AutoList;
 import big.engine.render.Screen;
 import big.events.MessageReceiveEvent;
 import big.events.RenderEvent;

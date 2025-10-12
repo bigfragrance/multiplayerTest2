@@ -1,6 +1,6 @@
 package big.game.network;
 
-import big.engine.math.util.PacketUtil;
+import big.engine.util.PacketUtil;
 import big.game.client.ClientNetwork;
 import big.game.entity.*;
 import big.game.entity.bullet.BulletEntity;
@@ -11,7 +11,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import static big.engine.math.util.PacketName.*;
+import static big.engine.util.PacketName.*;
 import static big.engine.modules.EngineMain.cs;
 
 public class ClientNetworkHandler {

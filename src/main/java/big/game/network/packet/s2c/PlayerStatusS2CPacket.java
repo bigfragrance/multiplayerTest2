@@ -1,6 +1,6 @@
 package big.game.network.packet.s2c;
 
-import big.engine.math.util.PacketUtil;
+import big.engine.util.PacketUtil;
 import big.game.entity.player.PlayerEntity;
 import big.game.network.ClientNetworkHandler;
 import big.game.network.packet.Packet;

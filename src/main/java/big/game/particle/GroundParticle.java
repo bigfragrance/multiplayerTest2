@@ -2,7 +2,7 @@ package big.game.particle;
 
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
-import big.engine.math.util.Util;
+import big.engine.util.Util;
 import big.engine.render.Screen;
 
 import java.awt.*;

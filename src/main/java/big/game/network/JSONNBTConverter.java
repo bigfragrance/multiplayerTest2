@@ -4,12 +4,17 @@ import net.querz.nbt.tag.*;
 import org.json.*;
 
 import java.util.Iterator;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class JSONNBTConverter {
+    //public static ConcurrentHashMap<JSONObject,CompoundTag> jsonToNBTMap=new ConcurrentHashMap<>();
 
     /** JSON -> CompoundTag */
     public static CompoundTag toCompound(JSONObject json) {
-        json = new JSONObject(json.toString()); // 深拷贝防止修改原对象
+        CompoundTag tag=new CompoundTag();
+        tag.put("j",new StringTag(json.toString()));
+        /*//if(jsonToNBTMap.containsKey(json)) return jsonToNBTMap.get(json);
+        json = new JSONObject(json.toString());
         CompoundTag tag = new CompoundTag();
         Iterator<String> keys = json.keys();
         while (keys.hasNext()) {
@@ -17,6 +22,7 @@ public class JSONNBTConverter {
             Object value = json.get(key);
             tag.put(key, toNBT(value));
         }
+        //jsonToNBTMap.put(json,tag);*/
         return tag;
     }
 
@@ -107,12 +113,12 @@ public class JSONNBTConverter {
 
     /** CompoundTag -> JSON */
     public static JSONObject toJSON(CompoundTag tag) {
-        JSONObject json = new JSONObject();
+        /*JSONObject json = new JSONObject();
         for (String key : tag.keySet()) {
             Tag<?> value = tag.get(key);
             json.put(key, fromNBT(value));
-        }
-        return json;
+        }*/
+        return new JSONObject(tag.getString("j"));
     }
 
     private static Object fromNBT(Tag<?> tag) {

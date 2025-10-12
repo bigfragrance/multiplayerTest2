@@ -1,7 +1,7 @@
 package big.game.network.packet.c2s;
 
 import big.engine.math.Vec2d;
-import big.engine.math.util.PacketUtil;
+import big.engine.util.PacketUtil;
 import big.game.entity.player.ServerPlayerEntity;
 import big.game.network.ServerNetworkHandler;
 import big.game.network.packet.Packet;

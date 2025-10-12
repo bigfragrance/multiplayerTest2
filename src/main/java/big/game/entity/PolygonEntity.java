@@ -2,10 +2,10 @@ package big.game.entity;
 
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
-import big.engine.math.util.ColorUtils;
-import big.engine.math.util.EntityUtils;
-import big.engine.math.util.PacketUtil;
-import big.engine.math.util.Util;
+import big.engine.util.ColorUtils;
+import big.engine.util.EntityUtils;
+import big.engine.util.PacketUtil;
+import big.engine.util.Util;
 import big.game.entity.player.PlayerEntity;
 import big.game.world.World;
 import org.json.JSONObject;
@@ -149,14 +149,14 @@ public class PolygonEntity extends MobEntity{
     public static double[] spawnAreas={1,1,0.4,0.4,0.4,0.3,0.3,0.3,0.3,0.3};
     public static double sizeBase=12*sizeMultiplier;
     public static double damageBase=8;
-    public static double speed=0.15*sizeMultiplier;
+    public static double speed=0.08*sizeMultiplier;
     public static double attackSpeed=1*sizeMultiplier;
     public Vec2d addVelocity=new Vec2d(0,0);
     public int velChangeTimer=0;
     public int sides;
     public int type;
     public double size;
-    public double scoreBase=0.1;
+    public double scoreBase=0.05;
 
     public PolygonEntity(Vec2d position,int sides,int type){
         super();
@@ -185,7 +185,7 @@ public class PolygonEntity extends MobEntity{
         this.health=healths[sides-3]*healthMultipliers[type];
         this.damage=damageBase* damageMultipliers2[sides-3]* damageMultipliers[type];
         this.velocity=new Vec2d(0,0);
-        this.score=this.health*Math.pow(this.damage,2)*scoreBase;
+        this.score=this.health*Math.pow(this.damage,1.2)*scoreBase;
     }
     public void tick(){
         if(!cs.isServer) {

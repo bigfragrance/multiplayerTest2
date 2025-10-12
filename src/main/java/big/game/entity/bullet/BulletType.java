@@ -2,15 +2,15 @@ package big.game.entity.bullet;
 
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
-import big.engine.math.util.BulletRenderer;
-import big.engine.math.util.ColorUtils;
-import big.engine.math.util.PacketUtil;
-import big.engine.math.util.Util;
+import big.engine.util.BulletRenderer;
+import big.engine.util.ColorUtils;
+import big.engine.util.PacketUtil;
+import big.engine.util.Util;
 import org.json.JSONObject;
 
 import java.awt.*;
 
-import static big.engine.math.util.EntityUtils.smallerBullet;
+import static big.engine.util.EntityUtils.smallerBullet;
 import static big.engine.modules.EngineMain.cs;
 
 public class BulletType {

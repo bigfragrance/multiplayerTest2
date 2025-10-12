@@ -91,7 +91,10 @@ public class InputManager {
         return Screen.isKeyPressed('b');
     }
     public boolean isPlacingBase(){
-        return Screen.isKeyPressed('f');
+        return Screen.isKeyPressed('f')&&!Screen.isKeyPressed('q');
+    }
+    public boolean isPlacingPush(){
+        return Screen.isKeyPressed('f')&&Screen.isKeyPressed('q');
     }
     public boolean isRemovingMaze(){
         return Screen.isKeyPressed('n');

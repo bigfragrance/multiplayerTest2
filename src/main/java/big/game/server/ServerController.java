@@ -1,26 +1,28 @@
 package big.game.server;
 
-import big.engine.math.BlockPos;
+import big.engine.math.Direction;
+import big.engine.math.Vec2i;
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
 import big.engine.math.test.MazeGenerator;
 import big.engine.math.test.MazeGenerator2;
-import big.engine.math.util.AfterCheckTask;
-import big.engine.math.util.Util;
-import big.engine.math.util.timer.IntTimer;
-import big.engine.math.util.timer.Timer;
-import big.engine.math.util.timer.TimerList;
+import big.engine.util.AfterCheckTask;
+import big.engine.util.Util;
+import big.engine.util.timer.IntTimer;
+import big.engine.util.timer.Timer;
+import big.engine.util.timer.TimerList;
 import big.engine.modules.EngineMain;
 import big.game.ctrl.InputManager;
 import big.game.entity.Entity;
-import big.game.entity.RockEntity;
 import big.game.entity.bullet.BulletEntity;
 import big.game.entity.bullet.BulletType;
-import big.game.network.packet.s2c.TanksDataS2CPacket;
+import big.game.network.packet.s2c.ServerDataS2CPacket;
 import big.game.weapon.GunList;
-import big.game.world.blocks.Block;
+import big.game.world.Block;
 import big.game.world.BlockState;
 import big.game.world.Blocks;
+import big.game.world.blocks.PushBlock;
+import big.server.ClientHandler;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -59,7 +61,7 @@ public class ServerController {
             for(Entity e:cs.world.getEntities()){
                 e.kill();
             }
-            cs.multiClientHandler.clients.forEach(clientHandler -> clientHandler.send(new TanksDataS2CPacket(GunList.data,GunList.presetData).toJSON())); ;
+            cs.multiClientHandler.clients.forEach(ClientHandler::sendServerData);
         }
         if(inputManager.isGeneratingMaze()&&mazeGenTimer.passed()){
             mazeGenTimer.reset();
@@ -97,13 +99,13 @@ public class ServerController {
         Vec2d mousePos=inputManager.getMouseVec().add(cs.getCamPos());
         if(lastMousePos==null) lastMousePos=mousePos;
         if(showingCurrentBlock){
-            BlockPos blockPos= BlockPos.ofFloor(mousePos);
+            Vec2i blockPos= Vec2i.ofFloor(mousePos);
             sc.renderTasks2.add(g->{
                 Blocks.TEST.render(g,null,blockPos.x,blockPos.y);
-                BlockPos last=null;
+                Vec2i last=null;
                 for(double d=0;d<=1;d+=0.01){
                     Vec2d pos= Util.lerp(lastMousePos,mousePos,d);
-                    BlockPos p= BlockPos.ofFloor(pos);
+                    Vec2i p= Vec2i.ofFloor(pos);
                     if(p.equals(last)) continue;
                     last=p;
                     Blocks.TEST.render(g,null,p.x,p.y);
@@ -126,6 +128,11 @@ public class ServerController {
                 state.setTeam((int)Math.floor(currentRarity));
                 setBlock(lastMousePos == null ? mousePos : lastMousePos, mousePos,state,currentPlaceRadius);
                 put(mousePos,currentPlaceRadius,blockState -> blockState.setTeam((int)Math.floor(currentRarity)));
+            }
+            if(inputManager.isPlacingPush()){
+                BlockState state=new BlockState(Blocks.PUSH_BLOCK);
+                setBlock(lastMousePos == null ? mousePos : lastMousePos, mousePos,state,currentPlaceRadius);
+                put(mousePos,currentPlaceRadius,blockState -> PushBlock.setPushDirection(blockState, Direction.fromID(Util.floor(currentRarity))));
             }
             if (inputManager.isRemovingMaze()) {
                 setBlock(lastMousePos == null ? mousePos : lastMousePos, mousePos, Blocks.AIR,currentPlaceRadius);
@@ -184,7 +191,7 @@ public class ServerController {
             for(int x=-r;x<=r;x++){
                 for(int y=-r;y<=r;y++){
                     Vec2d p=pos.add(x,y);
-                    BlockPos bPos=BlockPos.ofFloor(p);
+                    Vec2i bPos= Vec2i.ofFloor(p);
                     if(bPos.toCenterPos().distanceTo(pos)<=radius){
                         if(cs.world.getBlock(bPos)!=block){
                             cs.world.setBlockState(bPos.x,bPos.y,new BlockState(block));
@@ -201,7 +208,7 @@ public class ServerController {
             for(int x=-r;x<=r;x++){
                 for(int y=-r;y<=r;y++){
                     Vec2d p=pos.add(x,y);
-                    BlockPos bPos=BlockPos.ofFloor(p);
+                    Vec2i bPos= Vec2i.ofFloor(p);
                     if(bPos.toCenterPos().distanceTo(pos)<=radius){
                         cs.world.setBlockState(bPos.x,bPos.y,state);
                     }
@@ -224,7 +231,7 @@ public class ServerController {
         for(int x=-r;x<=r;x++){
             for(int y=-r;y<=r;y++){
                 Vec2d pos=center.add(x,y);
-                BlockPos bPos=BlockPos.ofFloor(pos);
+                Vec2i bPos= Vec2i.ofFloor(pos);
                 if(bPos.toCenterPos().distanceTo(center)<=radius){
                     task.run(cs.world.getBlockState(bPos));
                 }

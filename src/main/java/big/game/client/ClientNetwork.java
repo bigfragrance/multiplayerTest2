@@ -1,16 +1,16 @@
 package big.game.client;
 
-import big.engine.math.util.PacketUtil;
-import big.engine.math.util.PercentEncoder;
+import big.engine.util.PacketUtil;
+import big.engine.util.PercentEncoder;
 import big.game.network.ClientNetworkHandler;
 import big.game.network.JSONNBTConverter;
 import net.querz.nbt.io.*;
 import net.querz.nbt.tag.CompoundTag;
 import net.querz.nbt.tag.Tag;
 import org.json.JSONObject;
-import javax.swing.*; 
-import java.awt.*; 
-import java.io.*; 
+import javax.swing.*;
+import java.awt.*;
+import java.io.*;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.util.LinkedList;
@@ -97,26 +97,26 @@ public class ClientNetwork {
         }
         connected=true;
     }
- 
+
     private void handleDisconnect(Exception e) {
         e.printStackTrace();
-        SwingUtilities.invokeLater(()  -> 
+        SwingUtilities.invokeLater(()  ->
             JOptionPane.showMessageDialog(null,  "Reconnecting to big.server..."));
-        
+
         try {
-            Thread.sleep(RECONNECT_DELAY); 
+            Thread.sleep(RECONNECT_DELAY);
             establishConnection();
         } catch (Exception ex) {
             if (running) handleDisconnect(ex);
         }
     }
- 
+
     public void sendPixelUpdate(int x, int y, Color color) {
         JSONObject json = new JSONObject();
         json.put(PacketUtil.getShortVariableName("type"),  "pixel_update");
         json.put("x",  x);
         json.put("y",  y);
-        json.put("color",  color.getRGB()); 
+        json.put("color",  color.getRGB());
         out.println(json.toString());
         out.println(json.toString());
         out.println(json.toString());
@@ -176,20 +176,20 @@ public class ClientNetwork {
     }
 
     public Color getPixel(int x, int y) {
-        canvasLock.readLock().lock(); 
+        canvasLock.readLock().lock();
         try {
             return canvas[x][y];
         } finally {
-            canvasLock.readLock().unlock(); 
+            canvasLock.readLock().unlock();
         }
     }
- 
+
     public void disconnect() {
         running = false;
         try {
-            socket.close(); 
+            socket.close();
         } catch (IOException e) {
-            System.err.println("Disconnect  error: " + e.getMessage()); 
+            System.err.println("Disconnect  error: " + e.getMessage());
         }
     }
 }

@@ -1,8 +1,8 @@
 package big.game.screen;
 
 import big.engine.math.Vec2d;
-import big.engine.math.util.TaskManagerMemoryApproximator;
-import big.engine.math.util.Util;
+import big.engine.util.TaskManagerMemoryApproximator;
+import big.engine.util.Util;
 import big.engine.render.Screen;
 import big.events.RenderEvent;
 import big.events.TickEvent;
@@ -27,6 +27,7 @@ public class DebugScreen {
         INSTANCE=new DebugScreen();
         INSTANCE.addToRender(() -> "DebugScreen");
         INSTANCE.addToRender(()->"TPS: "+String.format("%.1f",cs.currentTPS.getAvg()));
+        INSTANCE.addToRender(()->"FPS: "+String.format("%.1f",sc.FPS.getSpeed()));
         INSTANCE.addToRender(()->"MSPT: "+String.format("%.1f",cs.nspt/1000000d));
         INSTANCE.addToRender(()->"RunTime: "+String.format("%.1f",cs.runTime/20d));
         INSTANCE.addToRender(()->"MemoryUsed: "+ String.format("%.1f",TaskManagerMemoryApproximator.getMemoryUsed()/(1024d*1024d))+"MB");

@@ -1,14 +1,13 @@
 package big.server;
 
-import big.engine.math.util.EntityUtils;
+import big.engine.util.EntityUtils;
 import big.game.entity.player.PlayerData;
 import big.game.entity.player.ServerPlayerEntity;
 import big.game.network.JSONNBTConverter;
 import big.game.network.ServerNetworkHandler;
 import big.game.network.packet.Packet;
-import big.game.network.packet.s2c.ArrayPacket;
 import big.game.network.packet.s2c.MessageS2CPacket;
-import big.game.network.packet.s2c.TanksDataS2CPacket;
+import big.game.network.packet.s2c.ServerDataS2CPacket;
 import big.game.weapon.GunList;
 import net.querz.nbt.io.*;
 import net.querz.nbt.tag.CompoundTag;
@@ -57,7 +56,7 @@ public class ClientHandler implements Runnable {
         this.serverNetworkHandler = new ServerNetworkHandler(this);
         cs.multiClientHandler.addClient(this);
         this.serverNetworkHandler.sendPlayerSpawn(player);
-        this.serverNetworkHandler.send(new TanksDataS2CPacket(GunList.data,GunList.presetData).toJSON());
+        this.sendServerData();
         player.networkHandler = serverNetworkHandler;
         MessageS2CPacket.sendHistory(this);
     }
@@ -132,7 +131,7 @@ public class ClientHandler implements Runnable {
             while (!Thread.interrupted() && !interrupted) {
 
                 JSONObject obj = broadcastQueue.take();
-                System.out.println(broadcastQueue.size());
+                //System.out.println(broadcastQueue.size());
 
                 JSONObject packet=obj;//new ArrayPacket(packetArray).toJSON();
                 CompoundTag tag=convertJSONObjectToCompoundTag(packet);
@@ -173,6 +172,9 @@ public class ClientHandler implements Runnable {
 
     public void send(JSONObject obj) {
         broadcastQueue.offer(obj);
+    }
+    public void sendServerData(){
+        send(new ServerDataS2CPacket(GunList.data,GunList.presetData,cs.borderBox).toJSON());
     }
 
     public void send(Packet<?> packet) {

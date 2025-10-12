@@ -2,8 +2,8 @@ package big.game.screen;
 
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
-import big.engine.math.util.PacketVariable;
-import big.engine.math.util.Util;
+import big.engine.util.PacketVariable;
+import big.engine.util.Util;
 import big.engine.render.Screen;
 import big.game.entity.player.PlayerEntity;
 import big.game.network.packet.c2s.UpdateWeaponC2SPacket;

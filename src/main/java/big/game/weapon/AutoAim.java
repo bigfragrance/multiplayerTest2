@@ -1,7 +1,7 @@
 package big.game.weapon;
 
 import big.engine.math.Vec2d;
-import big.engine.math.util.EntityUtils;
+import big.engine.util.EntityUtils;
 import big.game.entity.Entity;
 import big.game.entity.MobEntity;
 import big.game.entity.player.PlayerEntity;

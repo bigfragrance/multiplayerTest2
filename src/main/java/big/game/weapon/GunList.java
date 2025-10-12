@@ -1,7 +1,7 @@
 package big.game.weapon;
 
-import big.engine.math.util.PacketUtil;
-import big.engine.math.util.Util;
+import big.engine.util.PacketUtil;
+import big.engine.util.Util;
 import big.game.entity.Entity;
 import big.game.entity.player.AutoController;
 import org.json.JSONArray;

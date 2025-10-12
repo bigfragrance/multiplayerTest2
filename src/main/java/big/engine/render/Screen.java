@@ -3,9 +3,11 @@ package big.engine.render;
 
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
-import big.engine.math.util.AfterCheckTask;
-import big.engine.math.util.Util;
-import big.engine.math.util.timer.AutoList;
+import big.engine.util.AfterCheckTask;
+import big.engine.util.AvgCounter;
+import big.engine.util.SpeedCounter;
+import big.engine.util.Util;
+import big.engine.util.timer.AutoList;
 import big.engine.modules.EngineMain;
 import big.events.RenderEvent;
 import big.events.TickEvent;
@@ -29,7 +31,7 @@ import java.util.Enumeration;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static big.engine.math.util.Util.round;
+import static big.engine.util.Util.round;
 import static big.engine.modules.EngineMain.TPS;
 import static big.engine.modules.EngineMain.cs;
 
@@ -37,6 +39,7 @@ import static big.engine.modules.EngineMain.cs;
 public class Screen extends JPanel implements Runnable,ActionListener, KeyListener{
     public static Screen sc;
     public static JFrame frame;
+    public static double TARGET_FPS=60;
     public volatile double camX=0;
     public volatile double camY=0;
     public static double renderFix=64;
@@ -64,6 +67,9 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     public String renderString="";
     public GUI currentScreen=null;
     private Vec2d mouseStart=null;
+    //public int frames=0;
+    public SpeedCounter FPS=new SpeedCounter(1000);
+    //private long lastStartCalcFPSTime;
     public Screen(){
         sc =this;
         frame.addKeyListener(this);
@@ -166,6 +172,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     }
     public void run(){
         setUIFont(new Font("微软雅黑", Font.PLAIN, 14));
+        //lastStartCalcFPSTime=System.currentTimeMillis();
         while (true) {
             try {
                 SCREEN_BOX=new Box(0, Screen.sc.windowWidth,0,Screen.sc.windowHeight);
@@ -186,8 +193,10 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
                 }catch ( Exception e){
                     e.printStackTrace();
                 }
+
+                FPS.add();
                 lastRender=System.currentTimeMillis();
-                long s= -(System.currentTimeMillis() - start) +1000/60;
+                long s= (long) (-(System.currentTimeMillis() - start) +1000/TARGET_FPS);
                 if(s>0)Thread.sleep(s); // 60 FPS
             } catch (Exception e) {
                 e.printStackTrace();

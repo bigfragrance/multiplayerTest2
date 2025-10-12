@@ -1,11 +1,11 @@
 package big.game.entity;
 
-import big.engine.math.BlockPos;
+import big.engine.math.Vec2i;
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
-import big.engine.math.util.ColorUtils;
-import big.engine.math.util.PacketUtil;
-import big.engine.math.util.Util;
+import big.engine.util.ColorUtils;
+import big.engine.util.PacketUtil;
+import big.engine.util.Util;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -15,7 +15,7 @@ import static big.engine.modules.EngineMain.cs;
 
 public class BlockEntity extends Entity{
     public static Color color=new Color(115, 115, 115);
-    public BlockPos blockPos=new BlockPos(0,0);
+    public Vec2i blockPos=new Vec2i(0,0);
     public boolean leftCheck=true;
     public boolean rightCheck=true;
     public boolean topCheck=true;

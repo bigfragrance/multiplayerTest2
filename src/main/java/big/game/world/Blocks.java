@@ -1,7 +1,7 @@
 package big.game.world;
 
 import big.game.world.blocks.BaseBlock;
-import big.game.world.blocks.Block;
+import big.game.world.blocks.PushBlock;
 
 import java.awt.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,6 +13,7 @@ public class Blocks {
     public static final Block AIR=register("air",false,new Color(150,150,150,20));
     public static final Block STONE=register("stone");
     public static final Block BASE_BLOCK=register(new BaseBlock("base_block",0),false,Color.WHITE);
+    public static final Block PUSH_BLOCK=register(new PushBlock("push_block",0),false,PushBlock.BASE_COLOR);
     public static final Block TEST=register("test");
     public static Block register(String name){
         Block b=new Block(name,id.get());

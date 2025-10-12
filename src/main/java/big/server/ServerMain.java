@@ -1,6 +1,6 @@
 package big.server;
 
-import big.engine.math.util.AvgCounter;
+import big.engine.util.AvgCounter;
 import big.game.entity.player.PlayerData;
 
 import java.net.ServerSocket;

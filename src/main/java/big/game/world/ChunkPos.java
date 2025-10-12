@@ -1,12 +1,12 @@
 package big.game.world;
 
-import big.engine.math.BlockPos;
+import big.engine.math.Vec2i;
 
-public class ChunkPos extends BlockPos {
+public class ChunkPos extends Vec2i {
     public ChunkPos(int x, int y) {
         super(x, y);
     }
-    public ChunkPos(BlockPos pos){
+    public ChunkPos(Vec2i pos){
         this(Chunk.toChunk(pos.x),Chunk.toChunk(pos.y));
     }
 

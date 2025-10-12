@@ -1,8 +1,8 @@
 package big.game.entity.boss;
 
 import big.engine.math.Vec2d;
-import big.engine.math.util.EntityUtils;
-import big.engine.math.util.Util;
+import big.engine.util.EntityUtils;
+import big.engine.util.Util;
 import big.engine.render.Screen;
 import big.game.entity.player.ServerBotEntity;
 import big.game.weapon.CanAttack;

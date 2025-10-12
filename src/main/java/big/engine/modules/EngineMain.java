@@ -3,9 +3,9 @@ package big.engine.modules;
 
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
-import big.engine.math.util.Setting;
-import big.engine.math.util.AvgCounter;
-import big.engine.math.util.Util;
+import big.engine.util.Setting;
+import big.engine.util.AvgCounter;
+import big.engine.util.Util;
 import big.engine.render.Screen;
 import big.events.TickEvent;
 import big.game.entity.RockEntity;
@@ -38,7 +38,7 @@ import java.util.Map;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicLong;
 
-import static big.engine.math.util.Util.round;
+import static big.engine.util.Util.round;
 import static big.engine.render.Screen.sc;
 
 public class EngineMain implements Runnable{
@@ -65,7 +65,7 @@ public class EngineMain implements Runnable{
     public static long lastTick=0;
     public Vec2d camPos=new Vec2d(0,0);
     public Vec2d prevCamPos=new Vec2d(0,0);
-    public Box borderBox=new Box(new Vec2d(0,0),60,60);
+    public Box borderBox=new Box(new Vec2d(0,0),100,100);
     public ServerController serverController;
     public boolean ticking=false;
     public Setting setting=null;

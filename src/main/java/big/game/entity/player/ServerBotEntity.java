@@ -1,7 +1,7 @@
 package big.game.entity.player;
 
 import big.engine.math.Vec2d;
-import big.engine.math.util.Util;
+import big.engine.util.Util;
 import big.game.weapon.GunList;
 
 import java.util.ArrayList;

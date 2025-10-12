@@ -1,14 +1,11 @@
 package big.game.world;
 
-import big.engine.math.BlockPos;
-import big.engine.math.Box;
+import big.engine.math.Vec2i;
 import big.engine.math.Vec2d;
-import big.engine.math.util.ColorUtils;
-import big.engine.math.util.EntityUtils;
-import big.engine.math.util.Util;
-import big.engine.math.util.timer.IntTimer;
+import big.engine.util.EntityUtils;
+import big.engine.util.Util;
+import big.engine.util.timer.IntTimer;
 import big.engine.modules.EngineMain;
-import big.engine.render.Screen;
 import big.game.entity.Entity;
 import big.game.entity.MobEntity;
 import big.game.entity.PolygonEntity;
@@ -16,7 +13,6 @@ import big.game.entity.boss.VisitorEntity;
 import big.game.entity.player.ServerBotEntity;
 import big.game.network.packet.s2c.BlockStateUpdateS2CPacket;
 import big.game.network.packet.s2c.TickS2CPacket;
-import big.game.world.blocks.Block;
 import big.server.ClientHandler;
 
 import java.awt.*;
@@ -27,8 +23,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import static big.engine.math.util.Util.random;
-import static big.engine.math.util.Util.round;
+import static big.engine.util.Util.random;
+import static big.engine.util.Util.round;
 import static big.engine.modules.EngineMain.cs;
 import static big.game.world.Chunk.CHUNK_SIZE;
 
@@ -204,7 +200,7 @@ public class ServerWorld extends World{
         double typeMax=cs.setting.getPolygonType();
         for(int i=0;i<500;i++){
             Vec2d pos= Util.randomInBox(cs.borderBox);
-            BlockPos blockPos= BlockPos.ofFloor(pos);
+            Vec2i blockPos= Vec2i.ofFloor(pos);
             BlockState blockState=cs.world.getBlockState(blockPos);
             if(blockState.getBlock().solid) continue;
             double s = blockState.getSpawnMobRarity()*7+Math.random()*1.6-0.8;
@@ -224,7 +220,12 @@ public class ServerWorld extends World{
         cs.multiClientHandler.clients.forEach(c->c.send(new BlockStateUpdateS2CPacket(x,y,blockState).toJSON()));
     }
     public void render(Graphics g){
-        for(int x=-60;x<=60;x++){
+        for(long id:worldChunks.keySet()){
+            Chunk c=worldChunks.get(id);
+            int[] position=ChunkPos.fromLong(id);
+            c.render(g,position[0],position[1]);
+        }
+        /*for(int x=-60;x<=60;x++){
             for(int y=-60;y<=60;y++){
                 BlockPos pos=new BlockPos(x,y);
                 BlockState b=cs.world.getBlockState(pos);
@@ -235,6 +236,6 @@ public class ServerWorld extends World{
                     }
                 }
             }
-        }
+        }*/
     }
 }

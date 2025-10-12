@@ -1,7 +1,6 @@
 package big.game.world;
 
-import big.engine.math.util.PacketUtil;
-import big.game.world.blocks.Block;
+import big.engine.util.PacketUtil;
 import org.json.JSONObject;
 
 public class BlockState {
@@ -17,6 +16,9 @@ public class BlockState {
     }
     public Block getBlock(){
         return block;
+    }
+    public JSONObject getData(){
+        return data;
     }
     public JSONObject toJSON(){
         JSONObject json=new JSONObject();

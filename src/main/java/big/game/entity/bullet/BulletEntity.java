@@ -2,9 +2,9 @@ package big.game.entity.bullet;
 
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
-import big.engine.math.util.EntityUtils;
-import big.engine.math.util.PacketUtil;
-import big.engine.math.util.Util;
+import big.engine.util.EntityUtils;
+import big.engine.util.PacketUtil;
+import big.engine.util.Util;
 import big.engine.render.Screen;
 import big.game.entity.Attackable;
 import big.game.entity.Entity;

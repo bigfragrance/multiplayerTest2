@@ -1,6 +1,6 @@
 package big.game.network.packet.c2s;
 
-import big.engine.math.util.PacketUtil;
+import big.engine.util.PacketUtil;
 import big.game.entity.Entity;
 import big.game.entity.player.PlayerEntity;
 import big.game.network.ServerNetworkHandler;

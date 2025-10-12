@@ -158,7 +158,7 @@
           "x":0.1,
           "y":0
         },
-        "reloadMultiplier":0.9,
+        "reloadMultiplier":0.3,
         "layer":1,
         "startDelay":0,
         "size":[0.15,0.15,0.15,0.05,0.12,0.12,0.1,0.15,0.15],
@@ -181,7 +181,7 @@
           }
         },
         "extraData":{
-          "maxCount":30,
+          "maxCount":6,
           "autoFire": true
         }
       }

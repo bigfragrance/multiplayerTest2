@@ -2,9 +2,9 @@ package big.game.weapon;
 
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
-import big.engine.math.util.ColorUtils;
-import big.engine.math.util.PacketUtil;
-import big.engine.math.util.Util;
+import big.engine.util.ColorUtils;
+import big.engine.util.PacketUtil;
+import big.engine.util.Util;
 import big.engine.render.Screen;
 import big.game.entity.Entity;
 import org.json.JSONArray;

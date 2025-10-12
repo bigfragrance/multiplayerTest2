@@ -1,16 +1,17 @@
 package big.game.entity;
 
-import big.engine.math.BlockPos;
+import big.engine.math.Vec2i;
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
-import big.engine.math.util.EntityUtils;
-import big.engine.math.util.PacketUtil;
-import big.engine.math.util.PacketVariable;
-import big.engine.math.util.Util;
+import big.engine.util.EntityUtils;
+import big.engine.util.PacketUtil;
+import big.engine.util.PacketVariable;
+import big.engine.util.Util;
 import big.engine.render.Screen;
 import big.game.entity.bullet.BulletType;
 import big.game.entity.player.PlayerEntity;
 import big.game.weapon.GunList;
+import big.game.world.BlockState;
 import big.game.world.ChunkPos;
 import big.game.world.World;
 import org.json.JSONObject;
@@ -22,9 +23,9 @@ import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static big.engine.math.util.PacketVariable.basic;
-import static big.engine.math.util.Util.floor;
-import static big.engine.math.util.Util.round;
+import static big.engine.util.PacketVariable.basic;
+import static big.engine.util.Util.floor;
+import static big.engine.util.Util.round;
 import static big.engine.modules.EngineMain.chunkSize;
 import static big.engine.modules.EngineMain.cs;
 
@@ -130,19 +131,11 @@ public abstract class Entity implements NetworkItem {
         }
         if(cs.isServer) {
             this.resetTickDelta();
-            if(checkBorderCollision&&!this.boundingBox.intersects(cs.borderBox)){
-                this.velocity.offset(this.position.subtract(cs.borderBox.getCenter()).multiply(-1).limit(0.5));
-            }
+            this.blockTick();
             this.move(this.velocity.add(extraVelocity));
             this.extraVelocity.multiply1(extraVelocityD);
             if(this.weapon!=null&&!(this instanceof PlayerEntity)){
                 this.weapon.tick(true,false,cs.isServer);
-            }
-            if(cs.world.getBlock(BlockPos.ofFloor(this.boundingBox.getCenter())).solid){
-                this.insideWall=true;
-                this.health-=this.health*0.05+5;
-            }else{
-                this.insideWall=false;
             }
             if(World.gravityEnabled){
                 this.onGround=EntityUtils.isOnGround(this);
@@ -177,6 +170,20 @@ public abstract class Entity implements NetworkItem {
         this.position.offset(v);
         this.boundingBox.offset1(v);
     }
+    public void blockTick(){
+        Vec2i pos=Vec2i.ofFloor(this.position);
+        BlockState state=cs.world.getBlockState(pos);
+        state.getBlock().tick(state,pos.x,pos.y,this);
+        if(cs.world.getBlock(pos).solid){
+            this.insideWall=true;
+            this.health-=this.health*0.05+5;
+        }else{
+            this.insideWall=false;
+        }
+        if(checkBorderCollision&&!this.boundingBox.intersects(cs.borderBox)){
+            this.velocity.offset(this.position.subtract(cs.borderBox.getCenter()).multiply(-1).limit(0.5));
+        }
+    }
     public BulletType addMultipliers(BulletType b){
         return b.copy();
     }
@@ -197,6 +204,7 @@ public abstract class Entity implements NetworkItem {
         this.tickDelta=0;
     }
     public void render(Graphics g){
+        ((Graphics2D)g).setStroke(new BasicStroke((float) (Screen.sc.lineWidth/Screen.sc.zoom2), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         this.tickDelta= Screen.tickDelta;//Math.min(1,this.tickDelta+ Screen.tickDeltaAdd);
         if(weapon!=null){
             weapon.render(g);

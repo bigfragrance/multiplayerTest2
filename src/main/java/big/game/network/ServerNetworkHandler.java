@@ -1,8 +1,8 @@
 package big.game.network;
 
 import big.engine.math.Vec2d;
-import big.engine.math.util.EntityUtils;
-import big.engine.math.util.PacketUtil;
+import big.engine.util.EntityUtils;
+import big.engine.util.PacketUtil;
 import big.game.entity.BlockEntity;
 import big.game.entity.Entity;
 import big.game.entity.player.PlayerEntity;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 
-import static big.engine.math.util.PacketName.*;
+import static big.engine.util.PacketName.*;
 import static big.engine.modules.EngineMain.cs;
 
 public class ServerNetworkHandler {

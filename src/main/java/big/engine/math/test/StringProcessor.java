@@ -1,7 +1,7 @@
 package big.engine.math.test;
 
-import big.engine.math.util.FileUtil;
-import big.engine.math.util.Util;
+import big.engine.util.FileUtil;
+import big.engine.util.Util;
 
 import java.util.*;
 import java.util.regex.Matcher;

@@ -1,8 +1,11 @@
 package big.engine.math;
 
 
-import big.engine.math.util.Util;
+import big.engine.util.Util;
 import org.json.JSONObject;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class Box {
     public double minX;
@@ -15,7 +18,7 @@ public class Box {
         this.minY=Math.min(minY,maxY);
         this.maxY=Math.max(minY,maxY);
     }
-    public Box(BlockPos pos){
+    public Box(Vec2i pos){
         this(pos.x+1,pos.x,pos.y+1,pos.y);
     }
     public Box(int x,int y){
@@ -129,6 +132,15 @@ public class Box {
     }
     public double avgSize(){
         return (xSize()+ySize())/2;
+    }
+    public Set<Vec2i> getContaining(){
+        Set<Vec2i> set=new HashSet<>();
+        for(int x=(int)Math.floor(minX);x<=(int)Math.floor(maxX);x++){
+            for(int y=(int)Math.floor(minY);y<=(int)Math.floor(maxY);y++){
+                set.add(new Vec2i(x,y));
+            }
+        }
+        return set;
     }
     public Box switchToJFrame(){
         return new Box(Util.switchXToJFrame(minX), Util.switchXToJFrame(maxX),Util.switchYToJFrame(minY),Util.switchYToJFrame(maxY));

@@ -1,14 +1,14 @@
 package big.game.entity.player;
 
-import big.engine.math.BlockPos;
+import big.engine.math.Vec2i;
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
-import big.engine.math.util.AutoRecorder;
-import big.engine.math.util.EntityUtils;
-import big.engine.math.util.Util;
-import big.engine.math.util.pathing.Calculator;
-import big.engine.math.util.pathing.Path;
-import big.engine.math.util.pathing.PathNode;
+import big.engine.util.AutoRecorder;
+import big.engine.util.EntityUtils;
+import big.engine.util.Util;
+import big.engine.util.pathing.Calculator;
+import big.engine.util.pathing.Path;
+import big.engine.util.pathing.PathNode;
 import big.game.ctrl.ServerInputManager;
 import big.game.entity.Controllable;
 import big.game.entity.Entity;
@@ -175,7 +175,7 @@ public class AutoController<T extends Entity&Controllable> {
     }
     private Vec2d getPathPos(Vec2d target){
         if(calculator==null) calculator=new Calculator(owner);
-        Path p=calculator.getPath(BlockPos.ofFloor(owner.position.multiply(2)).toCenterPos().multiply(0.5),target);
+        Path p=calculator.getPath(Vec2i.ofFloor(owner.position.multiply(2)).toCenterPos().multiply(0.5),target);
         if(p==null) return null;
         if(lastPath!=null&&lastPath.isStillValid()){
             Vec2d lastEnd=lastPath.getLast();
@@ -204,13 +204,13 @@ public class AutoController<T extends Entity&Controllable> {
         return p.getMoveToNow();
     }
     public void awayFromOthersBase(){
-        BlockPos pos=owner.getPos().ofFloor();
-        BlockPos minDistPos=null;
+        Vec2i pos=owner.getPos().ofFloor();
+        Vec2i minDistPos=null;
         double minDist=10000000;
         for(int x=-3;x<=3;x++){
             for(int y=-3;y<=3;y++){
                 if(x==0&&y==0) continue;
-                BlockPos p=pos.add(x,y);
+                Vec2i p=pos.add(x,y);
                 BlockState state=cs.world.getBlockState(p);
                 if(state.getTeam()!=owner.team&&state.getBlock()== Blocks.BASE_BLOCK){
                     double dist=p.distanceTo(pos);
