@@ -44,7 +44,7 @@ public class ServerDataS2CPacket implements Packet<ClientNetworkHandler> {
             tankData.remove(s);
         }
         JSONObject data=new JSONObject();
-        PacketUtil.put(data,"tank",tanksData);
+        PacketUtil.put(data,"tank",tankData);
         PacketUtil.put(data,"preset",presetData);
         PacketUtil.put(data,"box",borderBox.toJSON());
         PacketUtil.putPacketType(data,getType());
