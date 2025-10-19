@@ -46,7 +46,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     public static double defZoom=1.6*renderFix/0.02;
     public volatile double zoom=defZoom;
     public volatile double zoom2=1/renderFix;
-    private double oldZoom=defZoom;
+    private double oldZoom=-1;
     public double lineWidth=1;
     public int windowWidth=1000;
     public int windowHeight=1000;
@@ -102,6 +102,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
         addMouseMotionListener(new MouseAdapter() {
             @Override
             public void mouseMoved(MouseEvent e) {
+
                 //mouseX = (int) ((e.getX()-windowWidth/2)*renderFix+windowWidth/2);
                 //mouseY = (int) ((e.getY()-windowHeight/2)*renderFix+windowHeight/2);
                 mousePos.set(screenToGame(e.getX(),e.getY()));
@@ -110,7 +111,6 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
         });
         addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
-
 
                 mousePos.set(screenToGame(e.getX(),e.getY()));
             }
@@ -176,7 +176,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
         while (true) {
             try {
                 SCREEN_BOX=new Box(0, Screen.sc.windowWidth,0,Screen.sc.windowHeight);
-                if(cs.ticking) continue;
+                if(cs.ticking&&!cs.isWorldEditMode()) continue;
                 long start=System.currentTimeMillis();
                 windowWidth=frame.getWidth();
                 windowHeight=frame.getHeight();
@@ -188,6 +188,9 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
                 tickDeltaAdd=(System.currentTimeMillis()-lastRender)/1000.0d*TPS;
                 tickDelta=EngineMain.getTickDelta();
                 //cs.fastUpdate(tickDeltaAdd);
+                if(cs.isWorldEditMode()){
+                    EngineMain.tickTask.run();
+                }
                 try {
                     repaint();
                 }catch ( Exception e){
@@ -373,10 +376,12 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
         currentScreen=null;
     }
     public void storeAndSetDef(){
+        //if(oldZoom>0) return;
         oldZoom=zoom;
         zoom=defZoom;
     }
     public void restoreZoom(){
+        if(oldZoom<0) return;
         zoom=oldZoom;
     }
     private AffineTransform getRenderTransform() {

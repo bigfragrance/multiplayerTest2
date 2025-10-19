@@ -53,6 +53,7 @@ public class ServerNetworkHandler {
         this.clientHandler.send(o);
     }
     public void sendEntitySpawn(Entity e){
+        if(!clientHandler.dataSent) return;
         if(e!=null){
             if(!inRange(e)) return;
             JSONObject o2=new JSONObject();
@@ -67,6 +68,7 @@ public class ServerNetworkHandler {
         }
     }
     public boolean inRange(Entity e){
+        if(!clientHandler.dataSent) return false;
         double distance=e.prevPosition.distanceTo(clientHandler.player.position)+e.boundingBox.avgSize()/2;
         distance /=clientHandler.player.getFov();
         return e instanceof ServerPlayerEntity|| (e instanceof BlockEntity?distance<updateRangeBlocks:distance<updateRange);
@@ -93,7 +95,7 @@ public class ServerNetworkHandler {
         }
     }
     public void sendEntityUpdate(Entity e){
-        if(e==null) return;
+        if(e==null||!clientHandler.dataSent) return;
         if(!inRange(e)) {
             sendEntityRemove(e.id);
             sentRemove.put(e.id,true);

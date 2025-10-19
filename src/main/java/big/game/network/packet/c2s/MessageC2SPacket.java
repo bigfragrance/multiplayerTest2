@@ -3,6 +3,7 @@ package big.game.network.packet.c2s;
 import big.engine.util.PacketUtil;
 import big.game.network.ServerNetworkHandler;
 import big.game.network.packet.Packet;
+import big.game.network.packet.s2c.AssetsS2CPacket;
 import big.game.network.packet.s2c.MessageS2CPacket;
 import org.json.JSONObject;
 
@@ -26,6 +27,14 @@ public class MessageC2SPacket implements Packet<ServerNetworkHandler> {
 
     @Override
     public void apply(ServerNetworkHandler serverNetworkHandler) {
+        if(message.equals(AssetsS2CPacket.RECEIVED)){
+            serverNetworkHandler.clientHandler.dataSent=true;
+            return;
+        }
+        if(message.equals(AssetsS2CPacket.NEED_UPDATE)){
+            serverNetworkHandler.clientHandler.sendAssetsData();
+            return;
+        }
         String text="<"+serverNetworkHandler.clientHandler.player.name +"> "+message;
         cs.multiClientHandler.clients.forEach(c->c.serverNetworkHandler.send(new MessageS2CPacket(text).addHistory().toJSON()));
     }

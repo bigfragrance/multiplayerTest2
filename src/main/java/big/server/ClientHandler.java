@@ -6,6 +6,7 @@ import big.game.entity.player.ServerPlayerEntity;
 import big.game.network.JSONNBTConverter;
 import big.game.network.ServerNetworkHandler;
 import big.game.network.packet.Packet;
+import big.game.network.packet.s2c.AssetsS2CPacket;
 import big.game.network.packet.s2c.MessageS2CPacket;
 import big.game.network.packet.s2c.ServerDataS2CPacket;
 import big.game.weapon.GunList;
@@ -38,6 +39,7 @@ public class ClientHandler implements Runnable {
     private long connectionStartTime;
     private boolean handshaked = false;
     private Thread sendThread = null;
+    public boolean dataSent=false;
 
     public ClientHandler(Socket socket) {
         this.clientSocket = socket;
@@ -175,6 +177,12 @@ public class ClientHandler implements Runnable {
     }
     public void sendServerData(){
         send(new ServerDataS2CPacket(GunList.data,GunList.presetData,cs.borderBox).toJSON());
+        send(new AssetsS2CPacket(AssetsS2CPacket.HASH,AssetsS2CPacket.assetsHash));
+    }
+    public void sendAssetsData(){
+        for(AssetsS2CPacket packet:AssetsS2CPacket.createdData){
+            send(packet);
+        }
     }
 
     public void send(Packet<?> packet) {

@@ -96,7 +96,7 @@ public class ServerController {
             sc.renderString="currentRadius: "+Util.getRoundedDouble(currentPlaceRadius,3);
         }
 
-        Vec2d mousePos=inputManager.getMouseVec().add(cs.getCamPos());
+        Vec2d mousePos=inputManager.getMouseVec().add(cs.camPos);
         if(lastMousePos==null) lastMousePos=mousePos;
         if(showingCurrentBlock){
             Vec2i blockPos= Vec2i.ofFloor(mousePos);

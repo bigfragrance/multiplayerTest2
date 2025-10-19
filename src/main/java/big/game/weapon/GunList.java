@@ -4,6 +4,7 @@ import big.engine.util.PacketUtil;
 import big.engine.util.Util;
 import big.game.entity.Entity;
 import big.game.entity.player.AutoController;
+import big.game.network.packet.s2c.AssetsS2CPacket;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -104,6 +105,7 @@ public class GunList {
         try {
             loadWeaponsRecursively(new File(System.getProperty("user.dir")),data,"weapon");
             loadWeaponsRecursively(new File(System.getProperty("user.dir")),presetData,"preset");
+            AssetsS2CPacket.init();
         }catch (Exception e){
             System.out.println("Error reading weapons.json");
         }

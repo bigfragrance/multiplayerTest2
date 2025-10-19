@@ -140,6 +140,9 @@ public class PacketUtil {
             case("array_packet")->{
                 return new ArrayPacket(o);
             }
+            case("assets")->{
+                return new AssetsS2CPacket(o);
+            }
 
         }
         return null;

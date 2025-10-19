@@ -21,4 +21,5 @@ public class PacketName {
     public static String message="r";
     public static String tick="s";
     public static String array_packet="t";
+    public static String assets="u";
 }

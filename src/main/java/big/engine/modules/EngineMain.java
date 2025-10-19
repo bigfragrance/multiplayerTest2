@@ -46,6 +46,8 @@ public class EngineMain implements Runnable{
     public static double chunkSize=8;
     public static double damageExchangeSpeed=1;
     public static int maxTeams=2;
+    public static boolean isWorldEditMode=false;
+    public static Runnable tickTask=null;
 
     public static volatile EngineMain cs;
     private long lastGc=System.currentTimeMillis();
@@ -109,8 +111,6 @@ public class EngineMain implements Runnable{
         }
         EVENT_BUS.subscribe(world);
         EVENT_BUS.subscribe(sc);
-
-
     }
     private void initEventBus(){
         EVENT_BUS.registerLambdaFactory("big",(lookupInMethod, klass) -> (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup()));
@@ -120,7 +120,7 @@ public class EngineMain implements Runnable{
     public void run() {
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-        Runnable task = () -> {
+        tickTask = () -> {
             lastTick = System.currentTimeMillis();
             long start = System.nanoTime();
             try {
@@ -154,7 +154,7 @@ public class EngineMain implements Runnable{
             }*/
         };
 
-        scheduler.scheduleAtFixedRate(task, 0, (long)Math.floor(1000000000/TPS), TimeUnit.NANOSECONDS);
+        if(!isWorldEditMode)scheduler.scheduleAtFixedRate(tickTask, 0, (long)Math.floor(1000000000/TPS), TimeUnit.NANOSECONDS);
     }
     public static double getTickDelta(){
         return  Math.max(0,Math.min(TPS*((double)(System.currentTimeMillis() - lastTick)) / 1000d,1));
@@ -312,5 +312,8 @@ public class EngineMain implements Runnable{
         if(isServer){
             multiClientHandler.clients.forEach(c->c.serverNetworkHandler.sendEntityRemove(id));
         }
+    }
+    public boolean isWorldEditMode(){
+        return isWorldEditMode;
     }
 }

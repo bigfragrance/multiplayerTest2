@@ -32,7 +32,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
 
     public static double drag=0.67;
     public static double scorePow=1.03;
-    public static double initScore=Math.pow(scorePow,40)/scoreMultiplier+1;
+    public static double initScore=Math.pow(scorePow,220)/scoreMultiplier+1;
     public ServerInputManager inputManager=null;
     public int upgradeTimer=0;
     public int skillPointNow=0;

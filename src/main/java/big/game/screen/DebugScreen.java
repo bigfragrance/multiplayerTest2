@@ -6,6 +6,7 @@ import big.engine.util.Util;
 import big.engine.render.Screen;
 import big.events.RenderEvent;
 import big.events.TickEvent;
+import big.game.network.packet.s2c.AssetsS2CPacket;
 import meteordevelopment.orbit.EventHandler;
 
 import java.awt.*;
@@ -33,6 +34,8 @@ public class DebugScreen {
         INSTANCE.addToRender(()->"MemoryUsed: "+ String.format("%.1f",TaskManagerMemoryApproximator.getMemoryUsed()/(1024d*1024d))+"MB");
         INSTANCE.addToRender(()->"Entities: "+cs.entities.size());
         INSTANCE.addToRender(()->"Players: "+(cs.multiClientHandler==null?0: cs.multiClientHandler.clients.size()));
+        INSTANCE.addToRender(()->"AssetsState: "+ AssetsS2CPacket.state);
+        INSTANCE.addToRender(()->"Assets: "+ AssetsS2CPacket.createdData.size());
     }
     public DebugScreen(){
         cs.EVENT_BUS.subscribe(this);

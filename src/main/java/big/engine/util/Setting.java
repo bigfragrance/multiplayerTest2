@@ -43,6 +43,12 @@ public class Setting {
     public double getFps(){
         return data.getDouble("fps");
     }
+    public int getAssetsHash(){
+        return data.getInt("assets_hash");
+    }
+    public void setAssetsHash(int assetsHash){
+        data.put("assets_hash",assetsHash);
+    }
     //server
     public int getMaxPolygon(){
         return serverData.getInt("max_polygon");
@@ -105,6 +111,7 @@ public class Setting {
         o.put("is_server",false);
         o.put("mouse_offset", Vec2d.zero().toJSON());
         o.put("fps",60);
+        o.put("assets_hash",0);
         return o.toString();
     }
     public static String createServer(){

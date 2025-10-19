@@ -11,7 +11,11 @@ import big.engine.modules.EngineMain;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
@@ -22,9 +26,8 @@ import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Random;
 import java.util.function.IntToDoubleFunction;
 
 import static big.engine.modules.EngineMain.cs;
@@ -416,5 +419,67 @@ public class Util {
     }
     private static double bytesToMB(long bytes) {
         return bytes / (1024.0 * 1024.0);
+    }
+    public static void loadImagesRecursively(File dir, Map<String, BufferedImage> map) {
+        if (dir == null || !dir.exists()) return;
+
+        File[] files = dir.listFiles();
+        if (files == null) return;
+
+        for (File file : files) {
+            if (file.isDirectory()) {
+                loadImagesRecursively(file, map);
+            } else if (isImageFile(file)) {
+                try {
+                    BufferedImage img = ImageIO.read(file);
+                    if (img != null) {
+                        map.put(file.getName(), img);
+                    }
+                } catch (IOException e) {
+                    System.err.println("read image failed: " + file.getAbsolutePath());
+                }
+            }
+        }
+    }
+
+    public static boolean isImageFile(File file) {
+        String name = file.getName().toLowerCase();
+        return name.endsWith(".png") ||
+                name.endsWith(".jpg") ||
+                name.endsWith(".jpeg") ||
+                name.endsWith(".bmp") ||
+                name.endsWith(".gif");
+    }
+    public static String imageToString(BufferedImage image, String format) {
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
+            ImageIO.write(image, format, baos);
+            byte[] bytes = baos.toByteArray();
+            return Base64.getEncoder().encodeToString(bytes);
+        } catch (IOException e) {
+            throw new RuntimeException("error transform image to string", e);
+        }
+    }
+
+    public static BufferedImage stringToImage(String base64) {
+        try (ByteArrayInputStream bais =
+                     new ByteArrayInputStream(Base64.getDecoder().decode(base64))) {
+            return ImageIO.read(bais);
+        } catch (IOException e) {
+            throw new RuntimeException("error transform string to image", e);
+        }
+    }
+    public static List<String> splitString(String input, int maxChunkSize) {
+        List<String> parts = new ArrayList<>();
+        if (input == null || input.isEmpty()) {
+            return parts;
+        }
+
+        int length = input.length();
+        for (int i = 0; i < length; i += maxChunkSize) {
+            int end = Math.min(length, i + maxChunkSize);
+            parts.add(input.substring(i, end));
+        }
+
+        return parts;
     }
 }

@@ -19,7 +19,7 @@ import static big.engine.render.Screen.sc;
 
 public class VisitorEntity extends ServerBotEntity {
     //                                       {          "Damage[z]","Speed[x]","Health[c]","Size[v]","Reload[b]","MoveSpeed[n]","DamageAbsorb[m]","ShieldRegen[,]","HealthRegen[.]","Fov[/]"};
-    public static double[] defSkillPoints= new double[]{0.5         ,1       ,0.5          ,5        ,1          ,0.5           ,10               ,0.1             ,0.05           ,2};
+    public static double[] defSkillPoints= new double[]{1.2         ,1       ,1.2          ,5        ,1.5          ,1.5           ,20               ,1             ,1           ,2};
     private boolean inited=false;
     private ConcurrentHashMap<Integer,RotationNode> rotationNodes=new ConcurrentHashMap<>();
     public VisitorEntity(Vec2d position,int level){

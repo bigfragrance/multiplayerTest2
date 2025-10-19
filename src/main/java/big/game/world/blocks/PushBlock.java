@@ -23,13 +23,16 @@ public class PushBlock extends Block {
         super(name, id);
     }
     public void tick(BlockState state, int x, int y, Entity e){
-        Vec2d push=getPushDirection(state).getOffset().toVec2d();
+        Direction dir=getPushDirection(state);
+        if(dir==null) return;
+        Vec2d push=dir.getOffset().toVec2d();
         double s=push.dot(e.velocity);
         e.velocity.offset(push.multiply(Math.pow(Math.E,-s)*0.15));
     }
     public static Direction getPushDirection(BlockState state){
         if(!PacketUtil.contains(state.getData(),"direction")){
-            setPushDirection(state,Direction.RIGHT);
+            //setPushDirection(state,Direction.RIGHT);
+            return null;
         }
         return Direction.fromName(PacketUtil.getString(state.getData(),"direction"));
     }
@@ -41,6 +44,7 @@ public class PushBlock extends Block {
         renderArrow(g,Vec2d.center(x,y),getPushDirection(state));
     }
     public void renderArrow(Graphics g,Vec2d center,Direction dir){
+        if(dir==null) return;
         g.setColor(ARROW_COLOR);
         ((Graphics2D)g).setStroke(new BasicStroke((float) (0.001/sc.zoom2*sc.zoom),BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
         Vec2dList list=new Vec2dList();

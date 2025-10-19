@@ -5,4 +5,5 @@
 "name":"Player-206.0",
 "fps":60,
 "server_port":8088,
-"server_address":"localhost"}
+"server_address":"localhost",
+"assets_hash":0}

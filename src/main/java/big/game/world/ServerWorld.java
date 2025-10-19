@@ -42,8 +42,11 @@ public class ServerWorld extends World{
         visitorSpawnTimer.reset();
     }
     public void tick(){
+        cs.serverController.update();
+        if(cs.isWorldEditMode()) return;
         spawnMobs();
         spawnBot();
+        visitorSpawnTimer.setDelay(cs.setting.getVisitorSpawnDelay());
         if(!cs.setting.isSiege()){
             updateVisitorSpawn();
         }
@@ -53,12 +56,10 @@ public class ServerWorld extends World{
         randomTicks();
         EngineMain.maxTeams=cs.setting.getMaxTeam();
         EngineMain.damageExchangeSpeed=cs.setting.getDamageExchangeSpeed();
-        visitorSpawnTimer.setDelay(cs.setting.getVisitorSpawnDelay());
 
         updateEntity();
     }
     public void updateEntity(){
-        cs.serverController.update();
         for(Long id:cs.addingEntities.keySet()){
             cs.entities.put(id,cs.addingEntities.get(id));
         }

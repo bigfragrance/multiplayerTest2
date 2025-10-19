@@ -9,11 +9,14 @@ import big.engine.util.Util;
 import org.json.JSONObject;
 
 import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static big.engine.util.EntityUtils.smallerBullet;
 import static big.engine.modules.EngineMain.cs;
 
 public class BulletType {
+
     public static double[] baseMultipliers={1,1,1,1,1,1,1,1};
     public int type;
     public int renderType;
