@@ -17,6 +17,7 @@ import big.game.entity.PolygonEntity;
 import big.game.weapon.Gun;
 import big.game.world.BlockState;
 import big.game.world.Blocks;
+import big.game.world.blocks.BaseBlock;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -212,7 +213,7 @@ public class AutoController<T extends Entity&Controllable> {
                 if(x==0&&y==0) continue;
                 Vec2i p=pos.add(x,y);
                 BlockState state=cs.world.getBlockState(p);
-                if(state.getTeam()!=owner.team&&state.getBlock()== Blocks.BASE_BLOCK){
+                if(state.getTeam()!=owner.team&&state.getBlock()== Blocks.BASE_BLOCK&& BaseBlock.shouldDealDamage(state)){
                     double dist=p.distanceTo(pos);
                     if(dist<minDist){
                         minDist=dist;

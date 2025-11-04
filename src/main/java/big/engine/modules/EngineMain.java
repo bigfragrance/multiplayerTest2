@@ -11,6 +11,7 @@ import big.events.TickEvent;
 import big.game.entity.RockEntity;
 import big.game.network.packet.s2c.MessageS2CPacket;
 import big.game.screen.DebugScreen;
+import big.game.screen.MenuScreen;
 import meteordevelopment.orbit.EventBus;
 import meteordevelopment.orbit.IEventBus;
 import big.game.ChunkMap;
@@ -67,7 +68,7 @@ public class EngineMain implements Runnable{
     public static long lastTick=0;
     public Vec2d camPos=new Vec2d(0,0);
     public Vec2d prevCamPos=new Vec2d(0,0);
-    public Box borderBox=new Box(new Vec2d(0,0),100,100);
+    public Box borderBox=new Box(new Vec2d(0,0),50,50);
     public ServerController serverController;
     public boolean ticking=false;
     public Setting setting=null;
@@ -81,6 +82,7 @@ public class EngineMain implements Runnable{
         initEventBus();
         ChatMessageScreen.init();
         DebugScreen.init();
+        MenuScreen.init();
         if(isServer){
             GunList.init();
             world=new ServerWorld();

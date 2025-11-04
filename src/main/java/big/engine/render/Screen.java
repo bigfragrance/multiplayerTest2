@@ -9,6 +9,8 @@ import big.engine.util.SpeedCounter;
 import big.engine.util.Util;
 import big.engine.util.timer.AutoList;
 import big.engine.modules.EngineMain;
+import big.events.KeyClickEvent;
+import big.events.MouseClickEvent;
 import big.events.RenderEvent;
 import big.events.TickEvent;
 import big.game.ctrl.InputManager;
@@ -53,6 +55,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     public static int mouseX = 50;
     public static int mouseY = 50;
     public static volatile Vec2d mousePos=new Vec2d(0,0);
+    public static volatile Vec2d mousePosJF=new Vec2d(0,0);
     public static Vec2d mouseOffset=new Vec2d(0,0);
     public static volatile  ConcurrentHashMap<Character,Boolean> keyPressed=new  ConcurrentHashMap<>();
     public static volatile ConcurrentHashMap<Character,Boolean> lastKeyPressed=new  ConcurrentHashMap<>();
@@ -67,6 +70,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     public String renderString="";
     public GUI currentScreen=null;
     private Vec2d mouseStart=null;
+    private Vec2d tempMousePos=new Vec2d(0,0);
     //public int frames=0;
     public SpeedCounter FPS=new SpeedCounter(1000);
     //private long lastStartCalcFPSTime;
@@ -76,7 +80,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
         addMouseListener(new MouseListener() {
             @Override
             public void mouseClicked(MouseEvent e){
-
+                cs.EVENT_BUS.post(MouseClickEvent.get(e.getButton()));
             }
             @Override
             public void mousePressed(MouseEvent e) {
@@ -105,14 +109,15 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
 
                 //mouseX = (int) ((e.getX()-windowWidth/2)*renderFix+windowWidth/2);
                 //mouseY = (int) ((e.getY()-windowHeight/2)*renderFix+windowHeight/2);
-                mousePos.set(screenToGame(e.getX(),e.getY()));
+                tempMousePos.set(e.getX(),e.getY());
+
             }
 
         });
         addMouseMotionListener(new MouseMotionAdapter() {
             public void mouseDragged(MouseEvent e) {
+                tempMousePos.set(e.getX(),e.getY());
 
-                mousePos.set(screenToGame(e.getX(),e.getY()));
             }
         });
         addMouseWheelListener(new MouseWheelListener() {
@@ -140,7 +145,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
 
     @Override
     public void keyTyped(KeyEvent e) {
-
+        cs.EVENT_BUS.post(KeyClickEvent.get(e.getKeyChar()));
     }
 
     @Override
@@ -192,6 +197,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
                     EngineMain.tickTask.run();
                 }
                 try {
+
                     repaint();
                 }catch ( Exception e){
                     e.printStackTrace();
@@ -228,6 +234,9 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
             g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION,  RenderingHints.VALUE_INTERPOLATION_BICUBIC);
 
             g2d.setStroke(new BasicStroke((float) (lineWidth/zoom2), BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND));
+
+            mousePos.set(screenToGame((int) tempMousePos.x, (int) tempMousePos.y));
+            mousePosJF.set(tempMousePos.x,tempMousePos.y);
 
             int centerX = getWidth() / 2;
             int centerY = getHeight() / 2;
@@ -383,6 +392,10 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     public void restoreZoom(){
         if(oldZoom<0) return;
         zoom=oldZoom;
+        oldZoom=-1;
+    }
+    public double getStaticZoom(){
+        return oldZoom>0?oldZoom:zoom;
     }
     private AffineTransform getRenderTransform() {
         int centerX = windowWidth / 2;

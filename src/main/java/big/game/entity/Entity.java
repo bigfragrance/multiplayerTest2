@@ -272,13 +272,16 @@ public abstract class Entity implements NetworkItem {
     public JSONObject toJSON() {
         return null;
     }
-    public String getType(){
-        return "entity";
+    public EntityType getType(){
+        return null;
     }
     public JSONObject getUpdate(){
         return null;
     }
     public void kill(){
+        kill(0);
+    }
+    public void kill(int reason){
         if(!this.isAlive) return;
         this.isAlive=false;
         addScore();

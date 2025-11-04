@@ -8,9 +8,9 @@ import java.awt.event.ActionListener;
 public class InputDialog {
 
 
-    public static String getInputFromDialog() {
+    public static String getInputFromDialog(String title) {
         final String[] result = new String[1];
-        final JDialog dialog = new JDialog((Frame) null, "send message", true);
+        final JDialog dialog = new JDialog((Frame) null, title, true);
         dialog.setLayout(new BorderLayout());
         dialog.setSize(500, 200);
         dialog.setLocationRelativeTo(null);
@@ -54,15 +54,4 @@ public class InputDialog {
         return result[0] != null ? result[0] : "";
     }
 
-
-    public static void main(String[] args) {
-
-        SwingUtilities.invokeLater(() -> {
-            String userInput = getInputFromDialog();
-            System.out.println("user input: " + userInput);
-            
-
-            JOptionPane.showMessageDialog(null, "you input: " + userInput);
-        });
-    }
 }

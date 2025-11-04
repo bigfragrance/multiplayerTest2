@@ -12,17 +12,22 @@ import big.engine.util.timer.IntTimer;
 import big.engine.util.timer.Timer;
 import big.engine.util.timer.TimerList;
 import big.engine.modules.EngineMain;
+import big.events.KeyClickEvent;
 import big.game.ctrl.InputManager;
 import big.game.entity.Entity;
+import big.game.entity.KillReason;
 import big.game.entity.bullet.BulletEntity;
 import big.game.entity.bullet.BulletType;
 import big.game.network.packet.s2c.ServerDataS2CPacket;
+import big.game.screen.MenuScreen;
 import big.game.weapon.GunList;
 import big.game.world.Block;
 import big.game.world.BlockState;
 import big.game.world.Blocks;
+import big.game.world.blocks.BaseBlock;
 import big.game.world.blocks.PushBlock;
 import big.server.ClientHandler;
+import meteordevelopment.orbit.EventHandler;
 import org.json.JSONObject;
 
 import java.awt.*;
@@ -44,7 +49,7 @@ public class ServerController {
     private Timer actionTimer=timers.add(new IntTimer(5));
     private boolean showingCurrentBlock=false;
     public double currentRarity=0.1;
-    private double currentPlaceRadius=1;
+    public double currentPlaceRadius=1;
     public ServerController(){
         inputManager= sc.inputManager;
         //loadWorld();
@@ -56,46 +61,14 @@ public class ServerController {
         }else{
             EngineMain.TPS =20;
         }
-        if(inputManager.isReloading()){
-            GunList.init();
-            for(Entity e:cs.world.getEntities()){
-                e.kill();
-            }
-            cs.multiClientHandler.clients.forEach(ClientHandler::sendServerData);
-        }
         if(inputManager.isGeneratingMaze()&&mazeGenTimer.passed()){
             mazeGenTimer.reset();
             generateMaze();
-        }
-        if(inputManager.isSaving()&&saveTimer.passed()){
-            saveTimer.reset();
-            saveWorld();
-        }
-        if(inputManager.isLoading()&&saveTimer.passed()){
-            saveTimer.reset();
-            loadWorld();
         }
         if(actionTimer.passed()&&inputManager.isChangingShowingCurrentBlock()){
             showingCurrentBlock=!showingCurrentBlock;
             actionTimer.reset();
         }
-        if(inputManager.isIncreasingMobRarity()){
-            currentRarity+=0.02;
-            sc.renderString="currentRarity: "+Util.getRoundedDouble(currentRarity,3);
-        }
-        if(inputManager.isDecreasingMobRarity()){
-            currentRarity-=0.02;
-            sc.renderString="currentRarity: "+Util.getRoundedDouble(currentRarity,3);
-        }
-        if(inputManager.isIncreasingPlaceRadius()){
-            currentPlaceRadius+=0.1;
-            sc.renderString="currentRadius: "+Util.getRoundedDouble(currentPlaceRadius,3);
-        }
-        if(inputManager.isDecreasingPlaceRadius()){
-            currentPlaceRadius-=0.1;
-            sc.renderString="currentRadius: "+Util.getRoundedDouble(currentPlaceRadius,3);
-        }
-
         Vec2d mousePos=inputManager.getMouseVec().add(cs.camPos);
         if(lastMousePos==null) lastMousePos=mousePos;
         if(showingCurrentBlock){
@@ -121,28 +94,18 @@ public class ServerController {
         }
         if(!inputManager.isLocking()) {
             if (inputManager.isPlacingMaze()) {
-                setBlock(lastMousePos == null ? mousePos : lastMousePos, mousePos, Blocks.STONE,currentPlaceRadius);
-            }
-            if(inputManager.isPlacingBase()){
-                BlockState state=new BlockState(Blocks.BASE_BLOCK);
-                state.setTeam((int)Math.floor(currentRarity));
-                setBlock(lastMousePos == null ? mousePos : lastMousePos, mousePos,state,currentPlaceRadius);
-                put(mousePos,currentPlaceRadius,blockState -> blockState.setTeam((int)Math.floor(currentRarity)));
-            }
-            if(inputManager.isPlacingPush()){
-                BlockState state=new BlockState(Blocks.PUSH_BLOCK);
-                setBlock(lastMousePos == null ? mousePos : lastMousePos, mousePos,state,currentPlaceRadius);
-                put(mousePos,currentPlaceRadius,blockState -> PushBlock.setPushDirection(blockState, Direction.fromID(Util.floor(currentRarity))));
+                setBlock(lastMousePos == null ? mousePos : lastMousePos, mousePos,currentPlaceRadius);
             }
             if (inputManager.isRemovingMaze()) {
                 setBlock(lastMousePos == null ? mousePos : lastMousePos, mousePos, Blocks.AIR,currentPlaceRadius);
             }
             if(inputManager.isPuttingMobRarity()){
-                put(mousePos,currentPlaceRadius,blockState -> blockState.setSpawnMobRarity(currentRarity));
+                put(mousePos,currentPlaceRadius,blockState -> blockState.setSpawnMobRarity(MenuScreen.INSTANCE.currentMode.spawnMobRarity));
             }
+
             lastMousePos = mousePos;
         }
-        if(inputManager.isSpawningBullet()){
+        if(inputManager.isSpawningBullet()&&!EngineMain.isWorldEditMode){
             for(int i=0;i<10;i++) {
                 cs.addEntity(new BulletEntity(mousePos, Util.randomVec().limit(0.5), 5, BulletType.KILLER));
             }
@@ -151,6 +114,13 @@ public class ServerController {
         int[] in=inputManager.getPlayerInput();
         cs.prevCamPos.set(cs.camPos);
         cs.camPos.offset(in[0]*10/sc.getRealZoom(),in[1]*10/sc.getRealZoom());
+    }
+    @EventHandler
+    public void onKey(KeyClickEvent e){
+        if(e.button=='f'){
+            Vec2d mousePos=inputManager.getMouseVec().add(cs.camPos);
+            MenuScreen.INSTANCE.currentMode.putEntity(mousePos);
+        }
     }
     public void saveWorld(){
         Util.write("world.txt",cs.world.toJSON().toString());
@@ -184,6 +154,13 @@ public class ServerController {
             e.printStackTrace();
         }
     }
+    public void reload(){
+        GunList.init();
+        for(Entity e:cs.world.getEntities()){
+            e.kill(KillReason.CLEAR);
+        }
+        cs.multiClientHandler.clients.forEach(ClientHandler::sendServerData);
+    }
     public void setBlock(Vec2d start, Vec2d end, Block block,double radius){
         int r= (int) Math.ceil(radius);
         for(double d=0;d<=1;d+=0.1){
@@ -196,6 +173,21 @@ public class ServerController {
                         if(cs.world.getBlock(bPos)!=block){
                             cs.world.setBlockState(bPos.x,bPos.y,new BlockState(block));
                         }
+                    }
+                }
+            }
+        }
+    }
+    public void setBlock(Vec2d start, Vec2d end,double radius){
+        int r= (int) Math.ceil(radius);
+        for(double d=0;d<=1;d+=0.1){
+            Vec2d pos= Util.lerp(start,end,d);
+            for(int x=-r;x<=r;x++){
+                for(int y=-r;y<=r;y++){
+                    Vec2d p=pos.add(x,y);
+                    Vec2i bPos= Vec2i.ofFloor(p);
+                    if(bPos.toCenterPos().distanceTo(pos)<=radius){
+                        MenuScreen.INSTANCE.currentMode.apply(bPos);
                     }
                 }
             }

@@ -2,8 +2,8 @@
 "polygon_random_pow":2,
 "visitor_spawn_time":100,
 "maze_bullet_break":true,
-"max_team":1,
-"is_siege":true,
+"max_team":2,
+"gamemode":2,
 "random_tick_speed":80,
 "maze_bullet_rebound":false,
 "polygon_side":7,
@@ -11,6 +11,6 @@
 "visitor_spawn_possibility":0.04,
 "damage_exchange_speed":0.75,
 "max_polygon":200,
-"max_visitor":3,
+"max_visitor":0,
 "polygon_split":0,
-"bot_count":20}
+"bot_count":0}

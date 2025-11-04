@@ -482,4 +482,24 @@ public class Util {
 
         return parts;
     }
+    public static <T> T tryGet(Getter<T> getter){
+        return tryGet(getter,null,null);
+    }
+    public static <T> T tryGet(Getter<T> getter,T defaultValue,Runnable onError){
+        try{
+            return getter.get();
+        }catch(Exception e){
+            if(onError!=null){
+                onError.run();
+            }
+            return defaultValue;
+        }
+    }
+    public static <T> T tryGet(Class<T> clazz, Getter<T> getter){
+        try{
+            return clazz.cast(getter.get());
+        }catch(Exception e){
+            return null;
+        }
+    }
 }

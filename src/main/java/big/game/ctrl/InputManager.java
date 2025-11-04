@@ -43,7 +43,7 @@ public class InputManager {
         return Screen.isKeyPressed('q')&&Screen.isKeyPressed('e');
     }
     public Vec2d getMouseVec(){
-        return Screen.mousePos.switchToGame(Screen.sc.zoom);
+        return Screen.mousePos.switchToGame(Screen.sc.getStaticZoom());
     }
     public boolean isUpgrading(int skill){
         char c;
@@ -90,12 +90,6 @@ public class InputManager {
     public boolean isPlacingMaze(){
         return Screen.isKeyPressed('b');
     }
-    public boolean isPlacingBase(){
-        return Screen.isKeyPressed('f')&&!Screen.isKeyPressed('q');
-    }
-    public boolean isPlacingPush(){
-        return Screen.isKeyPressed('f')&&Screen.isKeyPressed('q');
-    }
     public boolean isRemovingMaze(){
         return Screen.isKeyPressed('n');
     }
@@ -109,7 +103,10 @@ public class InputManager {
         return Screen.isKeyPressed('v');
     }
     public boolean isChangingShowingCurrentBlock() {
-        return Screen.isKeyPressed('l');
+        return Screen.isKeyClicked('l');
+    }
+    public boolean isPlacingEntity() {
+        return Screen.isKeyClicked('f');
     }
     public boolean isIncreasingMobRarity() {
         return Screen.isKeyPressed('k');

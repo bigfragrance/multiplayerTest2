@@ -5,6 +5,7 @@ import big.engine.util.EntityUtils;
 import big.engine.util.PacketUtil;
 import big.game.entity.BlockEntity;
 import big.game.entity.Entity;
+import big.game.entity.EntityType;
 import big.game.entity.player.PlayerEntity;
 import big.game.entity.player.ServerPlayerEntity;
 import big.game.network.packet.Packet;

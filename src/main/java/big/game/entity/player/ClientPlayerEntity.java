@@ -71,7 +71,7 @@ public class ClientPlayerEntity extends PlayerEntity {
         if(inputManager.isOpeningSendMsg()){
             if(thread==null||!thread.isAlive()) {
                 thread = new Thread(() -> {
-                    String msg = InputDialog.getInputFromDialog();
+                    String msg = InputDialog.getInputFromDialog("send message");
                     if (msg != null && !msg.isEmpty()) {
                         cs.networkHandler.send(new MessageC2SPacket(msg));
                     }

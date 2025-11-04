@@ -68,8 +68,8 @@ public class Setting {
     public int getVisitorSpawnTime(){
         return serverData.getInt("visitor_spawn_time");
     }
-    public boolean isSiege(){
-        return serverData.getBoolean("is_siege");
+    public int getGameMode(){
+        return serverData.getInt("gamemode");
     }
     public int getMaxTeam(){
         return serverData.getInt("max_team");
@@ -122,7 +122,7 @@ public class Setting {
         o.put("visitor_spawn_delay",10);
         o.put("visitor_spawn_possibility",0.01);
         o.put("visitor_spawn_time",1000);
-        o.put("is_siege",false);
+        o.put("gamemode",0);
         o.put("max_team",2);
         o.put("random_tick_speed",80);
         o.put("damage_exchange_speed",1);

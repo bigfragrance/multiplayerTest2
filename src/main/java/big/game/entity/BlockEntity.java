@@ -57,8 +57,8 @@ public class BlockEntity extends Entity{
         super.addJSON(o);
         return o;
     }
-    public String getType(){
-        return "block";
+    public EntityType getType(){
+        return EntityType.BLOCK;
     }
     public static BlockEntity fromJSON(JSONObject o){
         JSONObject basic=PacketUtil.getJSONObject(o,"basic");

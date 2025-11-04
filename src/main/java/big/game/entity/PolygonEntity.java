@@ -242,8 +242,9 @@ public class PolygonEntity extends MobEntity{
             }
         }
     }
-    public void kill(){
-        super.kill();
+    public void kill(int reason){
+        super.kill(reason);
+        if(reason==KillReason.CLEAR) return;
         if(this.type>0&&cs.isServer){
             for(int i=0;i<cs.setting.getPolygonSplit();i++){
                 cs.addEntity(new PolygonEntity(this.getPos().add(Util.randomVec().multiply(0.1)),this.sides,this.type-1));
@@ -294,8 +295,8 @@ public class PolygonEntity extends MobEntity{
         super.addJSON(o);
         return o;
     }
-    public String getType(){
-        return "polygon";
+    public EntityType getType(){
+        return EntityType.POLYGON;
     }
     public static PolygonEntity fromJSON(JSONObject o){
         JSONObject basic=PacketUtil.getJSONObject(o,"basic");

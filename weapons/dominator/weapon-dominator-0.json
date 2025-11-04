@@ -1,0 +1,105 @@
+{
+  "Dominator-Trapper":{
+    "data":[
+      {
+        "type":"GunArray",
+        "count": 16,
+        "startDelays": [0],
+        "offsetRotation":0,
+        "offset":{
+          "x":0.15,
+          "y":0
+        },
+        "reloadMultiplier":0.25,
+        "layer":1,
+        "startDelay":0,
+        "size":[0.07,0.008,0.013,0.02,0.013,0.03],
+        "bulletType":{
+          "type":3,
+          "renderType": 1,
+          "sharp":true,
+          "sharpFactor":0.3,
+          "multipliers":[3,2,3,0.2,6]
+        }
+      }
+    ]
+  },
+  "Dominator-AutoDestroyer":{
+    "data":[
+      {
+        "type":"AutoGunArray",
+        "count": 4,
+        "info": {
+          "offsetRotation":0,
+          "offset":{
+            "x":0.12,
+            "y":0
+          },
+          "layer":1,
+          "size":0.12,
+          "fov":120
+        },
+        "data":[
+          {
+            "type":"Gun",
+            "mode": 0,
+            "offsetRotation":0,
+            "offset":{
+              "x":0.08,
+              "y":0
+            },
+            "reloadMultiplier":0.1,
+            "layer":1,
+            "startDelay":0,
+            "size":[0.1,0.06,0.06],
+            "bulletType":{
+              "type":0,
+              "sharp":false,
+              "sharpFactor":1,
+              "multipliers":[8,2,8,0.6]
+            }
+          }
+        ]
+      }
+    ]
+  },
+  "Dominator-SuperRanger":{
+    "data":[
+      {
+        "type":"AutoGunArray",
+        "count": 1,
+        "info": {
+          "offsetRotation":0,
+          "offset":{
+            "x":0,
+            "y":0
+          },
+          "layer":20,
+          "size":0.15,
+          "fov":10000
+        },
+        "data":[
+          {
+            "type":"Gun",
+            "mode": 0,
+            "offsetRotation":0,
+            "offset":{
+              "x":0.1,
+              "y":0
+            },
+            "reloadMultiplier":0.1,
+            "layer":1,
+            "startDelay":0,
+            "size":[0.2,0.03,0.03],
+            "bulletType":{
+              "type":0,
+              "sharp":false,
+              "sharpFactor":1,
+              "multipliers":[5,8,20,0.3]
+            }
+          }
+        ]
+      }
+    ]
+  }
+}

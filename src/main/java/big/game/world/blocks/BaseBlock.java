@@ -5,6 +5,7 @@ import big.engine.math.Vec2i;
 import big.engine.math.Box;
 import big.engine.util.ColorUtils;
 import big.engine.util.EntityUtils;
+import big.engine.util.PacketUtil;
 import big.engine.util.Util;
 import big.game.entity.Entity;
 import big.game.entity.player.ServerPlayerEntity;
@@ -34,16 +35,31 @@ public class BaseBlock extends Block {
         }*/
     }
     public void tick(BlockState state, int x, int y, Entity e){
+        if(!shouldDealDamage(state)) return;
         if(e.team!=state.getTeam()){
-            e.addDamage(20,null);
+            e.addDamage(e.health*0.2+10,null);
         }
     }
     public void renderMini(Graphics g,BlockState state,int x,int y){
         Color c= ColorUtils.setAlpha(EntityUtils.getTeamcolor(state.getTeam()),50);
-        render(g,Util.toMiniMap(new Box(new Vec2i(x,y))),c);
+        if(shouldDealDamage(state)) {
+            render(g,Util.toMiniMap(new Box(new Vec2i(x,y))),c);
+        }else{
+            render(g,Util.toMiniMap(new Box(x+0.3,x+0.7,y+0.3,y+0.7)), c);
+        }
     }
     public void render(Graphics g,BlockState state, int x, int y){
         Color c= ColorUtils.setAlpha(EntityUtils.getTeamcolor(state.getTeam()),50);
-        render(g,new Box(new Vec2i(x,y)),c);
+        if(shouldDealDamage(state)) {
+            render(g, new Box(x,y), c);
+        }else{
+            render(g, new Box(x+0.3,x+0.7,y+0.3,y+0.7), c);
+        }
+    }
+    public static boolean shouldDealDamage(BlockState state){
+        return Util.tryGet(() -> PacketUtil.getBoolean(state.getData(), "damage"),true,()->setDealDamage(state,true));
+    }
+    public static void setDealDamage(BlockState state,boolean damage){
+        PacketUtil.put(state.getData(),"damage",damage);
     }
 }

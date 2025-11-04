@@ -189,11 +189,10 @@ public class ClientHandler implements Runnable {
         send(packet.toJSON());
     }
 
-    private void disconnect() {
+    public void disconnect() {
         interrupted = true;
         try {
             if (handshaked && player != null) {
-
                 ServerMain.connectedPlayersEntity.put(player.name.hashCode(), new PlayerData(player));
                 cs.removeEntity(player.id);
             }

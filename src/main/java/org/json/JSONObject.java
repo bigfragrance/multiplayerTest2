@@ -4,6 +4,9 @@ package org.json;
 Public Domain.
 */
 
+import big.engine.math.Box;
+import big.engine.math.Vec2d;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.StringWriter;
@@ -73,6 +76,7 @@ import java.util.regex.Pattern;
  * @version 2016-08-15
  */
 public class JSONObject {
+
     /**
      * JSONObject.NULL is equivalent to the value that JavaScript calls null,
      * whilst Java's null is equivalent to the value that JavaScript calls
@@ -811,6 +815,16 @@ public class JSONObject {
      *             if the key is not found or if the value cannot be converted
      *             to a long.
      */
+    public Vec2d getVec2d(String key){
+        JSONObject obj=getJSONObject(key);
+        if(obj==null) return null;
+        return Vec2d.fromJSON(obj);
+    }
+    public Box getBox(String key){
+        JSONObject obj=getJSONObject(key);
+        if(obj==null) return null;
+        return Box.fromJSON(obj);
+    }
     public long getLong(String key) throws JSONException {
         final Object object = this.get(key);
         if(object instanceof Number) {

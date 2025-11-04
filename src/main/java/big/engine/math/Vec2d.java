@@ -182,6 +182,9 @@ public class Vec2d {
         long combined = bitsA * 31 + bitsB;
         return Long.hashCode(combined);
     }
+    public String toString(){
+        return toJSON().toString();
+    }
     public static Vec2d center(int x,int y) {
         return new Vec2d(x+0.5,y+0.5);
     }

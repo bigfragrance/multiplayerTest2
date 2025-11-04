@@ -6,6 +6,7 @@ import big.engine.math.Vec2d;
 import big.engine.util.EntityUtils;
 import big.engine.util.PacketUtil;
 import big.engine.util.Util;
+import big.game.entity.EntityType;
 import big.game.entity.bullet.BulletEntity;
 import big.game.entity.Entity;
 import big.game.entity.bullet.BulletType;
@@ -136,6 +137,13 @@ public class PlayerEntity extends Entity {
     }
 
     public void render(Graphics g){
+        if(this.name.contains("Dominator")){
+            double r=this.boundingBox.avgSize()/2/Util.cos(30)*1.2;
+            g.setColor(Color.DARK_GRAY);
+            Util.renderPolygon(g,this.position,6,r,0,false,true);
+            g.setColor(Color.black);
+            Util.renderPolygon(g,this.position,6,r,0,true,false);
+        }
         super.render(g);
         EntityUtils.render(g,this);
         if(!cs.isServer)sc.renderAtLast((gr)->{
@@ -154,8 +162,8 @@ public class PlayerEntity extends Entity {
         super.addJSON(o);
         return o;
     }
-    public String getType(){
-        return "player";
+    public EntityType getType(){
+        return EntityType.PLAYER;
     }
     public static PlayerEntity fromJSON(JSONObject o){
         JSONObject basic=PacketUtil.getJSONObject(o,"basic");

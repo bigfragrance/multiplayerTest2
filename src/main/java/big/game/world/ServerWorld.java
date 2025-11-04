@@ -6,6 +6,7 @@ import big.engine.util.EntityUtils;
 import big.engine.util.Util;
 import big.engine.util.timer.IntTimer;
 import big.engine.modules.EngineMain;
+import big.game.entity.DominatorEntity;
 import big.game.entity.Entity;
 import big.game.entity.MobEntity;
 import big.game.entity.PolygonEntity;
@@ -14,9 +15,11 @@ import big.game.entity.player.ServerBotEntity;
 import big.game.network.packet.s2c.BlockStateUpdateS2CPacket;
 import big.game.network.packet.s2c.TickS2CPacket;
 import big.server.ClientHandler;
+import big.server.ServerMain;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -33,10 +36,12 @@ public class ServerWorld extends World{
     private IntTimer botSpawnTimer=new IntTimer(1);
     private IntTimer visitorSpawnTimer=new IntTimer(10);
     private IntTimer waveTimer=new IntTimer(100);
+    private IntTimer restartTimer=new IntTimer(100);
     private int waitedSpawn=0;
     private Vec2d visitorSpawningPosition=null;
     private boolean waveStarted=false;
     private int currentWave=0;
+    private boolean lose=false;
     public ServerWorld(){
         super();
         visitorSpawnTimer.reset();
@@ -47,11 +52,13 @@ public class ServerWorld extends World{
         spawnMobs();
         spawnBot();
         visitorSpawnTimer.setDelay(cs.setting.getVisitorSpawnDelay());
-        if(!cs.setting.isSiege()){
+        if(cs.setting.getGameMode()==0){
             updateVisitorSpawn();
         }
-        else {
+        else if(cs.setting.getGameMode()==1){
             updateVisitorSpawnSiege();
+        }else{
+            checkWinner();
         }
         randomTicks();
         EngineMain.maxTeams=cs.setting.getMaxTeam();
@@ -167,6 +174,41 @@ public class ServerWorld extends World{
             visitorSpawningPosition=null;
             waitedSpawn=0;
             visitorSpawnTimer.reset();
+        }
+    }
+    private void checkWinner(){
+        restartTimer.update();
+        if(lose){
+            if(restartTimer.passed()){
+                cs.multiClientHandler.clients.forEach(c->c.disconnect());
+                ServerMain.connectedPlayersEntity.clear();
+                cs.serverController.loadWorld();
+                lose=false;
+                cs.sendMessageServer("Game restarted.");
+            }
+            return;
+        }
+        int[] counts=new int[EngineMain.maxTeams+5];
+        boolean[] hasDominator=new boolean[EngineMain.maxTeams+5];
+        Arrays.fill(counts,0);
+        Arrays.fill(hasDominator,false);
+        for(Entity e:cs.entities.values()){
+            if(e instanceof DominatorEntity d){
+                if(d.team>=0)counts[d.team]++;
+                hasDominator[d.initialTeam]=true;
+            }
+        }
+        boolean b=true;
+        for(int i=0;i<EngineMain.maxTeams;i++){
+            b&=hasDominator[i];
+        }
+        if(!b) return;
+        for(int i=0;i<EngineMain.maxTeams;i++){
+            if(counts[i]==0){
+                cs.sendMessageServer("Team "+i+" lose!");
+                restartTimer.reset();
+                lose=true;
+            }
         }
     }
     private int getVisitorCount(){

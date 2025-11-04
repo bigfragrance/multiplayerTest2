@@ -41,6 +41,7 @@ public class Chunk {
         if(Screen.sc.inputManager.isRenderingMobRarity()){
             for(int x=0;x<CHUNK_SIZE;x++){
                 for(int y=0;y<CHUNK_SIZE;y++){
+                    if(chunkBlocks[x][y].getBlock()!=Blocks.AIR) continue;
                     Block.render(g,new Box(new Vec2i(x+chunkX*CHUNK_SIZE,y+chunkY*CHUNK_SIZE)), ColorUtils.setAlpha(ColorUtils.getRainbowColor(chunkBlocks[x][y].getSpawnMobRarity()),50));
                 }
             }

@@ -108,7 +108,8 @@ public class ClientNetworkHandler {
     }
     public void handleEntitySpawn(JSONObject o){
         JSONObject o2=o.getJSONObject("entity");
-        switch (o2.getString(PacketUtil.getShortVariableName("type"))){
+        cs.addEntity(EntityType.createEntity(o2));
+        /*switch (o2.getString(PacketUtil.getShortVariableName("type"))){
             case("player")->{
                 cs.addEntity(PlayerEntity.fromJSON(o2.getJSONObject("data")));
             }
@@ -125,7 +126,7 @@ public class ClientNetworkHandler {
             case("rock")->{
                 cs.addEntity(RockEntity.fromJSON(o2.getJSONObject("data")));
             }
-        }
+        }*/
     }
     public void handleEntityRemove(JSONObject o){
         cs.removeEntity(o.getLong(PacketUtil.getShortVariableName("id")));
@@ -137,13 +138,9 @@ public class ClientNetworkHandler {
     }
     public void handlePlayerRespawn(JSONObject o){
         JSONObject o2=o.getJSONObject("entity");
-        switch (o2.getString(PacketUtil.getShortVariableName("type"))){
-            case("player")->{
-                ClientPlayerEntity player= ClientPlayerEntity.fromJSON(o2.getJSONObject("data"));
-                cs.player=player;
-                cs.addEntity(player);
-            }
-        }
+        ClientPlayerEntity player= ClientPlayerEntity.fromJSON(o2.getJSONObject("data"));
+        cs.player=player;
+        cs.addEntity(player);
     }
     public void handlePlayerData(JSONObject o){
         Entity e=cs.entities.get(PacketUtil.getLong(o,"id"));

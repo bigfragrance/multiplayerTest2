@@ -8,6 +8,7 @@ import big.engine.util.Util;
 import big.engine.render.Screen;
 import big.game.entity.Attackable;
 import big.game.entity.Entity;
+import big.game.entity.EntityType;
 import big.game.network.packet.c2s.WantWeaponC2SPacket;
 import big.game.weapon.CanAttack;
 import big.game.weapon.GunList;
@@ -155,8 +156,8 @@ public class BulletEntity extends Entity {
         super.addJSON(o);
         return o;
     }
-    public String getType(){
-        return "bullet";
+    public EntityType getType(){
+        return EntityType.BULLET;
     }
     public static BulletEntity fromJSON(JSONObject o){
         JSONObject basic=PacketUtil.getJSONObject(o,"basic");

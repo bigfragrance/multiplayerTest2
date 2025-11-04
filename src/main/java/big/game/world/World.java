@@ -6,8 +6,10 @@ import big.engine.math.Vec2d;
 import big.engine.util.SegmentBoxIntersectionChecker;
 import big.engine.util.Util;
 import big.events.TickEvent;
+import big.game.entity.DominatorEntity;
 import big.game.entity.Entity;
 import meteordevelopment.orbit.EventHandler;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 
@@ -66,10 +68,26 @@ public class World {
         for(Long l:worldChunks.keySet()){
             json.put(String.valueOf(l),worldChunks.get(l).toJSON());
         }
+        JSONArray entities=new JSONArray();
+        for(Entity e:cs.world.getEntities()){
+            if(e instanceof DominatorEntity d){
+                entities.put(d.toJSONServer());
+            }
+        }
+        json.put("entities",entities);
         return json;
     }
     public void fromJSON(JSONObject json){
         for(String s:json.keySet()){
+            if(s.equals("entities")){
+                JSONArray entitiesArray=json.getJSONArray(s);
+                for(int i=0;i<entitiesArray.length();i++){
+                    JSONObject entityJSON=entitiesArray.getJSONObject(i);
+                    DominatorEntity e=DominatorEntity.fromJSONServer(entityJSON);
+                    cs.addEntity(e);
+                }
+                continue;
+            }
             worldChunks.put(Long.parseLong(s),Chunk.fromJSON(json.getJSONObject(s)));
         }
     }

@@ -151,9 +151,6 @@ public class Box {
     public Vec2d getCenter(){
         return new Vec2d((minX+maxX)/2,(minY+maxY)/2);
     }
-    public String toString(){
-        return "Box("+minX+","+maxX+","+minY+","+maxY+")";
-    }
     public Box copy(){
         return new Box(minX,maxX,minY,maxY);
     }
@@ -200,6 +197,9 @@ public class Box {
         combined = 31 * combined + bitsC;
         combined = 31 * combined + bitsD;
         return Long.hashCode(combined);
+    }
+    public String toString(){
+        return toJSON().toString();
     }
     public Vec2d getMinPos(){
         return new Vec2d(minX,minY);

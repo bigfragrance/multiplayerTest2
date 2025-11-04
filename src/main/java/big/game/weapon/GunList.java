@@ -2,6 +2,7 @@ package big.game.weapon;
 
 import big.engine.util.PacketUtil;
 import big.engine.util.Util;
+import big.game.entity.DominatorEntity;
 import big.game.entity.Entity;
 import big.game.entity.player.AutoController;
 import big.game.network.packet.s2c.AssetsS2CPacket;
@@ -106,6 +107,7 @@ public class GunList {
             loadWeaponsRecursively(new File(System.getProperty("user.dir")),data,"weapon");
             loadWeaponsRecursively(new File(System.getProperty("user.dir")),presetData,"preset");
             AssetsS2CPacket.init();
+            DominatorEntity.init();
         }catch (Exception e){
             System.out.println("Error reading weapons.json");
         }

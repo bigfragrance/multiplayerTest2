@@ -48,8 +48,8 @@ public class RockEntity extends Entity{
         super.addJSON(o);
         return o;
     }
-    public String getType(){
-        return "rock";
+    public EntityType getType(){
+        return EntityType.ROCK;
     }
     public static RockEntity fromJSON(JSONObject o){
         JSONObject basic=PacketUtil.getJSONObject(o,"basic");
