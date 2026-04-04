@@ -3,6 +3,7 @@ package big.game.network.packet.s2c;
 import big.engine.util.PacketUtil;
 import big.game.entity.player.PlayerEntity;
 import big.game.network.ClientNetworkHandler;
+import big.game.network.PacketType;
 import big.game.network.packet.Packet;
 import org.json.JSONObject;
 
@@ -32,9 +33,8 @@ public class PlayerStatusS2CPacket implements Packet<ClientNetworkHandler> {
             cs.player.updateStatus(data);
         }
     }
-
     @Override
-    public String getType() {
-        return "player_status";
+    public PacketType getType() {
+        return PacketType.PLAYER_STATUS_S2C;
     }
 }

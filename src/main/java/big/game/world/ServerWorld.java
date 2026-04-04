@@ -14,8 +14,10 @@ import big.game.entity.boss.VisitorEntity;
 import big.game.entity.player.ServerBotEntity;
 import big.game.network.packet.s2c.BlockStateUpdateS2CPacket;
 import big.game.network.packet.s2c.TickS2CPacket;
-import big.server.ClientHandler;
-import big.server.ServerMain;
+
+import big.server.NettyClientHandler;
+import big.server.NettyServerMain;
+
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -32,7 +34,7 @@ import static big.engine.modules.EngineMain.cs;
 import static big.game.world.Chunk.CHUNK_SIZE;
 
 public class ServerWorld extends World{
-    private IntTimer mobSpawnTimer=new IntTimer(50);
+    private IntTimer mobSpawnTimer=new IntTimer(2);
     private IntTimer botSpawnTimer=new IntTimer(1);
     private IntTimer visitorSpawnTimer=new IntTimer(10);
     private IntTimer waveTimer=new IntTimer(100);
@@ -67,6 +69,10 @@ public class ServerWorld extends World{
         updateEntity();
     }
     public void updateEntity(){
+        if(!toAdd.isEmpty()){
+            cs.addEntity(toAdd.get(0));
+            toAdd.remove(0);
+        }
         for(Long id:cs.addingEntities.keySet()){
             cs.entities.put(id,cs.addingEntities.get(id));
         }
@@ -100,7 +106,7 @@ public class ServerWorld extends World{
         }
         cs.sendEntitiesUpdate();
         for(int i=0;i<cs.multiClientHandler.clients.size();i++){
-            ClientHandler c=cs.multiClientHandler.clients.get(i);
+            NettyClientHandler c=cs.multiClientHandler.clients.get(i);
             c.serverNetworkHandler.checkDeath();
             //c.checkConnecting();
             c.send(new TickS2CPacket(System.currentTimeMillis()));
@@ -181,8 +187,14 @@ public class ServerWorld extends World{
         if(lose){
             if(restartTimer.passed()){
                 cs.multiClientHandler.clients.forEach(c->c.disconnect());
-                ServerMain.connectedPlayersEntity.clear();
-                cs.serverController.loadWorld();
+                NettyServerMain.connectedPlayersEntity.clear();
+                for(Entity e:cs.world.getEntities()){
+                    if(e instanceof DominatorEntity dominator) {
+                        if(dominator.team!=dominator.initialTeam) {
+                            e.kill();
+                        }
+                    }
+                }
                 lose=false;
                 cs.sendMessageServer("Game restarted.");
             }

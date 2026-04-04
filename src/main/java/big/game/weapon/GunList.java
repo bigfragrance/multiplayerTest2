@@ -14,13 +14,15 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class GunList {
     public static JSONObject data=new JSONObject();
     public static JSONObject presetData=new JSONObject();
-    public static ConcurrentHashMap<String,String> parent=new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, List<String>> parent=new ConcurrentHashMap<>();
+    public static ConcurrentHashMap<String, List<String>> child=new ConcurrentHashMap<>();
     public JSONObject extradata=createDefData();
     public ConcurrentHashMap<Long,CanAttack> list;
     public AtomicInteger id=new AtomicInteger(0);
@@ -111,12 +113,18 @@ public class GunList {
         }catch (Exception e){
             System.out.println("Error reading weapons.json");
         }
-        /*for(String str:data.keySet()){
+        for(String str:data.keySet()){
             JSONObject obj=data.getJSONObject(str);
             if(obj.has("parent")){
-                parent.put(str,obj.getString("parent"));
+                JSONArray array=obj.getJSONArray("parent");
+                for(int j=0;j<array.length();j++){
+                    parent.putIfAbsent(str,new ArrayList<>());
+                    parent.get(str).add(array.getString(j));
+                    child.putIfAbsent(array.getString(j),new ArrayList<>());
+                    child.get(array.getString(j)).add(str);
+                }
             }
-        }*/
+        }
     }
     public static void loadWeaponsRecursively(File dir,JSONObject data,String weapon) {
         if (dir == null || !dir.exists() || !dir.isDirectory()) return;

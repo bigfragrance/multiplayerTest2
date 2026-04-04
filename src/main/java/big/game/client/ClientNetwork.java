@@ -1,195 +1,189 @@
 package big.game.client;
 
-import big.engine.util.PacketUtil;
-import big.engine.util.PercentEncoder;
 import big.game.network.ClientNetworkHandler;
 import big.game.network.JSONNBTConverter;
-import net.querz.nbt.io.*;
+import io.netty.bootstrap.Bootstrap;
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.Unpooled;
+import io.netty.channel.*;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
+import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import net.querz.nbt.io.NBTInputStream;
+import net.querz.nbt.io.NBTOutputStream;
+import net.querz.nbt.io.NamedTag;
 import net.querz.nbt.tag.CompoundTag;
+
 import net.querz.nbt.tag.Tag;
 import org.json.JSONObject;
+
 import javax.swing.*;
-import java.awt.*;
-import java.io.*;
-import java.net.*;
-import java.nio.charset.StandardCharsets;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.LinkedList;
 import java.util.Queue;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 public class ClientNetwork {
+
     private static final int RECONNECT_DELAY = 5000;
-    final ReentrantReadWriteLock canvasLock = new ReentrantReadWriteLock();
-    private Color[][] canvas = new Color[64][64];
-    private Socket socket;
-    private PrintWriter out;
-    private BufferedReader in;
+    private final ClientNetworkHandler networkHandler;
+    private Channel channel;
+    private EventLoopGroup group;
+    private volatile boolean running = true;
+    private volatile boolean connected = false;
     private String serverAddress;
     private int port = 8088;
-    private volatile boolean running = true;
-    public ClientNetworkHandler networkHandler;
-    private boolean connected=false;
-    private Queue<String> toSend=new LinkedList<>();
+    private final Queue<String> toSend = new LinkedList<>();
 
-    public ClientNetwork(ClientNetworkHandler networkHandler) {
-        this.networkHandler = networkHandler;
+    public ClientNetwork(ClientNetworkHandler handler) {
+        this.networkHandler = handler;
     }
 
-    public void connect(String address, int port) throws IOException {
+    public void connect(String address, int port) {
         this.serverAddress = address;
         this.port = port;
-        establishConnection();
+        startConnection();
+    }
 
+    private void startConnection() {
         new Thread(() -> {
-            try (DataInputStream dis = new DataInputStream(socket.getInputStream())) {
-                while (running) {
+            group = new NioEventLoopGroup(1);
+            try {
+                Bootstrap b = new Bootstrap();
+                b.group(group)
+                        .channel(NioSocketChannel.class)
+                        .option(ChannelOption.TCP_NODELAY, true)
+                        .handler(new ChannelInitializer<SocketChannel>() {
+                            @Override
+                            protected void initChannel(SocketChannel ch) {
+                                ChannelPipeline p = ch.pipeline();
+                                 
+                                p.addLast(new LengthFieldBasedFrameDecoder(10 * 1024 * 1024, 0, 4, 0, 4));
+                                p.addLast(new NettyClientHandler());
+                            }
+                        });
 
-                    int len;
-                    try {
-                        len = dis.readInt();
-                    } catch (EOFException e) {
-                        break;
-                    }
+                ChannelFuture f = b.connect(serverAddress, port).sync();
+                this.channel = f.channel();
+                this.connected = true;
 
-                    if (len <= 0) continue;
+                 
+                send(new JSONObject().put("type", "handshake"));
 
-
-                    byte[] data = new byte[len];
-                    dis.readFully(data);
-
-
-                    CompoundTag receivedTag;
-                    try (GZIPInputStream gzipIn = new GZIPInputStream(new ByteArrayInputStream(data))) {
-                        NBTInput nbtIn = new NBTInputStream(gzipIn);
-                        NamedTag namedTag = nbtIn.readTag(len);
-                        receivedTag = (CompoundTag) namedTag.getTag();
-                    }
-
-
-                    JSONObject msg = JSONNBTConverter.toJSON(receivedTag);
-                    try {
-                        networkHandler.apply(msg);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-
-                }
+                f.channel().closeFuture().sync();
             } catch (Exception e) {
                 if (running) handleDisconnect(e);
+            } finally {
+                group.shutdownGracefully();
             }
         }).start();
     }
-    private void establishConnection() throws IOException {
-        socket = new Socket();
-        socket.connect(new  InetSocketAddress(serverAddress, port), 3000);
-        socket.setTcpNoDelay(true);
-        out = new PrintWriter(
-            new OutputStreamWriter(socket.getOutputStream(),  StandardCharsets.UTF_8), true);
-        in = new BufferedReader(
-            new InputStreamReader(socket.getInputStream(),  StandardCharsets.UTF_8));
-        send(new JSONObject().put("type", "handshake"));
-        try {
-            Thread.sleep(200);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        connected=true;
-    }
 
     private void handleDisconnect(Exception e) {
+        connected = false;
         e.printStackTrace();
-        SwingUtilities.invokeLater(()  ->
-            JOptionPane.showMessageDialog(null,  "Reconnecting to big.server..."));
-
+        if (!running) return;
+        SwingUtilities.invokeLater(() ->
+                JOptionPane.showMessageDialog(null, "Reconnecting to big.server..."));
         try {
-            Thread.sleep(RECONNECT_DELAY);
-            establishConnection();
-        } catch (Exception ex) {
-            if (running) handleDisconnect(ex);
+            TimeUnit.MILLISECONDS.sleep(RECONNECT_DELAY);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
         }
+        startConnection();
     }
 
-    public void sendPixelUpdate(int x, int y, Color color) {
-        JSONObject json = new JSONObject();
-        json.put(PacketUtil.getShortVariableName("type"),  "pixel_update");
-        json.put("x",  x);
-        json.put("y",  y);
-        json.put("color",  color.getRGB());
-        out.println(json.toString());
-        out.println(json.toString());
-        out.println(json.toString());
-    }
-    public void sendold(JSONObject json) {
-        if(!connected){
-            toSend.add(json.toString());
-
-            return;
-        }
-        while(!toSend.isEmpty()){
-            out.println(PercentEncoder.encodeChinese(toSend.poll()));
-        }
-        out.println(PercentEncoder.encodeChinese(json.toString()));
-    }
     public void send(JSONObject json) {
-        if (!connected) {
-            toSend.add(json.toString());
+        if (!connected || channel == null || !channel.isActive()) {
+            synchronized (toSend) {
+                toSend.add(json.toString());
+            }
             return;
         }
 
         try {
-            DataOutputStream dos = new DataOutputStream(socket.getOutputStream());
-
-
-            while (!toSend.isEmpty()) {
-                String cached = toSend.poll();
-                sendJsonAsCompoundTag(cached, dos);
+             
+            synchronized (toSend) {
+                while (!toSend.isEmpty()) {
+                    String cached = toSend.poll();
+                    sendJsonAsCompoundTag(new JSONObject(cached));
+                }
             }
-
-            sendJsonAsCompoundTag(json.toString(), dos);
-
+             
+            sendJsonAsCompoundTag(json);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-
-    private void sendJsonAsCompoundTag(String jsonString, DataOutputStream dos) throws IOException {
-        JSONObject obj = new JSONObject(jsonString);
+    private void sendJsonAsCompoundTag(JSONObject obj) throws Exception {
         CompoundTag compoundTag = JSONNBTConverter.toCompound(obj);
-
         NamedTag namedTag = new NamedTag("root", compoundTag);
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        try (OutputStream out = new GZIPOutputStream(baos, true)) {
-            NBTOutput nbtOut = new NBTOutputStream(out); // LittleEndianNBTOutputStream(out)
+        try (GZIPOutputStream gzipOut = new GZIPOutputStream(baos, true);
+             NBTOutputStream nbtOut = new NBTOutputStream(gzipOut)) {
             nbtOut.writeTag(namedTag, Tag.DEFAULT_MAX_DEPTH);
             nbtOut.flush();
         }
 
         byte[] bytes = baos.toByteArray();
-
-        dos.writeInt(bytes.length);
-        dos.write(bytes);
-        dos.flush();
-    }
-
-    public Color getPixel(int x, int y) {
-        canvasLock.readLock().lock();
-        try {
-            return canvas[x][y];
-        } finally {
-            canvasLock.readLock().unlock();
-        }
+        ByteBuf out = Unpooled.buffer(4 + bytes.length);
+        out.writeInt(bytes.length);
+        out.writeBytes(bytes);
+        channel.writeAndFlush(out);
     }
 
     public void disconnect() {
         running = false;
+        connected = false;
         try {
-            socket.close();
-        } catch (IOException e) {
-            System.err.println("Disconnect  error: " + e.getMessage());
+            if (channel != null) channel.close();
+            if (group != null) group.shutdownGracefully();
+        } catch (Exception e) {
+            System.err.println("Disconnect error: " + e.getMessage());
+        }
+    }
+
+
+    private class NettyClientHandler extends SimpleChannelInboundHandler<ByteBuf> {
+
+        @Override
+        protected void channelRead0(ChannelHandlerContext ctx, ByteBuf buf) throws Exception {
+            int len = buf.readableBytes();
+            if (len <= 0) return;
+            byte[] data = new byte[len];
+            buf.readBytes(data);
+
+            CompoundTag receivedTag;
+            try (GZIPInputStream gzipIn = new GZIPInputStream(new ByteArrayInputStream(data));
+                 NBTInputStream nbtIn = new NBTInputStream(gzipIn)) {
+                NamedTag namedTag = nbtIn.readTag(len);
+                receivedTag = (CompoundTag) namedTag.getTag();
+            }
+
+            JSONObject msg = JSONNBTConverter.toJSON(receivedTag);
+            try {
+                networkHandler.apply(msg);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void channelInactive(ChannelHandlerContext ctx) {
+            if (running) handleDisconnect(new IOException("Server closed connection"));
+        }
+
+        @Override
+        public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+            cause.printStackTrace();
+            ctx.close();
         }
     }
 }

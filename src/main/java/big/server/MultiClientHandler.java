@@ -5,14 +5,14 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class MultiClientHandler {
-    public ArrayList<ClientHandler> clients = new ArrayList<>();
+    public ArrayList<NettyClientHandler> clients = new ArrayList<>();
     public MultiClientHandler() {
 
     }
-    public void addClient(ClientHandler client) {
+    public void addClient(NettyClientHandler client) {
         clients.add(client);
     }
-    public void removeClient(ClientHandler client) {
+    public void removeClient(NettyClientHandler client) {
         clients.remove(client);
     }
     public void sendToAll(JSONObject o) {

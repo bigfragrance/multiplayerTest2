@@ -9,7 +9,7 @@
       "stopFollow":3,
       "fov": 1.1
     },
-    "parent": ["Twin"]
+    "parent": ["Twin","MiniGun"]
   },
   "MachineGunner":{
     "data":[

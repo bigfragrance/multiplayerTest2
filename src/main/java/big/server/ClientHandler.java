@@ -1,5 +1,5 @@
 package big.server;
-
+/*
 import big.engine.util.EntityUtils;
 import big.game.entity.player.PlayerData;
 import big.game.entity.player.ServerPlayerEntity;
@@ -35,8 +35,7 @@ public class ClientHandler implements Runnable {
     private final BlockingQueue<JSONObject> broadcastQueue = new LinkedBlockingQueue<>();
     public ServerNetworkHandler serverNetworkHandler;
     public ServerPlayerEntity player;
-    private volatile long lastReceive = 0;
-    private long connectionStartTime;
+    private long lastReceive = 0;
     private boolean handshaked = false;
     private Thread sendThread = null;
     public boolean dataSent=false;
@@ -44,9 +43,7 @@ public class ClientHandler implements Runnable {
     public ClientHandler(Socket socket) {
         this.clientSocket = socket;
         lastReceive = System.currentTimeMillis();
-        connectionStartTime = System.currentTimeMillis();
         System.out.println("Client " + clientSocket.getInetAddress() + " connected");
-        //spawnPlayer();
     }
 
 
@@ -129,16 +126,10 @@ public class ClientHandler implements Runnable {
         try {
             long lastSend=System.currentTimeMillis();
             int sent=0;
-            JSONArray packetArray=new JSONArray();
             while (!Thread.interrupted() && !interrupted) {
 
                 JSONObject obj = broadcastQueue.take();
-                //System.out.println(broadcastQueue.size());
-
-                JSONObject packet=obj;//new ArrayPacket(packetArray).toJSON();
-                CompoundTag tag=convertJSONObjectToCompoundTag(packet);
-                packetArray=new JSONArray();
-                //lastSend=System.currentTimeMillis();
+                CompoundTag tag=convertJSONObjectToCompoundTag(obj);
 
                 ByteArrayOutputStream baos = new ByteArrayOutputStream();
                 try (GZIPOutputStream gzipOut = new GZIPOutputStream(baos, true)) {
@@ -159,12 +150,6 @@ public class ClientHandler implements Runnable {
                     sent=0;
                     lastSend=System.currentTimeMillis();
                 }
-
-                /*if(packetArray.length()<50&&System.currentTimeMillis()-lastSend<1) {
-                    packetArray.put(obj);
-                }else {
-
-                }*/
             }
         } catch (InterruptedException | IOException e) {
             Thread.currentThread().interrupt();
@@ -213,3 +198,4 @@ public class ClientHandler implements Runnable {
         return JSONNBTConverter.toJSON(tag);
     }
 }
+*/

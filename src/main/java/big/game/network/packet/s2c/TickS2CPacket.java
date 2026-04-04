@@ -2,6 +2,7 @@ package big.game.network.packet.s2c;
 
 import big.engine.util.PacketUtil;
 import big.game.network.ClientNetworkHandler;
+import big.game.network.PacketType;
 import big.game.network.packet.Packet;
 import org.json.JSONObject;
 
@@ -33,7 +34,7 @@ public class TickS2CPacket implements Packet<ClientNetworkHandler> {
     }
 
     @Override
-    public String getType() {
-        return "tick";
+    public PacketType getType() {
+        return PacketType.TICK_S2C;
     }
 }

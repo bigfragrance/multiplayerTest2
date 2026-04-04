@@ -42,6 +42,8 @@ public class PlayerEntity extends Entity {
     public double speed=SPEED;
     public boolean havingShield=false;
     protected double size;
+    public DodgeGhost dodgeGhost=null;
+    public int hurtTime=0;
     public PlayerEntity(Vec2d position) {
         super();
         this.size=SIZE;
@@ -57,6 +59,12 @@ public class PlayerEntity extends Entity {
     }
     public void tick() {
         super.tick();
+        if(dodgeGhost!=null){
+            dodgeGhost.tick();
+            if(dodgeGhost.isExpired()){
+                dodgeGhost=null;
+            }
+        }
     }
 
     protected void updateCollision(){
@@ -154,7 +162,20 @@ public class PlayerEntity extends Entity {
         super.renderAfter(g);
         EntityUtils.renderPlayerName(g,this);
         EntityUtils.renderScore(g,this);
-
+        if(dodgeGhost!=null){
+            dodgeGhost.render(g,this);
+        }
+    }
+    public boolean shouldHide(){
+        return dodgeGhost!=null&&dodgeGhost.tick<=25;
+    }
+    public boolean tempSwitchRender=false;
+    public double getRenderAlpha(){
+        if(tempSwitchRender){
+            return dodgeGhost==null?1: dodgeGhost.getAlpha(this);
+        }
+        if(shouldHide()) return 0;
+        return dodgeGhost!=null?(dodgeGhost.tick-25+getTickDelta())/15d:1;
     }
     public JSONObject toJSON() {
         JSONObject o=new JSONObject();

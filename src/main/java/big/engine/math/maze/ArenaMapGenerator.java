@@ -27,7 +27,7 @@ public class ArenaMapGenerator {
             for (int x = 0; x < width; x++)
                 grid[y][x] = FLOOR;
 
-        // 随机撒点障碍
+         
         int obstacles = (int)(width * height * density);
         for (int i = 0; i < obstacles; i++) {
             int x = rng.nextInt(width-2)+1;
@@ -35,22 +35,22 @@ public class ArenaMapGenerator {
             int type = rng.nextInt(4);
 
             switch (type) {
-                case 0: // 单点
+                case 0:  
                     grid[y][x] = WALL; break;
-                case 1: // 方块
+                case 1:  
                     for (int dy=0; dy<2; dy++)
                         for (int dx=0; dx<2; dx++)
                             if (y+dy<height && x+dx<width)
                                 grid[y+dy][x+dx] = WALL;
                     break;
-                case 2: // 十字
+                case 2:  
                     grid[y][x] = WALL;
                     if (x+1<width) grid[y][x+1] = WALL;
                     if (x-1>=0) grid[y][x-1] = WALL;
                     if (y+1<height) grid[y+1][x] = WALL;
                     if (y-1>=0) grid[y-1][x] = WALL;
                     break;
-                case 3: // 矩形墙带
+                case 3:  
                     int w = 3 + rng.nextInt(4);
                     int h = 1 + rng.nextInt(2);
                     for (int dy=0; dy<h; dy++)
@@ -61,7 +61,7 @@ public class ArenaMapGenerator {
             }
         }
 
-        // 边界空开，不要围墙
+         
         for (int x = 0; x < width; x++) {
             grid[0][x] = FLOOR;
             grid[height-1][x] = FLOOR;

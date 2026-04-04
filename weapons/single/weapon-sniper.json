@@ -93,5 +93,71 @@
       "stopFollow":5,
       "fov": 1.6
     }
+  },
+  "MiniGun":{
+    "data":[
+      {
+        "type":"GunLine",
+        "oOffset": {
+          "x":0.1,
+          "y":0
+        },
+        "startDelays":[0,2,4,6],
+        "count": 3,
+        "offsetRotation":0,
+        "offset":{
+          "x":0,
+          "y":0
+        },
+        "reloadMultiplier":1.5,
+        "layer":1,
+        "startDelay":0,
+        "size":[0.4,0.08,0.08],
+        "bulletType":{
+          "type":0,
+          "sharp":true,
+          "sharpFactor":1,
+          "multipliers":[1,4.5,1.5,1,2]
+        }
+      }
+    ],
+    "parent": ["Sniper"],
+    "extraData":{
+      "stopFollow":4,
+      "fov": 1.3
+    }
+  },
+  "StreamLiner":{
+    "data":[
+      {
+        "type":"GunLine",
+        "oOffset": {
+          "x":0.1,
+          "y":0
+        },
+        "startDelays":[0,2,4,6],
+        "count": 5,
+        "offsetRotation":0,
+        "offset":{
+          "x":0,
+          "y":0
+        },
+        "reloadMultiplier":1.5,
+        "layer":1,
+        "startDelay":0,
+        "size":[0.4,0.08,0.08],
+        "bulletType":{
+          "type":0,
+          "sharp":true,
+          "sharpFactor":1,
+          "multipliers":[1,4.5,1.5,1,2]
+        }
+      }
+    ],
+    "parent": ["MiniGun"],
+    "extraData":{
+      "stopFollow":4,
+      "fov": 1.3
+    }
   }
 }

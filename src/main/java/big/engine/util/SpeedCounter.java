@@ -19,11 +19,14 @@ public class SpeedCounter {
     }
     public void add(long time){
         times.add(time);
+        clean();
+    }
+    public void clean(){
         while(true){
             if(times.isEmpty()){
                 break;
             }
-            if(times.peek()<time-checkPeriod){
+            if(times.peek()<System.currentTimeMillis()-checkPeriod){
                 times.poll();
             }else{
                 break;
@@ -31,6 +34,7 @@ public class SpeedCounter {
         }
     }
     public double getSpeed(){
+        clean();
         return 1000d*times.size()/checkPeriod;
     }
 }

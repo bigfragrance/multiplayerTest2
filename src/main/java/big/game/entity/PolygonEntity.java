@@ -281,6 +281,7 @@ public class PolygonEntity extends MobEntity{
             BlockEntity block=(BlockEntity)e;
             vec.set(EntityUtils.getMaxMove(this.boundingBox,vec,e.boundingBox,block.leftCheck,block.rightCheck,block.topCheck,block.buttonCheck));
         });*/
+        if(vec==null) return;
         vec.set(EntityUtils.getMaxMove(this.boundingBox,vec));
         this.position.offset(vec);
         this.boundingBox=this.boundingBox.offset(vec);

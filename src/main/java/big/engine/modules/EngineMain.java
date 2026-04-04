@@ -8,28 +8,24 @@ import big.engine.util.AvgCounter;
 import big.engine.util.Util;
 import big.engine.render.Screen;
 import big.events.TickEvent;
-import big.game.entity.RockEntity;
+import big.game.entity.*;
 import big.game.network.packet.s2c.MessageS2CPacket;
-import big.game.screen.DebugScreen;
-import big.game.screen.MenuScreen;
+import big.game.screen.*;
+import big.server.NettyServerMain;
 import meteordevelopment.orbit.EventBus;
 import meteordevelopment.orbit.IEventBus;
 import big.game.ChunkMap;
-import big.game.entity.BlockEntity;
 import big.game.entity.player.ClientPlayerEntity;
-import big.game.entity.Entity;
 import big.game.entity.player.PlayerEntity;
-import big.game.entity.PolygonEntity;
 import big.game.network.ClientNetworkHandler;
 import big.game.particle.Particle;
-import big.game.screen.ChatMessageScreen;
 import big.game.server.ServerController;
 import big.game.weapon.GunList;
 import big.game.world.ClientWorld;
 import big.game.world.ServerWorld;
 import big.game.world.World;
 import big.server.MultiClientHandler;
-import big.server.ServerMain;
+
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandles;
@@ -83,6 +79,7 @@ public class EngineMain implements Runnable{
         ChatMessageScreen.init();
         DebugScreen.init();
         MenuScreen.init();
+
         if(isServer){
             GunList.init();
             world=new ServerWorld();
@@ -92,7 +89,7 @@ public class EngineMain implements Runnable{
             try {
                 new Thread(()->{
                     try {
-                        ServerMain.main(new String[]{});
+                        NettyServerMain.main(new String[]{});
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
@@ -105,6 +102,8 @@ public class EngineMain implements Runnable{
         }else {
             TPS+=0.01;
             world=new ClientWorld();
+            EffectScreen.init();
+            DarkEffectScreen.init();
             try {
                 networkHandler = new ClientNetworkHandler(ip, port);
             } catch (IOException e) {
@@ -113,6 +112,7 @@ public class EngineMain implements Runnable{
         }
         EVENT_BUS.subscribe(world);
         EVENT_BUS.subscribe(sc);
+        EVENT_BUS.subscribe(sc.inputManager);
     }
     private void initEventBus(){
         EVENT_BUS.registerLambdaFactory("big",(lookupInMethod, klass) -> (MethodHandles.Lookup) lookupInMethod.invoke(null, klass, MethodHandles.lookup()));
@@ -126,6 +126,10 @@ public class EngineMain implements Runnable{
             lastTick = System.currentTimeMillis();
             long start = System.nanoTime();
             try {
+                while(sc.rendering&&!cs.isServer){
+                    Thread.sleep(0,500);
+                }
+
                 sc.renderTasks2.update(50);
                 ticking = true;
                 update();
@@ -212,7 +216,7 @@ public class EngineMain implements Runnable{
         }
 
         for(Entity entity:entities.values()){
-            if(!(entity instanceof PlayerEntity)) continue;
+            if(!(entity instanceof PlayerEntity)||entity instanceof DominatorEntity) continue;
             team.put(entity.team,team.getOrDefault(entity.team,0)+1);
         }
         int min=10000;

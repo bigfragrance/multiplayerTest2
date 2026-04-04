@@ -6,6 +6,7 @@ import big.engine.math.Box;
 import big.engine.math.Vec2d;
 import big.engine.math.test.MazeGenerator;
 import big.engine.math.test.MazeGenerator2;
+import big.engine.render.Screen;
 import big.engine.util.AfterCheckTask;
 import big.engine.util.Util;
 import big.engine.util.timer.IntTimer;
@@ -13,6 +14,7 @@ import big.engine.util.timer.Timer;
 import big.engine.util.timer.TimerList;
 import big.engine.modules.EngineMain;
 import big.events.KeyClickEvent;
+import big.events.RenderEvent;
 import big.game.ctrl.InputManager;
 import big.game.entity.Entity;
 import big.game.entity.KillReason;
@@ -26,7 +28,8 @@ import big.game.world.BlockState;
 import big.game.world.Blocks;
 import big.game.world.blocks.BaseBlock;
 import big.game.world.blocks.PushBlock;
-import big.server.ClientHandler;
+
+import big.server.NettyClientHandler;
 import meteordevelopment.orbit.EventHandler;
 import org.json.JSONObject;
 
@@ -45,11 +48,12 @@ public class ServerController {
     public int mazeSize=48;
     public static double off=0.000001;
     private Vec2d lastMousePos=null;
-    private Timer saveTimer=timers.add(new IntTimer(5));
     private Timer actionTimer=timers.add(new IntTimer(5));
     private boolean showingCurrentBlock=false;
     public double currentRarity=0.1;
     public double currentPlaceRadius=1;
+    public boolean boxPlace=true;
+    private Vec2d mousePos=null;
     public ServerController(){
         inputManager= sc.inputManager;
         //loadWorld();
@@ -69,7 +73,7 @@ public class ServerController {
             showingCurrentBlock=!showingCurrentBlock;
             actionTimer.reset();
         }
-        Vec2d mousePos=inputManager.getMouseVec().add(cs.camPos);
+        mousePos=inputManager.getMouseVec().add(cs.camPos);
         if(lastMousePos==null) lastMousePos=mousePos;
         if(showingCurrentBlock){
             Vec2i blockPos= Vec2i.ofFloor(mousePos);
@@ -92,17 +96,16 @@ public class ServerController {
                 }
             });
         }
+        if (inputManager.isPlacingMaze()) {
+            setBlock(lastMousePos == null ? mousePos : lastMousePos, mousePos,currentPlaceRadius,false);
+        }
+        if (inputManager.isRemovingMaze()) {
+            setBlock(lastMousePos == null ? mousePos : lastMousePos, mousePos,currentPlaceRadius,true);
+        }
+        if(inputManager.isPuttingMobRarity()){
+            put(mousePos,currentPlaceRadius,blockState -> blockState.setSpawnMobRarity(MenuScreen.INSTANCE.currentMode.spawnMobRarity));
+        }
         if(!inputManager.isLocking()) {
-            if (inputManager.isPlacingMaze()) {
-                setBlock(lastMousePos == null ? mousePos : lastMousePos, mousePos,currentPlaceRadius);
-            }
-            if (inputManager.isRemovingMaze()) {
-                setBlock(lastMousePos == null ? mousePos : lastMousePos, mousePos, Blocks.AIR,currentPlaceRadius);
-            }
-            if(inputManager.isPuttingMobRarity()){
-                put(mousePos,currentPlaceRadius,blockState -> blockState.setSpawnMobRarity(MenuScreen.INSTANCE.currentMode.spawnMobRarity));
-            }
-
             lastMousePos = mousePos;
         }
         if(inputManager.isSpawningBullet()&&!EngineMain.isWorldEditMode){
@@ -120,6 +123,21 @@ public class ServerController {
         if(e.button=='f'){
             Vec2d mousePos=inputManager.getMouseVec().add(cs.camPos);
             MenuScreen.INSTANCE.currentMode.putEntity(mousePos);
+        }
+    }
+    @EventHandler
+    public void onRender(RenderEvent event){
+        if(inputManager.isLocking()&&mousePos!=null&&lastMousePos!=null){
+            Vec2i startPos= Vec2i.ofFloor(lastMousePos);
+            Vec2i endPos= Vec2i.ofFloor(mousePos);
+            Box box=new Box(startPos,endPos);
+            Box mouse=new Box(mousePos,lastMousePos);
+            event.g.setColor(Color.red);
+            Util.renderCubeLine(event.g,box.switchToJFrame());
+            event.g.setColor(Color.GREEN);
+            Util.renderCubeLine(event.g,mouse.switchToJFrame());
+            event.g.setColor(cs.world.raycast(lastMousePos,mousePos)?Color.RED:Color.GREEN);
+            Util.renderLine(event.g,lastMousePos.switchToJFrame(),mousePos.switchToJFrame());
         }
     }
     public void saveWorld(){
@@ -159,35 +177,32 @@ public class ServerController {
         for(Entity e:cs.world.getEntities()){
             e.kill(KillReason.CLEAR);
         }
-        cs.multiClientHandler.clients.forEach(ClientHandler::sendServerData);
+        cs.multiClientHandler.clients.forEach(NettyClientHandler::sendServerData);
     }
-    public void setBlock(Vec2d start, Vec2d end, Block block,double radius){
-        int r= (int) Math.ceil(radius);
-        for(double d=0;d<=1;d+=0.1){
-            Vec2d pos= Util.lerp(start,end,d);
-            for(int x=-r;x<=r;x++){
-                for(int y=-r;y<=r;y++){
-                    Vec2d p=pos.add(x,y);
-                    Vec2i bPos= Vec2i.ofFloor(p);
-                    if(bPos.toCenterPos().distanceTo(pos)<=radius){
-                        if(cs.world.getBlock(bPos)!=block){
-                            cs.world.setBlockState(bPos.x,bPos.y,new BlockState(block));
-                        }
-                    }
+    public void setBlock(Vec2d start, Vec2d end,double radius,boolean air){
+        if(boxPlace){
+            Vec2i startPos= Vec2i.ofFloor(start);
+            Vec2i endPos= Vec2i.ofFloor(end);
+            for(int x=Math.min(startPos.x,endPos.x);x<=Math.max(startPos.x,endPos.x);x++){
+                for(int y=Math.min(startPos.y,endPos.y);y<=Math.max(startPos.y,endPos.y);y++){
+                    Vec2i bPos= Vec2i.ofFloor(x,y);
+                    if(!air) MenuScreen.INSTANCE.currentMode.apply(bPos);
+                    else if(cs.world.getBlock(bPos)!=Blocks.AIR) cs.world.setBlockState(bPos.x,bPos.y,new BlockState(Blocks.AIR));
                 }
             }
-        }
-    }
-    public void setBlock(Vec2d start, Vec2d end,double radius){
-        int r= (int) Math.ceil(radius);
-        for(double d=0;d<=1;d+=0.1){
-            Vec2d pos= Util.lerp(start,end,d);
-            for(int x=-r;x<=r;x++){
-                for(int y=-r;y<=r;y++){
-                    Vec2d p=pos.add(x,y);
-                    Vec2i bPos= Vec2i.ofFloor(p);
-                    if(bPos.toCenterPos().distanceTo(pos)<=radius){
-                        MenuScreen.INSTANCE.currentMode.apply(bPos);
+        }else {
+            int r = (int) Math.ceil(radius);
+            for (double d = 0; d <= 1; d += 0.1) {
+                Vec2d pos = Util.lerp(start, end, d);
+                for (int x = -r; x <= r; x++) {
+                    for (int y = -r; y <= r; y++) {
+                        Vec2d p = pos.add(x, y);
+                        Vec2i bPos = Vec2i.ofFloor(p);
+                        if (bPos.toCenterPos().distanceTo(pos) <= radius) {
+                            if (!air) MenuScreen.INSTANCE.currentMode.apply(bPos);
+                            else if (cs.world.getBlock(bPos) != Blocks.AIR)
+                                cs.world.setBlockState(bPos.x, bPos.y, new BlockState(Blocks.AIR));
+                        }
                     }
                 }
             }

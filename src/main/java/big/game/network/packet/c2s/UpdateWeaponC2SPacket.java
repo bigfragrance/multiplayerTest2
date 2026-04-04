@@ -2,6 +2,7 @@ package big.game.network.packet.c2s;
 
 import big.engine.util.PacketUtil;
 import big.game.entity.player.ServerPlayerEntity;
+import big.game.network.PacketType;
 import big.game.network.ServerNetworkHandler;
 import big.game.network.packet.Packet;
 import big.game.network.packet.s2c.PlayerWeaponUpdateS2CPacket;
@@ -37,7 +38,7 @@ public class UpdateWeaponC2SPacket implements Packet<ServerNetworkHandler> {
     }
 
     @Override
-    public String getType() {
-        return "update_weapon";
+    public PacketType getType() {
+        return PacketType.UPDATE_WEAPON_C2S;
     }
 }

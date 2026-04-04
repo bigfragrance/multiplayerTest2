@@ -48,13 +48,13 @@ public class CurvePredictorUI extends JFrame {
             super.paintComponent(g);
             Graphics2D g2 = (Graphics2D) g;
 
-            // 画历史点
+            
             g2.setColor(Color.BLUE);
             for (Vec2d p : history) {
                 g2.fillOval((int) p.x - 4, (int) p.y - 4, 8, 8);
             }
 
-            // 画历史连线
+            
             g2.setColor(Color.GRAY);
             for (int i = 1; i < history.size(); i++) {
                 Vec2d p1 = history.get(i - 1);
@@ -62,7 +62,7 @@ public class CurvePredictorUI extends JFrame {
                 g2.drawLine((int) p1.x, (int) p1.y, (int) p2.x, (int) p2.y);
             }
 
-            // 画预测轨迹
+            
             if (history.size() >= 3) {
                 g2.setColor(Color.RED);
                 Vec2d prev = history.get(history.size() - 1);
@@ -83,30 +83,30 @@ public class CurvePredictorUI extends JFrame {
     }
 }
 
-// --------------------- Vec2d 类 ---------------------
 
-// --------------------- 曲线预判类 ---------------------
+
+
 class CurvePredictor {
     public static Vec2d predictCatmullRom(List<Vec2d> history,double t) {
         int n = history.size();
         if (n < 4) {
-            // 点太少，退化为线性预测
+            
             Vec2d last = history.get(n - 1);
             Vec2d prev = history.get(n - 2);
             Vec2d vel = new Vec2d(last.x - prev.x, last.y - prev.y);
             return new Vec2d(last.x + vel.x * t, last.y + vel.y * t);
         }
 
-        // 使用最后 4 个点进行 Catmull-Rom 样条
+        
         Vec2d p0 = history.get(n - 4);
         Vec2d p1 = history.get(n - 3);
         Vec2d p2 = history.get(n - 2);
         Vec2d p3 = history.get(n - 1);
 
-        // t参数归一化，假设每步相当于0.1的步长
+        
         double step = 0.1;
         double u = step * t;
-        if (u > 1.0) u = 1.0; // 限制在样条区间内
+        if (u > 1.0) u = 1.0; 
 
         double u2 = u * u;
         double u3 = u2 * u;
@@ -126,14 +126,14 @@ class CurvePredictor {
     public static Vec2d predict(List<Vec2d> history,double t, int degree) {
         int n = history.size();
         if (n < degree + 1) {
-            // 点太少时退化为线性预测
+            
             Vec2d last = history.get(n - 1);
             Vec2d prev = history.get(n - 2);
             Vec2d vel = new Vec2d(last.x - prev.x, last.y - prev.y);
             return new Vec2d(last.x + vel.x * t, last.y + vel.y * t);
         }
 
-        // 构造时间序列：0,1,...,n-1
+        
         double[] xs = new double[n];
         double[] ys = new double[n];
         for (int i = 0; i < n; i++) {
@@ -151,9 +151,9 @@ class CurvePredictor {
         return new Vec2d(predX, predY);
     }
 
-    /** 多项式拟合（最小二乘法），返回系数数组 a0..ad */
+
     private static double[] polyFit(int n, int degree, double[] values) {
-        // 正规方程法：X^T X a = X^T y
+        
         double[][] A = new double[degree + 1][degree + 1];
         double[] B = new double[degree + 1];
 
@@ -175,7 +175,7 @@ class CurvePredictor {
         return gaussianSolve(A, B);
     }
 
-    /** 多项式求值 */
+
     private static double polyEval(double[] coef, double x) {
         double result = 0;
         for (int i = 0; i < coef.length; i++) {
@@ -188,7 +188,7 @@ class CurvePredictor {
     private static double[] gaussianSolve(double[][] A, double[] B) {
         int n = B.length;
         for (int i = 0; i < n; i++) {
-            // 主元选择
+            
             int maxRow = i;
             for (int k = i + 1; k < n; k++) {
                 if (Math.abs(A[k][i]) > Math.abs(A[maxRow][i])) {
@@ -198,7 +198,7 @@ class CurvePredictor {
             double[] tmp = A[i]; A[i] = A[maxRow]; A[maxRow] = tmp;
             double t = B[i]; B[i] = B[maxRow]; B[maxRow] = t;
 
-            // 消元
+            
             for (int k = i + 1; k < n; k++) {
                 double factor = A[k][i] / A[i][i];
                 B[k] -= factor * B[i];
@@ -208,7 +208,7 @@ class CurvePredictor {
             }
         }
 
-        // 回代
+        
         double[] x = new double[n];
         for (int i = n - 1; i >= 0; i--) {
             double sum = B[i];

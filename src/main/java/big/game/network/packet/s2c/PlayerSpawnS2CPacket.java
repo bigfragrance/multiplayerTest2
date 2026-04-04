@@ -3,6 +3,7 @@ package big.game.network.packet.s2c;
 import big.engine.util.PacketUtil;
 import big.game.entity.player.ClientPlayerEntity;
 import big.game.network.ClientNetworkHandler;
+import big.game.network.PacketType;
 import big.game.network.packet.Packet;
 import org.json.JSONObject;
 
@@ -37,7 +38,7 @@ public class PlayerSpawnS2CPacket implements Packet<ClientNetworkHandler> {
     }
 
     @Override
-    public String getType() {
-        return "player_respawn";
+    public PacketType getType() {
+        return PacketType.PLAYER_RESPAWN_C2S;
     }
 }

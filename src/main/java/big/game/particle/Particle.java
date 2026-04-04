@@ -14,7 +14,7 @@ public class Particle extends Entity {
     public void update(){
         this.prevPosition.set(this.position);
         this.position.offset(this.velocity);
-        this.boundingBox.offset1(this.velocity);
+        this.boundingBox.selfOffset(this.velocity);
     }
 
 }

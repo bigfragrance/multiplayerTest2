@@ -4,6 +4,7 @@ import big.engine.math.Box;
 import big.engine.math.Vec2d;
 import big.engine.util.EntityUtils;
 import big.engine.util.Util;
+import big.engine.util.timer.IntTimer;
 import big.game.ctrl.ServerInputManager;
 import big.game.entity.Attackable;
 import big.game.entity.Controllable;
@@ -13,9 +14,8 @@ import big.game.entity.bullet.AimBullet;
 import big.game.entity.bullet.BulletEntity;
 import big.game.network.ServerNetworkHandler;
 import big.game.network.packet.Packet;
-import big.game.network.packet.s2c.MessageS2CPacket;
-import big.game.network.packet.s2c.PlayerDataS2CPacket;
-import big.game.network.packet.s2c.PlayerWeaponUpdateS2CPacket;
+import big.game.network.packet.s2c.*;
+import big.game.screen.DarkEffectScreen;
 import big.game.weapon.GunList;
 import big.game.world.World;
 import org.json.JSONObject;
@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import static big.engine.modules.EngineMain.cs;
-import static java.lang.Math.floor;
 
 public class ServerPlayerEntity extends PlayerEntity implements Attackable, Controllable {
-
+    public static final double LOG11=Math.log(11);
     public static double drag=0.67;
     public static double scorePow=1.03;
     public static double initScore=Math.pow(scorePow,50)/scoreMultiplier+1;
@@ -40,14 +40,16 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
     public String weaponID="dai";
     public ServerNetworkHandler networkHandler=null;
     public ConcurrentHashMap<Entity,Vec2d> controllingShieldBullets=new ConcurrentHashMap<>();
-
+    public IntTimer multiDodgeTimer=new IntTimer(150);
+    public IntTimer dodgeTimer=new IntTimer(40);
+    public int dodgeLeft=2;
+    private double lastHealth=healthMax;
     public ServerPlayerEntity(Vec2d position) {
         super(position);
         inputManager=new ServerInputManager();
         this.score=initScore;
     }
     public void tick(){
-
         this.targetingPos=inputManager.aimPos;
         this.updateSkillPoint();
         if(World.gravityEnabled){
@@ -83,6 +85,13 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
                 this.speed*=0.2;
             }
         }
+        hurtTime=Math.max(0,hurtTime-1);
+        if(this.health-this.lastHealth>healthMax*0.05){
+            this.hurtTime=10;
+            sendPacket(new EffectS2CPacket("Hurt",10));
+        }
+        this.lastHealth=this.health;
+        sendPacket(new EffectS2CPacket(DarkEffectScreen.DARK_EFFECT,10));
     }
     private int getSkillPointNow(){
         double pow=score*scoreMultiplier;
@@ -116,6 +125,8 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
             this.kill();
             this.health=0;
         }
+        dodgeTimer.update();
+        multiDodgeTimer.update();
         regenShieldAndHealth();
         regenShieldAndHealth();
         if(isDefending()&&this.weaponID.contains("Def")){
@@ -183,6 +194,34 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
             }
             skillPointUsed=skillPointNow;
         }
+    }
+    public void dodgeMove(Vec2d direction) {
+        if(hurtTime>0) return;
+        if (multiDodgeTimer.passed()) {
+            multiDodgeTimer.reset();
+            sendPacket(new EffectS2CPacket("DgBCd",150));
+            dodgeLeft = 2;
+        }
+        if (!dodgeTimer.passed()) return;
+        if (dodgeLeft <= 0) return;
+        dodgeLeft--;
+        dodgeTimer.reset();
+        sendPacket(new EffectS2CPacket("DgCd",40));
+
+        if(shouldInstantDodge()) {
+            cs.multiClientHandler.sendToAll(new DodgeGhostS2CPacket(this.boundingBox, this.id).toJSON());
+            move(this.getRealVelocity().normalize().multiply(speed * 50));
+            this.noEnemyTimer = 5;
+        }else{
+            this.velocity.offset(this.getRealVelocity().normalize().multiply(speed*20));
+        }
+    }
+    private boolean shouldInstantDodge(){
+        AtomicBoolean couldDodge= new AtomicBoolean(false);
+        EntityUtils.updateCollision(this,e->(e.id==this.id||e.team==this.team||!e.isTargetable()),e->EntityUtils.intersectsCircle(this.prevBoundingBox,this.boundingBox,e.prevBoundingBox,e.boundingBox,10),e->{
+            couldDodge.set(true);
+        },2,true);
+        return couldDodge.get();
     }
     public JSONObject getUpdate(){
         return super.getUpdate();
@@ -396,7 +435,7 @@ public class ServerPlayerEntity extends PlayerEntity implements Attackable, Cont
         return controllingShieldBullets;
     }
     public static double getMultiplier(double level,double max){
-        return max*level/10;
+        return Math.log(level+1)/LOG11*max;
     }
 
     @Override

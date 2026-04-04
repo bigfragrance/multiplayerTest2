@@ -108,16 +108,11 @@ public class BulletEntity extends Entity {
         EntityUtils.updateCollision(this,e->(e.id==this.id||!e.isAlive),e->EntityUtils.intersectsCircle(this,e),e->{
             if (e.team != this.team) {
                 EntityUtils.takeDamage(this,e);
-                /*if(e instanceof BulletEntity b) {
+                if(cs.setting.shouldBulletCollide()&& e instanceof BulletEntity b) {
                     this.velocity.offset(EntityUtils.getKnockBackVector(this,b,b.knockBackFactor/this.mass));
-                }*/
+                }
             }
-            /*if(!(e instanceof BulletEntity)) {
-                Vec2d coll = EntityUtils.getPushVector(this, e);
-                this.velocity.offset(coll);
-            }*/
         });
-        //this.velocity.set(EntityUtils.getReboundVelocity(velocity,this.boundingBox));
         if(EntityUtils.isInsideWall(this.boundingBox.expand(0.01,0.01))){
             this.health=-1;
         }

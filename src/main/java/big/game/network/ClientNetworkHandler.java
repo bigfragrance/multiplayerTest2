@@ -7,6 +7,8 @@ import big.game.entity.bullet.BulletEntity;
 import big.game.entity.player.ClientPlayerEntity;
 import big.game.entity.player.PlayerEntity;
 import big.game.network.packet.Packet;
+import big.game.network.packet.c2s.PlayerDataC2SPacket;
+import big.game.network.packet.c2s.WantEntityC2SPacket;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -35,10 +37,8 @@ public class ClientNetworkHandler {
         send(o);
     }
     public void sendWantEntity(Long id){
-        JSONObject o=new JSONObject();
-        o.put(PacketUtil.getShortVariableName("type"),want_entity);
-        o.put(PacketUtil.getShortVariableName("id"),id);
-        send(o);
+        send(new WantEntityC2SPacket(id));
+        System.out.println("send want entity "+id);
     }
     public void sendKeepAlive(){
         if(System.currentTimeMillis()-lastSend<1000) return;
@@ -47,10 +47,7 @@ public class ClientNetworkHandler {
         send(o);
     }
     public void sendPlayerData(PlayerEntity player){
-        JSONObject o=new JSONObject();
-        PacketUtil.putPacketType(o,"player_data_other");
-        PacketUtil.put(o,"name",player.name);
-        send(o);
+        send(new PlayerDataC2SPacket(player.name));
     }
     public void apply(JSONObject o){
         Packet<ClientNetworkHandler> packet= PacketUtil.getS2CPacket(o);
@@ -61,9 +58,6 @@ public class ClientNetworkHandler {
         switch (PacketUtil.fromShortPacketName(PacketUtil.getString(o,"type"))){
             case ("entity_update")->{
                 handleEntityUpdate(o);
-            }
-            case("entity_spawn")->{
-                handleEntitySpawn(o);
             }
             case("entity_remove")->{
                 handleEntityRemove(o);
@@ -106,28 +100,7 @@ public class ClientNetworkHandler {
 
         }*/
     }
-    public void handleEntitySpawn(JSONObject o){
-        JSONObject o2=o.getJSONObject("entity");
-        cs.addEntity(EntityType.createEntity(o2));
-        /*switch (o2.getString(PacketUtil.getShortVariableName("type"))){
-            case("player")->{
-                cs.addEntity(PlayerEntity.fromJSON(o2.getJSONObject("data")));
-            }
-            case("bullet")->{
-                //System.out.println("Spawned bullet");
-                cs.addEntity(BulletEntity.fromJSON(o2.getJSONObject("data")));
-            }
-            case("polygon")->{
-                cs.addEntity(PolygonEntity.fromJSON(o2.getJSONObject("data")));
-            }
-            case("block")->{
-                cs.addEntity(BlockEntity.fromJSON(o2.getJSONObject("data")));
-            }
-            case("rock")->{
-                cs.addEntity(RockEntity.fromJSON(o2.getJSONObject("data")));
-            }
-        }*/
-    }
+
     public void handleEntityRemove(JSONObject o){
         cs.removeEntity(o.getLong(PacketUtil.getShortVariableName("id")));
     }

@@ -3,6 +3,7 @@ package big.game.network.packet.s2c;
 import big.engine.util.PacketUtil;
 import big.game.entity.Entity;
 import big.game.network.ClientNetworkHandler;
+import big.game.network.PacketType;
 import big.game.network.packet.Packet;
 import big.game.screen.TankChooseScreen;
 import big.game.weapon.GunList;
@@ -54,7 +55,7 @@ public class PlayerWeaponUpdateS2CPacket implements Packet<ClientNetworkHandler>
     }
 
     @Override
-    public String getType() {
-        return "weapon_update";
+    public PacketType getType() {
+        return PacketType.PLAYER_WEAPON_UPDATE_S2C;
     }
 }

@@ -235,13 +235,13 @@
                     "y":0
                 },
                 "startDelays":[0,2,4,6],
-                "count": 5,
+                "count": 3,
                 "offsetRotation":0,
                 "offset":{
                     "x":0,
                     "y":0
                 },
-                "reloadMultiplier":5,
+                "reloadMultiplier":1.5,
                 "layer":1,
                 "startDelay":0,
                 "size":[0.3,0.08,0.08,0.1,0.08,0.15],
@@ -249,11 +249,11 @@
                     "type":3,
                     "sharp":true,
                     "sharpFactor":0.6,
-                    "multipliers":[1,4.5,1.5,1,2]
+                    "multipliers":[1,4.5,2.5,1,2]
                 }
             }
         ],
-        "parent": ["Trapper","StreamLiner"],
+        "parent": ["Trapper","MiniGun"],
         "extraData":{
             "stopFollow":2,
             "fov": 1.2

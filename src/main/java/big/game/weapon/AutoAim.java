@@ -2,6 +2,8 @@ package big.game.weapon;
 
 import big.engine.math.Vec2d;
 import big.engine.util.EntityUtils;
+import big.engine.util.Util;
+import big.game.entity.DominatorEntity;
 import big.game.entity.Entity;
 import big.game.entity.MobEntity;
 import big.game.entity.player.PlayerEntity;
@@ -15,13 +17,22 @@ public class AutoAim<T extends AbleToAim> {
     private double fov;
     private Entity target;
     public double seeRangeMultiplier=1;
+    private boolean autoTarget=true;
     public AutoAim(T owner,double fov){
         this.owner=owner;
         this.fov=fov;
     }
+    public AutoAim(T owner,double fov,boolean autoTarget){
+        this.owner=owner;
+        this.fov=fov;
+        this.autoTarget=autoTarget;
+    }
     public void tick(){
-        updateTarget();
+        if(autoTarget)updateTarget();
         updateAim();
+    }
+    public void setTarget(Entity target){
+        this.target=target;
     }
     public void updateAim(){
         owner.setFire(false);
@@ -33,12 +44,19 @@ public class AutoAim<T extends AbleToAim> {
     }
     public void updateTarget(){
         double minDistance=target==null?defRange*seeRangeMultiplier:target.getPos().distanceTo(owner.getPos())-changeDiff;
+        boolean playerOnly=false;
+        if(owner instanceof AutoGunList list){
+            if(list.owner instanceof DominatorEntity){
+                playerOnly=true;
+            }
+        }
         double minDistanceMob=minDistance;
         PlayerEntity player=null;
         Entity mob=null;
         for(Entity e:cs.entities.values()){
             if(e.team==owner.getTeam()) continue;
-            if(!e.isAlive) continue;
+            if(!e.isTargetable()) continue;
+            if(playerOnly&&!(e instanceof PlayerEntity)) continue;
             if(e instanceof PlayerEntity||e instanceof MobEntity){
                 boolean b=e instanceof PlayerEntity;
                 if(b){
@@ -66,15 +84,16 @@ public class AutoAim<T extends AbleToAim> {
         if(player!=null){
             target=player;
         }
-        if(target==null||target.getPos().distanceTo(owner.getPos())>defRange*seeRangeMultiplier+changeDiff||!target.isAlive||target.killed()||!inFov(target)){
+        if(target==null||target.getPos().distanceTo(owner.getPos())>defRange*seeRangeMultiplier+changeDiff||!target.isTargetable()||target.killed()||!inFov(target)){
             target=null;
         }
     }
+
     public boolean inFov(Entity target){
         double a1=target.getPos().subtract(owner.getPos()).angle();
         double a2=owner.getRotation();
         if(a1<0) a1+=360;
         if(a2<0) a2+=360;
-        return Math.abs(a1-a2)%360<=fov/2;
+        return Math.abs(a1-a2)%360<=fov/2&&!cs.world.raycast(owner.getPos(),target.getPos());
     }
 }

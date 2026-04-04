@@ -40,6 +40,7 @@ public class ColorUtils {
         return new Color(255-c.getRed(),255-c.getGreen(),255-c.getBlue(),c.getAlpha());
     }
     public static Color setAlpha(Color c,int alpha){
+        alpha=Math.clamp(alpha,0,255);
         return new Color(c.getRed(),c.getGreen(),c.getBlue(),alpha);
     }
     public static Color setAlpha(Color c,double alpha){

@@ -2,17 +2,21 @@ package big.engine.util;
 
 
 
+import big.engine.math.Direction;
 import big.engine.math.Vec2i;
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
 import big.engine.math.interfaces.FInt2Int;
 import big.engine.modules.EngineMain;
 
+import big.game.world.World;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
+import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,12 +33,14 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.List;
 import java.util.function.IntToDoubleFunction;
+import java.util.function.Predicate;
 
 import static big.engine.modules.EngineMain.cs;
 import static big.engine.render.Screen.sc;
 
 public class Util {
     public static Random random=new Random(System.nanoTime());
+    public static double[] sinTable=createDoubles(360*100,i->Math.sin(Math.toRadians(i*360.0/100)));
 
     public static double sin(double d){
         return Math.sin(Math.toRadians(d));
@@ -111,6 +117,9 @@ public class Util {
     public static void render(Graphics g, Box b,double i){
         render(g,b.minX+i,b.minY+i,b.xSize()-2*i,b.ySize()-2*i,true);
     }
+    public static void renderArc(Graphics g,Box b,double start,double end){
+        g.drawArc(round(b.minX),round(b.minY),round(b.xSize()),round(b.ySize()),round(start),round(end-start));
+    }
     public static void renderCLine(Graphics g, Box b){
         render(g,b.minX,b.minY,b.xSize(),b.ySize(),false);
     }
@@ -143,6 +152,61 @@ public class Util {
         g.setFont(new Font("Microsoft JhengHei",Font.BOLD,size));
         g.drawString(s,round(centerPos.x-offX),round(centerPos.y+ (double) size /2));
     }
+    public static void renderString(
+            Graphics g,
+            String s,
+            Vec2d centerPos,
+            int size,
+            boolean center,
+            Color insideColor,
+            Color outlineColor,
+            float width
+    ) {
+        Graphics2D g2d = (Graphics2D) g;
+
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_TEXT_ANTIALIASING,
+                RenderingHints.VALUE_TEXT_ANTIALIAS_ON);
+
+        Font font = new Font("Microsoft JhengHei", Font.BOLD, size);
+        g2d.setFont(font);
+
+        FontRenderContext frc = g2d.getFontRenderContext();
+        GlyphVector gv = font.createGlyphVector(frc, s);
+
+
+        Rectangle bounds = gv.getPixelBounds(frc, 0, 0);
+
+        double x = centerPos.x;
+        double y = centerPos.y;
+
+        if (center) {
+            x -= bounds.getWidth() / 2.0;
+            y -= bounds.getHeight() / 2.0;
+        }
+
+        Shape textShape = gv.getOutline(
+                (float) x,
+                (float) y
+        );
+
+        if (outlineColor != null && width > 0) {
+            g2d.setColor(outlineColor);
+            g2d.setStroke(new BasicStroke(
+                    width,
+                    BasicStroke.CAP_ROUND,
+                    BasicStroke.JOIN_ROUND
+            ));
+            g2d.draw(textShape);
+        }
+
+        if (insideColor != null) {
+            g2d.setColor(insideColor);
+            g2d.fill(textShape);
+        }
+    }
+
     public static void renderPolygon(Graphics g,Vec2d center,int nSides,double radius,double rotation,boolean side,boolean fill,boolean sharp,double sharpFactor){
         if(sharp) {
             nSides *= 2;
@@ -204,6 +268,9 @@ public class Util {
         }
     }
     public static void render(Graphics g,boolean fill,Vec2d... points){
+        render(g,true,fill,points);
+    }
+    public static void render(Graphics g,boolean outline,boolean fill,Vec2d... points){
         int[] xPoints = new int[points.length];
         int[] yPoints = new int[points.length];
         for (int i = 0; i < points.length; i++) {
@@ -212,7 +279,7 @@ public class Util {
             yPoints[i] = round(point.y);
         }
         if(fill)g.fillPolygon(xPoints, yPoints, points.length);
-        g.drawPolygon(xPoints, yPoints, points.length);
+        if(outline)g.drawPolygon(xPoints, yPoints, points.length);
     }
 
     public static void renderPolygon(Graphics g,Vec2d center,int nSides,double radius,double rotation,boolean side,boolean fill){
@@ -482,6 +549,23 @@ public class Util {
 
         return parts;
     }
+    public static Object parseString(String value) {
+        if (value == null) return null;
+        value = value.trim();
+        if (value.equalsIgnoreCase("true") || value.equalsIgnoreCase("false")) {
+            return Boolean.parseBoolean(value);
+        }
+        try {
+            return Integer.parseInt(value);
+        } catch (NumberFormatException ignored) {}
+        try {
+            return Long.parseLong(value);
+        } catch (NumberFormatException ignored) {}
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException ignored) {}
+        return value;
+    }
     public static <T> T tryGet(Getter<T> getter){
         return tryGet(getter,null,null);
     }
@@ -502,4 +586,112 @@ public class Util {
             return null;
         }
     }
+    public static HitResult raycast(World world, Vec2d start, Vec2d end) {
+        double x0 = start.x;
+        double y0 = start.y;
+        double x1 = end.x;
+        double y1 = end.y;
+
+
+        int x = (int) Math.floor(x0);
+        int y = (int) Math.floor(y0);
+
+        double dx = x1 - x0;
+        double dy = y1 - y0;
+
+        int stepX = (dx > 0) ? 1 : (dx < 0 ? -1 : 0);
+        int stepY = (dy > 0) ? 1 : (dy < 0 ? -1 : 0);
+
+        double tMaxX, tMaxY;
+        double tDeltaX, tDeltaY;
+
+        if (dx != 0) {
+            double nextGridX = x + (stepX > 0 ? 1 : 0);
+            tMaxX = (nextGridX - x0) / dx;
+            tDeltaX = stepX / dx;
+        } else {
+            tMaxX = Double.POSITIVE_INFINITY;
+            tDeltaX = Double.POSITIVE_INFINITY;
+        }
+
+        if (dy != 0) {
+            double nextGridY = y + (stepY > 0 ? 1 : 0);
+            tMaxY = (nextGridY - y0) / dy;
+            tDeltaY = stepY / dy;
+        } else {
+            tMaxY = Double.POSITIVE_INFINITY;
+            tDeltaY = Double.POSITIVE_INFINITY;
+        }
+
+        Direction lastFace = null;
+
+        while (true) {
+            if (world.getBlock(x, y).solid) {
+                Vec2d hitPos;
+
+                if (lastFace == null) {
+                    hitPos = start;
+                } else {
+                    double tHit;
+                    if (lastFace == Direction.LEFT || lastFace == Direction.RIGHT) {
+                        tHit = tMaxX - tDeltaX;
+                    } else {
+                        tHit = tMaxY - tDeltaY;
+                    }
+
+                    tHit = Math.max(0, Math.min(1, tHit));
+
+                    double hitX = x0 + dx * tHit;
+                    double hitY = y0 + dy * tHit;
+                    hitPos = new Vec2d(hitX, hitY);
+                }
+
+                return new HitResult(true,hitPos, new Vec2i(x, y), lastFace);
+            }
+
+            if (x == (int)Math.floor(x1) && y == (int)Math.floor(y1)) break;
+
+            if (tMaxX < tMaxY) {
+                x += stepX;
+                tMaxX += tDeltaX;
+                lastFace = (stepX > 0) ? Direction.LEFT : Direction.RIGHT;
+            } else {
+                y += stepY;
+                tMaxY += tDeltaY;
+                lastFace = (stepY > 0) ? Direction.DOWN : Direction.UP;
+            }
+        }
+
+        return new HitResult(false,null, null, null);
+    }
+    public record HitResult(boolean hit,Vec2d pos, Vec2i blockPos, Direction direction){
+
+    }
+    public static Vec2d[] movingCircleCollision(
+            Vec2d p1, Vec2d v1, double r1,
+            Vec2d p2, Vec2d v2, double r2,double maxT) {
+        Vec2d dp = p1.subtract(p2);
+        Vec2d dv = v1.subtract(v2);
+        double a = dv.dot(dv);
+        double b = 2 * dp.dot(dv);
+        double c = dp.dot(dp) - (r1 + r2) * (r1 + r2);
+        if (Math.abs(a) < 1e-12) {
+            return null;
+        }
+        double disc = b * b - 4 * a * c;
+        if (disc < 0) {
+            return null;
+        }
+        double sqrtDisc = Math.sqrt(disc);
+        double t1 = (-b - sqrtDisc) / (2 * a);
+        double t2 = (-b + sqrtDisc) / (2 * a);
+        double t = (t1 >= 0) ? t1 : ((t2 >= 0) ? t2 : Double.NaN);
+        if (Double.isNaN(t)||t>=maxT) {
+            return null;
+        }
+        Vec2d posA = p1.add(v1.multiply(t));
+        Vec2d posB = p2.add(v2.multiply(t));
+        return new Vec2d[]{posA, posB};
+    }
+
 }

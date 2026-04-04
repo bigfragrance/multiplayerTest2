@@ -33,6 +33,12 @@ public class Box {
     public Box(Vec2d center, double d){
         this(center,d,d);
     }
+
+    public Box(Vec2i startPos, Vec2i endPos) {
+        this(startPos.x,endPos.x,startPos.y,endPos.y);
+        this.selfStretch(1,1);
+    }
+
     public boolean intersects(Box box) {
         return this.intersects(box.minX, box.minY, box.maxX, box.maxY);
     }
@@ -42,7 +48,6 @@ public class Box {
     }
     public Box expand(double x,double y){
         return new Box(maxX+x,minX-x,maxY+y,minY-y);
-
     }
     public Box expand(double d){
         return expand(d,d);
@@ -66,6 +71,32 @@ public class Box {
 
 
         return new Box(d, g, e, h);
+    }
+    public Box selfStretch(double x, double y) {
+        double d = this.minX;
+        double e = this.minY;
+        double g = this.maxX;
+        double h = this.maxY;
+        if (x < 0.0) {
+            d += x;
+        } else if (x > 0.0) {
+            g += x;
+        }
+
+        if (y < 0.0) {
+            e += y;
+        } else if (y > 0.0) {
+            h += y;
+        }
+        minX=Math.min(d,g);
+        maxX=Math.max(d,g);
+        minY=Math.min(e,h);
+        maxY=Math.max(e,h);
+
+        return this;
+    }
+    public Vec2d subtract(Box other){
+        return getCenter().subtract(other.getCenter());
     }
     public SegmentY getRightSegment() {
         return new SegmentY(minY, maxY, maxX);
@@ -109,14 +140,14 @@ public class Box {
     public boolean contains(double x, double y) {
         return x >= this.minX && x < this.maxX && y >= this.minY && y < this.maxY;
     }
-    public void offset1(double x,double y){
+    public void selfOffset(double x, double y){
         this.minX+=x;
         this.maxX+=x;
         this.minY+=y;
         this.maxY+=y;
     }
-    public void offset1(Vec2d vec){
-        offset1(vec.x,vec.y);
+    public void selfOffset(Vec2d vec){
+        selfOffset(vec.x,vec.y);
     }
     public Box offset(double x,double y){
         return new Box(minX+x,maxX+x,minY+y,maxY+y);
@@ -213,6 +244,7 @@ public class Box {
     public Vec2d getMaxXMinY(){
         return new Vec2d(maxX,minY);
     }
+
     public boolean valueEquals(Box other){
         return minX==other.minX&&maxX==other.maxX&&minY==other.minY&&maxY==other.maxY;
     }

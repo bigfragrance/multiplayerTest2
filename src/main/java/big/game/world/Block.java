@@ -52,4 +52,7 @@ public class Block {
         g.setColor(c);
         Util.renderCube(g,box.expand(-0.005,-0.005).switchToJFrame());
     }
+    public boolean isSolid(){
+        return solid;
+    }
 }

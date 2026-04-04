@@ -92,6 +92,9 @@ public class Setting {
     public double getPolygonRandomPow(){
         return serverData.getDouble("polygon_random_pow");
     }
+    public boolean shouldBulletCollide(){
+        return serverData.getBoolean("bullet_collide");
+    }
     public void save(){
         try {
             Util.write(SETTING_PATH, data.toString().replaceAll(",",",\n"));
@@ -132,6 +135,7 @@ public class Setting {
         o.put("polygon_type", 4);
         o.put("polygon_random_pow", 2);
         o.put("maze_bullet_rebound",false);
+        o.put("bullet_collide",false);
         return o.toString();
     }
     public boolean isMazeBulletBreak(){

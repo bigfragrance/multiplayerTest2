@@ -3,8 +3,10 @@ package big.game.entity;
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
 import big.engine.render.Screen;
+import big.engine.util.EntityUtils;
 import big.engine.util.PacketUtil;
 import big.engine.util.Util;
+import big.game.entity.bullet.BulletEntity;
 import big.game.entity.player.PlayerEntity;
 import big.game.entity.player.ServerPlayerEntity;
 import big.game.weapon.CanAttack;
@@ -13,6 +15,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static big.engine.modules.EngineMain.cs;
@@ -24,7 +27,6 @@ public class DominatorEntity extends ServerPlayerEntity {
     public static AtomicInteger dominatorIDCounter=new AtomicInteger(0);
     public int initialTeam;
     private String initialWeaponID;
-    private int t=0;
     private boolean canRespawn=true;
     public DominatorEntity(Vec2d position,int team,String name,String weaponID) {
         super(position);
@@ -32,12 +34,11 @@ public class DominatorEntity extends ServerPlayerEntity {
         this.initialTeam=team;
         this.name=name;
         this.initialWeaponID=weaponID;
+        this.weaponID=weaponID;
         this.skillPoints=defSkillPoints.clone();
-        t= dominatorIDCounter.getAndIncrement()*2;
     }
     public void tick(){
-        t--;
-        this.mass=100000000000000d;
+        this.mass=1e20d;
         this.velocity.set(0,0);
         this.inputManager.shoot=true;
         this.inputManager.defend=true;
@@ -48,14 +49,7 @@ public class DominatorEntity extends ServerPlayerEntity {
                 a.team=this.team;
             }
         }*/
-
         super.tick();
-        if(t<0){
-            if(this.team==initialTeam){
-                this.weaponID=initialWeaponID;
-            }
-        }
-
         if(!isAlive&&canRespawn){
             if(Screen.sc.inputManager.isSpawningBullet()){
                 return;
@@ -72,6 +66,15 @@ public class DominatorEntity extends ServerPlayerEntity {
                 this.weapon= GunList.fromID(this,weaponID);
             }
         }
+    }
+    protected void updateCollision(){
+        EntityUtils.updateCollision(this, e->(e.id==this.id||!e.isAlive), e->EntityUtils.intersectsCircle(this,e), e->{
+            if (e.team != this.team) {
+                if(this.noEnemyTimer<=0){
+                    EntityUtils.takeDamage(this,e);
+                }
+            }
+        });
     }
     public static void init(){
         dominatorIDCounter.set(0);

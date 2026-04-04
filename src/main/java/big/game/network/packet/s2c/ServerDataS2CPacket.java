@@ -4,6 +4,7 @@ import big.engine.math.Box;
 import big.engine.util.PacketUtil;
 import big.engine.render.Screen;
 import big.game.network.ClientNetworkHandler;
+import big.game.network.PacketType;
 import big.game.network.packet.Packet;
 import big.game.screen.TankChooseScreen;
 import big.game.weapon.GunList;
@@ -39,6 +40,9 @@ public class ServerDataS2CPacket implements Packet<ClientNetworkHandler> {
             if(s.contains("test")){
                 keys.add(s);
             }
+            if(s.contains("Dominator")){
+                keys.add(s);
+            }
         }
         for(String s:keys){
             tankData.remove(s);
@@ -64,7 +68,7 @@ public class ServerDataS2CPacket implements Packet<ClientNetworkHandler> {
     }
 
     @Override
-    public String getType() {
-        return "tanks_data";
+    public PacketType getType() {
+        return PacketType.SERVER_DATA_S2C;
     }
 }

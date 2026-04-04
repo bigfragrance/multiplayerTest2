@@ -2,6 +2,7 @@ package big.game.network.packet.s2c;
 
 import big.engine.util.PacketUtil;
 import big.game.network.ClientNetworkHandler;
+import big.game.network.PacketType;
 import big.game.network.packet.Packet;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,7 +32,7 @@ public class ArrayPacket implements Packet<ClientNetworkHandler> {
     }
 
     @Override
-    public String getType() {
-        return "array_packet";
+    public PacketType getType() {
+        return PacketType.ARRAY_S2C;
     }
 }

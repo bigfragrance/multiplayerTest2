@@ -1,6 +1,7 @@
 package big.game.network.packet.c2s;
 
 import big.engine.util.PacketUtil;
+import big.game.network.PacketType;
 import big.game.network.ServerNetworkHandler;
 import big.game.network.packet.Packet;
 import big.game.network.packet.s2c.ChunkUpdateS2CPacket;
@@ -48,9 +49,8 @@ public class WantChunkC2SPacket implements Packet<ServerNetworkHandler> {
             }*/
         }
     }
-
     @Override
-    public String getType() {
-        return "want_chunk";
+    public PacketType getType() {
+        return PacketType.WANT_CHUNK_C2S;
     }
 }

@@ -49,6 +49,8 @@ public class ServerBotEntity extends ServerPlayerEntity{
             String s = it.next();
             if(s.contains("test")) continue;
             if(s.contains("visitor")) continue;
+            if(s.contains("Dominator")) continue;
+            if(GunList.child.containsKey(s)) continue;
             //if(s.equals("MachineGun")) continue;
             list.add(s);
         }

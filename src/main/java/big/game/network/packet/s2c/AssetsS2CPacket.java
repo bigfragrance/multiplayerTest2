@@ -3,6 +3,7 @@ package big.game.network.packet.s2c;
 import big.engine.util.PacketUtil;
 import big.engine.util.Util;
 import big.game.network.ClientNetworkHandler;
+import big.game.network.PacketType;
 import big.game.network.packet.Packet;
 import big.game.network.packet.c2s.MessageC2SPacket;
 import big.game.screen.ChatMessageScreen;
@@ -77,8 +78,8 @@ public class AssetsS2CPacket implements Packet<ClientNetworkHandler> {
     }
 
     @Override
-    public String getType() {
-        return "assets";
+    public PacketType getType() {
+        return PacketType.ASSETS_S2C;
     }
     public static void init(){
         create(readAssets());

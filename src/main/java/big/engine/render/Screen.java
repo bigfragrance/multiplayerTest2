@@ -42,9 +42,11 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
     public static Screen sc;
     public static JFrame frame;
     public static double TARGET_FPS=60;
+    public boolean rendering=false;
     public volatile double camX=0;
     public volatile double camY=0;
     public static double renderFix=64;
+    public static double screenZoom=1;
     public static double defZoom=1.6*renderFix/0.02;
     public volatile double zoom=defZoom;
     public volatile double zoom2=1/renderFix;
@@ -182,6 +184,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
             try {
                 SCREEN_BOX=new Box(0, Screen.sc.windowWidth,0,Screen.sc.windowHeight);
                 if(cs.ticking&&!cs.isWorldEditMode()) continue;
+                rendering=true;
                 long start=System.currentTimeMillis();
                 windowWidth=frame.getWidth();
                 windowHeight=frame.getHeight();
@@ -193,6 +196,7 @@ public class Screen extends JPanel implements Runnable,ActionListener, KeyListen
                 tickDeltaAdd=(System.currentTimeMillis()-lastRender)/1000.0d*TPS;
                 tickDelta=EngineMain.getTickDelta();
                 //cs.fastUpdate(tickDeltaAdd);
+                rendering=false;
                 if(cs.isWorldEditMode()){
                     EngineMain.tickTask.run();
                 }

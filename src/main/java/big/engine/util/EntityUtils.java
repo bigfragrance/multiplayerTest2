@@ -4,6 +4,7 @@ import big.engine.math.*;
 import big.engine.modules.EngineMain;
 import big.game.entity.Entity;
 import big.game.entity.bullet.BulletEntity;
+import big.game.entity.player.ClientPlayerEntity;
 import big.game.entity.player.PlayerEntity;
 import big.game.entity.PolygonEntity;
 import big.game.world.BlockState;
@@ -49,11 +50,14 @@ public class EntityUtils {
         }
         return false;
     }
-    public static boolean intersectsCircle(Box pb1,Box b1,Box pb2,Box b2) {
+    public static boolean intersectsCircle(Box pb1,Box b1,Box pb2,Box b2,double maxT) {
         if(pb1==null) pb1=b1;
         if(pb2==null) pb2=b2;
         if(b1==null||b2==null) return false;
-        return ThickLineIntersectionNoCaps.isThickLineIntersect(pb1.getCenter(),b1.getCenter(),b1.avgSize()*0.5,pb2.getCenter(),b2.getCenter(),b2.avgSize()*0.5);
+        return Util.movingCircleCollision(b1.getCenter(),b1.subtract(pb1),b1.avgSize()*0.5,b2.getCenter(),b2.subtract(pb2),b2.avgSize()*0.5,maxT)!=null;
+    }
+    public static boolean intersectsCircle(Box pb1,Box b1,Box pb2,Box b2) {
+        return intersectsCircle(pb1,b1,pb2,b2,1);
     }
     public static boolean intersectsCircle(Entity e1,Entity e2){
         return e1.boundingBox.intersects(e2.boundingBox)||EntityUtils.intersectsCircle(e1.prevBoundingBox,e1.boundingBox,e2.prevBoundingBox,e2.boundingBox);
@@ -95,6 +99,9 @@ public class EntityUtils {
         }
         if(!e.isAlive){
             team=new Color(team.getRed(),team.getGreen(),team.getBlue(),50);
+        }
+        if(e instanceof PlayerEntity p){
+            if(p.shouldHide()) return;
         }
         if(e.team>=0) {
             g.setColor(ColorUtils.darker(team, 0.6));
@@ -297,10 +304,10 @@ public class EntityUtils {
     }
     public static Vec2d getKnockBackVector(Entity self,Entity other,double f){
         f=Math.min(f,1);
-        double d=self.velocity.dot(other.velocity.limit(1));
-        double d2=other.velocity.multiply(f).length();
+        double d=self.getRealVelocity().dot(other.getRealVelocity().limit(1));
+        double d2=other.getRealVelocity().multiply(f).length();
         if(d>d2) return new Vec2d(0,0);
-        return other.velocity.limit(d2-d);
+        return other.getRealVelocity().limit(d2-d);
     }
     public static Vec2d getOutOfWallOld(Box box){
         List<int[]> boxes=new ArrayList<>();

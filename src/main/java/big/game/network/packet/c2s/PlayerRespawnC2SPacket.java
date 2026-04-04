@@ -3,6 +3,7 @@ package big.game.network.packet.c2s;
 import big.engine.math.Vec2d;
 import big.engine.util.PacketUtil;
 import big.game.entity.player.ServerPlayerEntity;
+import big.game.network.PacketType;
 import big.game.network.ServerNetworkHandler;
 import big.game.network.packet.Packet;
 import org.json.JSONObject;
@@ -35,7 +36,7 @@ public class PlayerRespawnC2SPacket implements Packet<ServerNetworkHandler> {
     }
 
     @Override
-    public String getType() {
-        return "player_respawn";
+    public PacketType getType() {
+        return PacketType.PLAYER_RESPAWN_C2S;
     }
 }

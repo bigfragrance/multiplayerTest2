@@ -11,9 +11,9 @@ public class JSONNBTConverter {
 
     /** JSON -> CompoundTag */
     public static CompoundTag toCompound(JSONObject json) {
-        CompoundTag tag=new CompoundTag();
-        tag.put("j",new StringTag(json.toString()));
-        /*//if(jsonToNBTMap.containsKey(json)) return jsonToNBTMap.get(json);
+        //CompoundTag tag=new CompoundTag();
+        //tag.put("jjj",new StringTag(json.toString()));
+        //if(jsonToNBTMap.containsKey(json)) return jsonToNBTMap.get(json);
         json = new JSONObject(json.toString());
         CompoundTag tag = new CompoundTag();
         Iterator<String> keys = json.keys();
@@ -22,7 +22,7 @@ public class JSONNBTConverter {
             Object value = json.get(key);
             tag.put(key, toNBT(value));
         }
-        //jsonToNBTMap.put(json,tag);*/
+        //jsonToNBTMap.put(json,tag);
         return tag;
     }
 
@@ -113,12 +113,12 @@ public class JSONNBTConverter {
 
     /** CompoundTag -> JSON */
     public static JSONObject toJSON(CompoundTag tag) {
-        /*JSONObject json = new JSONObject();
+        JSONObject json = new JSONObject();
         for (String key : tag.keySet()) {
             Tag<?> value = tag.get(key);
             json.put(key, fromNBT(value));
-        }*/
-        return new JSONObject(tag.getString("j"));
+        }
+        return json;//new JSONObject(tag.getString("jjj"));
     }
 
     private static Object fromNBT(Tag<?> tag) {

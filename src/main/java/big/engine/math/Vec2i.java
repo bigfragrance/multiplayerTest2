@@ -2,6 +2,8 @@ package big.engine.math;
 
 import big.game.world.ChunkPos;
 
+import java.util.HashSet;
+
 public class Vec2i {
     public final int x;
     public final int y;
@@ -15,11 +17,26 @@ public class Vec2i {
     public Vec2i add(Vec2i pos){
         return add(pos.x,pos.y);
     }
+    public Vec2i down() {
+        return add(0,-1);
+    }
+    public Vec2i up() {
+        return add(0,1);
+    }
+    public Vec2i left() {
+        return add(-1,0);
+    }
+    public Vec2i right() {
+        return add(1,0);
+    }
     public Vec2i subtract(int x, int y){
         return add(-x,-y);
     }
     public Vec2d toCenterPos(){
         return new Vec2d(x+0.5,y+0.5);
+    }
+    public Vec2i offset(Direction dir) {
+        return add(dir.getOffset());
     }
     public Box toBox(){
         return new Box(this);
@@ -45,9 +62,9 @@ public class Vec2i {
         }
     }
     public int hashCode() {
-        int result = 17;
-        result = 31 * result + x;
-        result = 31 * result + y;
+        int result = 31;
+        result = 65535 * result + x;
+        result = 65535 * result + y;
         return result;
     }
     public double distanceTo(Vec2i pos) {
@@ -57,4 +74,7 @@ public class Vec2i {
     public Vec2d toVec2d() {
         return new Vec2d(x,y);
     }
+
+
+
 }

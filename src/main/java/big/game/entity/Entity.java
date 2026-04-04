@@ -168,7 +168,7 @@ public abstract class Entity implements NetworkItem {
     }
     public void move(Vec2d v){
         this.position.offset(v);
-        this.boundingBox.offset1(v);
+        this.boundingBox.selfOffset(v);
     }
     public void blockTick(){
         Vec2i pos=Vec2i.ofFloor(this.position);
@@ -200,6 +200,7 @@ public abstract class Entity implements NetworkItem {
     public ChunkPos getChunkPos(){
         return new ChunkPos(floor(this.position.x/chunkSize),floor(this.position.y/chunkSize));
     }
+
     public void resetTickDelta(){
         this.tickDelta=0;
     }
@@ -219,12 +220,12 @@ public abstract class Entity implements NetworkItem {
     public void setPosition(Vec2d position){
         this.prevPosition.set(this.position);
         this.prevBoundingBox=this.boundingBox.copy();
-        this.boundingBox.offset1(position.subtract(this.position));
+        this.boundingBox.selfOffset(position.subtract(this.position));
         this.position.set(position.copy());
         this.velocity.set(0,0);
     }
     public void setPosition2(Vec2d position){
-        this.boundingBox.offset1(position.subtract(this.position));
+        this.boundingBox.selfOffset(position.subtract(this.position));
         this.position.set(position.copy());
     }
     public Vec2d getTargetingPos(){
@@ -289,6 +290,12 @@ public abstract class Entity implements NetworkItem {
     public boolean killed(){
         return !this.isAlive;
     }
+    public boolean isHide(){
+        return false;
+    }
+    public boolean isTargetable(){
+        return !isHide()&&isAlive;
+    }
     public Box getRenderBoundingBox(){
         return Util.lerp(this.prevBoundingBox,this.boundingBox,tickDelta);
     }
@@ -325,7 +332,13 @@ public abstract class Entity implements NetworkItem {
         damageTaken.get(e.getDamageSourceID()).increase(damage);
     }
     public double getRenderAlpha(){
-        return isParticle? Math.clamp(0.5* (particleLifeTimeMax - lifeTime+tickDelta) /particleLifeTimeMax,0.01,0.99):1;
+        if(isParticle){
+            return getParticleAlpha();
+        }
+        return 1;
+    }
+    private double getParticleAlpha(){
+        return Math.clamp(0.5* (particleLifeTimeMax - lifeTime+tickDelta) /particleLifeTimeMax,0.01,0.99);
     }
     public double getTickDelta(){
         return isParticle?Screen.tickDelta:tickDelta;

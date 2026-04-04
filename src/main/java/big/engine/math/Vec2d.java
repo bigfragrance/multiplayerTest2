@@ -78,7 +78,12 @@ public class Vec2d {
         this.x += x;
         this.y += y;
     }
-
+    public Vec2d add(Direction dir,double len){
+        return add(dir.getOffset().toVec2d().multiply(len));
+    }
+    public Vec2d add(Direction dir){
+        return add(dir.getOffset().toVec2d());
+    }
     public Vec2d copy() {
         return new Vec2d(x, y);
     }

@@ -2,6 +2,7 @@ package big.game.network.packet.s2c;
 
 import big.engine.util.PacketUtil;
 import big.game.network.ClientNetworkHandler;
+import big.game.network.PacketType;
 import big.game.network.packet.Packet;
 import big.game.world.Chunk;
 import org.json.JSONObject;
@@ -34,9 +35,8 @@ public class ChunkUpdateS2CPacket implements Packet<ClientNetworkHandler> {
             cs.world.worldChunks.put(id, c);
         }
     }
-
     @Override
-    public String getType() {
-        return "chunk_update";
+    public PacketType getType() {
+        return PacketType.CHUNK_UPDATE_S2C;
     }
 }

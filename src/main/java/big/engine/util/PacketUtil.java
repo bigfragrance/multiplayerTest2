@@ -3,6 +3,7 @@ package big.engine.util;
 import big.engine.math.Box;
 import big.engine.math.Vec2d;
 import big.game.network.ClientNetworkHandler;
+import big.game.network.PacketType;
 import big.game.network.ServerNetworkHandler;
 import big.game.network.packet.Packet;
 import big.game.network.packet.c2s.*;
@@ -102,78 +103,31 @@ public class PacketUtil {
         return s;
     }
     public static Packet<ClientNetworkHandler> getS2CPacket(JSONObject o){
-        String type=o.getString(getShortVariableName("type"));
-        String name=decode(PacketName.class,type);
-        if(name==null){
-            //System.out.print("  decode failed:"+type);
+        Object type=o.get(getShortVariableName("type"));
+        if(!(type instanceof Number)){
             return null;
         }
-        //System.out.print("  decode success:"+type+"->"+name);
-        switch (name){
-            case("player_data")->{
-                return new PlayerDataS2CPacket(o);
-            }
-            case("player_spawn")->{
-                return new PlayerSpawnS2CPacket(o);
-            }
-            case("player_status")->{
-                return new PlayerStatusS2CPacket(o);
-            }
-            case("block_state_update")->{
-                return new BlockStateUpdateS2CPacket(o);
-            }
-            case("chunk_update")->{
-                return new ChunkUpdateS2CPacket(o);
-            }
-            case("weapon_update")->{
-                return new PlayerWeaponUpdateS2CPacket(o);
-            }
-            case("tanks_data")->{
-                return new ServerDataS2CPacket(o);
-            }
-            case("message")->{
-                return new MessageS2CPacket(o);
-            }
-            case("tick")->{
-                return new TickS2CPacket(o);
-            }
-            case("array_packet")->{
-                return new ArrayPacket(o);
-            }
-            case("assets")->{
-                return new AssetsS2CPacket(o);
-            }
-
+        int typeInt=(int)type;
+        if(typeInt<0||typeInt>=PacketType.values().length){
+            return null;
         }
-        return null;
+        PacketType packetType=PacketType.values()[typeInt];
+        return (Packet<ClientNetworkHandler>) packetType.createPacket(o);
     }
     public static Packet<ServerNetworkHandler> getC2SPacket(JSONObject o){
-        String type=o.getString(getShortVariableName("type"));
-        String name=decode(PacketName.class,type);
-        if(name==null){
-            //System.out.print("  decode failed:"+type);
-            return null;
-        }
-        //System.out.print("  decode success:"+type+"->"+name);
-        switch (name){
-            case("player_input")->{
-                return new PlayerInputC2SPacket(o);
+        try {
+            Object type = o.get(getShortVariableName("type"));
+            if (!(type instanceof Number)) {
+                return null;
             }
-            case("player_respawn")->{
-                return new PlayerRespawnC2SPacket();
+            int typeInt = (int) type;
+            if (typeInt < 0 || typeInt >= PacketType.values().length) {
+                return null;
             }
-            case("update_weapon")->{
-                return new UpdateWeaponC2SPacket(o);
-            }
-            case("want_chunk")->{
-                return new WantChunkC2SPacket(o);
-            }
-            case("want_weapon")->{
-                return new WantWeaponC2SPacket(o);
-            }
-            case("message")->{
-                return new MessageC2SPacket(o);
-            }
+            PacketType packetType = PacketType.values()[typeInt];
+            return (Packet<ServerNetworkHandler>) packetType.createPacket(o);
+        }catch (Exception e){
+            e.printStackTrace();
         }
         return null;
     }
@@ -222,6 +176,9 @@ public class PacketUtil {
     public static void put(JSONObject o, String name, Vec2d value){
         o.put(getShortVariableName(name),value.toJSON());
     }
+    public static void put(JSONObject o, String name, Box value){
+        o.put(getShortVariableName(name),value.toJSON());
+    }
     public static void put(JSONObject o, String name, String value){
         o.put(getShortVariableName(name),value);
     }
@@ -234,8 +191,11 @@ public class PacketUtil {
     public static void put(JSONObject o, String name, JSONArray value){
         o.put(getShortVariableName(name),value);
     }
-    public static void putPacketType(JSONObject o,String value){
-        o.put(getShortVariableName("type"),getShortPacketName(value));
+    public static void putPacketType(JSONObject o, PacketType value){
+        o.put(getShortVariableName("type"),value.ordinal());
+    }
+    public static void putPacketType(JSONObject o, String value){
+        o.put(getShortVariableName("type"),value);
     }
     public static Object get(JSONObject o,String name){
         if(o.has(name)){

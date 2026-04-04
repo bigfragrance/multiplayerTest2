@@ -166,13 +166,15 @@ public class AimBullet extends BulletEntity{
         EntityUtils.updateCollision(this,e->(e.id==this.id||!e.isAlive),e->EntityUtils.intersectsCircle(this,e),e->{
             if (e.team != this.team) {
                 EntityUtils.takeDamage(this,e);
+                if(cs.setting.shouldBulletCollide()&&e instanceof BulletEntity b) {
+                    this.velocity.offset(EntityUtils.getKnockBackVector(this,b,b.knockBackFactor/this.mass));
+                }
             }
             if(e instanceof AimBullet) {
                 Vec2d coll = EntityUtils.getPushVectorNew(this, e);
                 this.move(coll);
             }
         });
-        //this.velocity.set(EntityUtils.getReboundVelocity(velocity,this.boundingBox));
         if(EntityUtils.isInsideWall(this.boundingBox.expand(0.01,0.01))){
             this.health=-1;
         }

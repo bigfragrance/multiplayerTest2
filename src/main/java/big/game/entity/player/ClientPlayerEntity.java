@@ -8,6 +8,7 @@ import big.engine.util.Util;
 import big.engine.render.Screen;
 import big.game.ctrl.InputManager;
 import big.game.ctrl.ServerInputManager;
+import big.game.network.packet.c2s.DodgeMoveC2SPacket;
 import big.game.network.packet.c2s.MessageC2SPacket;
 import big.game.screen.InputDialog;
 import big.game.screen.TankChooseScreen;
@@ -32,6 +33,7 @@ public class ClientPlayerEntity extends PlayerEntity {
     public ClientPlayerEntity(Vec2d position) {
         super(position);
         inputManager= sc.inputManager;
+        addKeys();
     }
     public void tick(){
         this.name=cs.setting.getName();
@@ -52,6 +54,13 @@ public class ClientPlayerEntity extends PlayerEntity {
             }
         }
         prevMousePos=inputManager.getMouseVec();
+    }
+    private void addKeys(){
+        inputManager.addOnKey((c)->{
+            if(c.button==' '){
+                cs.networkHandler.send(new DodgeMoveC2SPacket(inputManager.getMouseVec().normalize()));
+            }
+        });
     }
     private void updateInput(){
         updateSkillPoint();
@@ -81,6 +90,7 @@ public class ClientPlayerEntity extends PlayerEntity {
             }
         }
     }
+
     private void updateSkillPoint(){
         serverInputManager.upgradingSkill=-1;
         for(int i=0;i<skillPoints.length;i++){
@@ -90,7 +100,12 @@ public class ClientPlayerEntity extends PlayerEntity {
             }
         }
     }
-
+    public boolean shouldHide(){
+        return false;
+    }
+    public double getRenderAlpha(){
+        return Math.clamp(super.getRenderAlpha(),0.1,1);
+    }
     public void render(Graphics g){
         super.render(g);
         EntityUtils.renderSkillPoints(getSkillPointRenderPosition(),skillPoints,skillPointCanUse,skillPointNext);

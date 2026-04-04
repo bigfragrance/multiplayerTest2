@@ -28,7 +28,7 @@ public enum EntityType {
     }
     public static Entity createEntity(JSONObject json){
         EntityType type=fromName(PacketUtil.getString(json,"type"));
-        return type.entityFactory.get(json.getJSONObject("data"));
+        return type.entityFactory.get(PacketUtil.getJSONObject(json,"data"));
     }
     public static EntityType fromName(String name){
         return Enum.valueOf(EntityType.class,name);

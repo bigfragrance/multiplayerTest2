@@ -35,7 +35,14 @@ public enum Direction {
     public static Direction fromID(int id){
         return values()[id];
     }
-
+    //clockwise
+    public static Direction previous(Direction dir){
+        return values()[(dir.ordinal()+3)%4];
+    }
+    //counterclockwise
+    public static Direction next(Direction dir){
+        return values()[(dir.ordinal()+1)%4];
+    }
     public double getAngle() {
         return angle;
     }

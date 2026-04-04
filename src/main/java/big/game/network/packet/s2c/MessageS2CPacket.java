@@ -4,8 +4,10 @@ import big.engine.util.PacketUtil;
 import big.engine.util.Util;
 import big.events.MessageReceiveEvent;
 import big.game.network.ClientNetworkHandler;
+import big.game.network.PacketType;
 import big.game.network.packet.Packet;
-import big.server.ClientHandler;
+
+import big.server.NettyClientHandler;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
@@ -50,10 +52,10 @@ public class MessageS2CPacket implements Packet<ClientNetworkHandler> {
     }
 
     @Override
-    public String getType() {
-        return "message";
+    public PacketType getType() {
+        return PacketType.MESSAGE_S2C;
     }
-    public static void sendHistory(ClientHandler c){
+    public static void sendHistory(NettyClientHandler c){
         for(String s:chatHistory){
             c.send(new MessageS2CPacket(s,false,15000));
         }

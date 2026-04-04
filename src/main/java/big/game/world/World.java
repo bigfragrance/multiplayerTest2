@@ -5,15 +5,18 @@ import big.engine.math.Box;
 import big.engine.math.Vec2d;
 import big.engine.util.SegmentBoxIntersectionChecker;
 import big.engine.util.Util;
+import big.events.RenderEvent;
 import big.events.TickEvent;
 import big.game.entity.DominatorEntity;
 import big.game.entity.Entity;
 import meteordevelopment.orbit.EventHandler;
+import meteordevelopment.orbit.EventPriority;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
@@ -23,6 +26,7 @@ import static big.engine.modules.EngineMain.cs;
 public class World {
     public static boolean gravityEnabled=false;
     public static double gravity=-0.05;
+    public ArrayList<Entity> toAdd=new ArrayList<>();
 
     public ConcurrentHashMap<Long,Chunk> worldChunks=new  ConcurrentHashMap<>();
     public Chunk getChunk(int x,int y){
@@ -78,13 +82,15 @@ public class World {
         return json;
     }
     public void fromJSON(JSONObject json){
+        cs.serverController.reload();
+        toAdd.clear();
         for(String s:json.keySet()){
             if(s.equals("entities")){
                 JSONArray entitiesArray=json.getJSONArray(s);
                 for(int i=0;i<entitiesArray.length();i++){
                     JSONObject entityJSON=entitiesArray.getJSONObject(i);
                     DominatorEntity e=DominatorEntity.fromJSONServer(entityJSON);
-                    cs.addEntity(e);
+                    toAdd.add(e);
                 }
                 continue;
             }
@@ -101,16 +107,7 @@ public class World {
         return Util.secondIfNull(cs.entities.get(id),cs.addingEntities.get(id));
     }
     public boolean raycast(Vec2d start,Vec2d end){
-        Box b=new Box(start,end);
-        for(int x = Util.floor(b.minX);x<=Util.floor(b.maxX);x++){
-            for(int y = Util.floor(b.minY);y<=Util.floor(b.maxY);y++){
-                if(!getBlock(x,y).solid) continue;
-                if(SegmentBoxIntersectionChecker.segmentIntersectsBox(start,end,new Box(x,y))){
-                    return true;
-                }
-            }
-        }
-        return false;
+        return Util.raycast(this,start,end).hit();
     }
     public void renderBackground(Graphics g){
 
@@ -123,6 +120,7 @@ public class World {
     public void tick(){
 
     }
+
     public void render(Graphics g){
 
     }

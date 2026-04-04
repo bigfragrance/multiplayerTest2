@@ -9,9 +9,11 @@ import big.game.entity.EntityType;
 import big.game.entity.player.PlayerEntity;
 import big.game.entity.player.ServerPlayerEntity;
 import big.game.network.packet.Packet;
+import big.game.network.packet.s2c.EntitySpawnS2CPacket;
+import big.server.NettyClientHandler;
+import big.server.NettyServerMain;
 import org.json.JSONObject;
-import big.server.ClientHandler;
-import big.server.ServerMain;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,31 +25,16 @@ import static big.engine.modules.EngineMain.cs;
 public class ServerNetworkHandler {
     public static double updateRange=10;
     public static double updateRangeBlocks=10;
-    public ClientHandler clientHandler;
+    public NettyClientHandler clientHandler;
     public boolean deathSent=false;
     public ConcurrentHashMap<Long,Boolean> sentRemove=new ConcurrentHashMap<>();
-    public ServerNetworkHandler(ClientHandler client){
+    public ServerNetworkHandler(NettyClientHandler client){
         this.clientHandler =client;
     }
     public void apply(JSONObject o){
         Packet<ServerNetworkHandler> packet= PacketUtil.getC2SPacket(o);
         if(packet!=null){
             packet.apply(this);
-            return;
-        }
-        switch (PacketUtil.fromShortPacketName(PacketUtil.getString(o,"type"))){
-            case ("player_move")->{
-                handlePlayerMove(o);
-            }
-            case("player_respawn")->{
-                handlePlayerSpawn(o);
-            }
-            case("want_entity")->{
-                handleWantEntity(o);
-            }
-            case("player_data_other")->{
-                handlePlayerData(o);
-            }
         }
     }
     public void send(JSONObject o){
@@ -57,15 +44,7 @@ public class ServerNetworkHandler {
         if(!clientHandler.dataSent) return;
         if(e!=null){
             if(!inRange(e)) return;
-            JSONObject o2=new JSONObject();
-            o2.put(PacketUtil.getShortVariableName("type"),entity_spawn);
-
-            JSONObject o3=new JSONObject();
-            o3.put(PacketUtil.getShortVariableName("type"),e.getType());
-            o3.put("data",e.toJSON());
-            o2.put("entity",o3);
-
-            send(o2);
+            send(new EntitySpawnS2CPacket(e).toJSON());
         }
     }
     public boolean inRange(Entity e){
@@ -139,65 +118,5 @@ public class ServerNetworkHandler {
         PacketUtil.put(o,"id",player.id);
         send(o);
     }
-    public void handlePlayerMove(JSONObject o){
-        Vec2d position=Vec2d.fromJSON(o.getJSONObject(PacketUtil.getShortVariableName("position")));
-        Entity e= cs.entities.get(clientHandler.player.id);
-        if(e!=null){
-            e.setPosition(position);
-        }
-    }
-    public void handlePlayerSpawn(JSONObject o){
-        PlayerEntity e= clientHandler.player;
-        if(e!=null){
-            if(e.isAlive) return;
-            e.isAlive=true;
-            e.setPosition(EntityUtils.getRandomSpawnPosition(e.team));
-            e.health=PlayerEntity.healthMax;
-            e.noEnemyTimer=10;
-            e.score*=0.5;
-            sendPlayerRespawn(e);
-            /*cs.multiClientHandler.clients.forEach(c->{
-                if(c.player.id!=e.id){
-                    c.serverNetworkHandler.sendEntityRemove(e.id);
-                }
-            });*/
-        }else{
-            ServerPlayerEntity player=new ServerPlayerEntity(new Vec2d(0,0));
-            player.team=cs.getTeam();
-            cs.addEntity(player);
-            clientHandler.player=player;
-            sendPlayerRespawn(clientHandler.player);
-        }
-    }
-    public void handleWantEntity(JSONObject o){
-        Entity e=cs.entities.get(o.getLong(PacketUtil.getShortVariableName("id")));
-        if(e!=null){
-            sendEntitySpawn(e);
-        }
-    }
-    /*public void handleBulletShoot(JSONObject o){
-        Vec2d pos=Vec2d.fromJSON(o.getJSONObject(PacketUtil.getShortVariableName("position")));
-        Vec2d velocity=Vec2d.fromJSON(o.getJSONObject(PacketUtil.getShortVariableName("velocity")));
-        double size=o.getDouble("size");
-        Entity e= clientHandler.player;
-        if(e!=null&&e.isAlive){
-            BulletEntity b=new BulletEntity(pos,velocity,new Box(pos,size,size),o.getDouble(PacketUtil.getShortVariableName("health")),o.getDouble(PacketUtil.getShortVariableName("damage")),e.team);
-            b.ownerId=e.id;
-            cs.addEntity(b);
-        }
-    }*/
-    public void handlePlayerData(JSONObject o){
-        ServerPlayerEntity e= clientHandler.player;
-        if(e!=null){
-            e.name= PacketUtil.getString(o,"name");
-            if(ServerMain.connectedPlayersEntity.containsKey(e.name.hashCode())){
-                ServerMain.connectedPlayersEntity.get(e.name.hashCode()).set(e);
-            }
-            cs.multiClientHandler.clients.forEach(c -> {
-                if(c.player.id!=e.id){
-                    c.serverNetworkHandler.sendPlayerData(e);
-                }
-            });
-        }
-    }
+
 }

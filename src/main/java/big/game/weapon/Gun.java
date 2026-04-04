@@ -268,6 +268,7 @@ public class Gun extends CanAttack {
         Vec2d gunLine=new Vec2d(len*shrink,0).rotate(rotation);
         Vec2d buttonLine=new Vec2d(0,w1*sizeMultiplier).rotate(rotation);
         Vec2d headLine=new Vec2d(0,w2*sizeMultiplier).rotate(rotation);
+        Color color=ColorUtils.setAlpha(Gun.color,owner.getRenderAlpha());
         g.setColor(color);
         Vec2d first=buttonPos.add(buttonLine);
         Vec2d second=buttonPos.subtract(buttonLine);

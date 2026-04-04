@@ -113,6 +113,7 @@ public class AutoGunList extends CanAttack implements AbleToAim,Node {
             canAttack.render(g);
         }
         Box box=new Box(getRenderPos(),size*sizeMultiplier);
+        Color color=ColorUtils.setAlpha(Gun.color,owner.getRenderAlpha());
         g.setColor(color);
         Util.render(g,box.switchToJFrame());
         Color dark= ColorUtils.darker(color,0.6);

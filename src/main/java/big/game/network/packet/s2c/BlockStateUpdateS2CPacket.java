@@ -2,6 +2,7 @@ package big.game.network.packet.s2c;
 
 import big.engine.util.PacketUtil;
 import big.game.network.ClientNetworkHandler;
+import big.game.network.PacketType;
 import big.game.network.packet.Packet;
 import big.game.world.BlockState;
 import org.json.JSONObject;
@@ -33,9 +34,8 @@ public class BlockStateUpdateS2CPacket implements Packet<ClientNetworkHandler> {
     public void apply(ClientNetworkHandler clientNetworkHandler) {
         cs.world.setBlockState(x,y,blockState);
     }
-
     @Override
-    public String getType() {
-        return "block_state_update";
+    public PacketType getType() {
+        return PacketType.BLOCK_STATE_UPDATE_S2C;
     }
 }

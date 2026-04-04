@@ -6,20 +6,19 @@ import big.engine.math.Vec2d;
 import big.engine.modules.EngineMain;
 import big.engine.render.Screen;
 import big.engine.util.Getter;
+import big.engine.util.Setting;
 import big.engine.util.Util;
 import big.events.MouseClickEvent;
 import big.events.RenderEvent;
 import big.events.TickEvent;
 import big.game.entity.DominatorEntity;
-import big.game.entity.Entity;
-import big.game.entity.EntityType;
-import big.game.weapon.GunList;
+
 import big.game.world.Block;
 import big.game.world.WorldEditMode;
 import big.game.world.Blocks;
 import big.game.world.blocks.BaseBlock;
 import big.game.world.blocks.PushBlock;
-import big.server.ClientHandler;
+
 import meteordevelopment.orbit.EventHandler;
 
 import java.awt.*;
@@ -168,8 +167,9 @@ public class MenuScreen {
                     t.start();
                 },false);
             });
+            addItem(()->"BoxPlace:"+cs.serverController.boxPlace,
+                    ()->cs.serverController.boxPlace=!cs.serverController.boxPlace,false);
         });
-
         addItem(()->"Entity("+currentMode.getCurrentEntity()+")",()->{
             addItem("Polygon",()->{
                 addItem(()->"CurrentType:"+currentMode.getCurrentPType(),()->{
@@ -209,6 +209,22 @@ public class MenuScreen {
             addItem("Reload",()->{
                 cs.serverController.reload();
             });
+        });
+        addItem("Setting",()->{
+            for(String key: cs.setting.data.keySet()){
+                addItem(()->key+" : "+cs.setting.data.get(key),()->{
+                    cs.setting.data.put(key,Util.parseString(InputDialog.getInputFromDialog(key)));
+                    cs.setting.save();
+                },false);
+            }
+            if(cs.isServer){
+                for(String key: cs.setting.serverData.keySet()){
+                    addItem(()->key+" : "+cs.setting.serverData.get(key),()->{
+                        cs.setting.serverData.put(key,Util.parseString(InputDialog.getInputFromDialog(key)));
+                        cs.setting.save();
+                    });
+                }
+            }
         });
         addItem("WorldEditMode",()->{
             addItem("Enable",()->{

@@ -2,9 +2,17 @@ package big.game.ctrl;
 
 import big.engine.math.Vec2d;
 import big.engine.render.Screen;
+import big.engine.util.AfterCheckTask;
+import big.events.KeyClickEvent;
+import meteordevelopment.orbit.EventHandler;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 
 public class InputManager {
+    public Set<AfterCheckTask<KeyClickEvent>> onKeys=new HashSet<>();
     public InputManager(){
 
     }
@@ -25,7 +33,7 @@ public class InputManager {
         return input;
     }
     public boolean isShooting(){
-        return Screen.isKeyPressed(' ')||Screen.isMousePressed(1);
+        return Screen.isKeyPressed('b')||Screen.isMousePressed(1);
     }
     public boolean isDefending(){
         return Screen.isKeyPressed('z')||Screen.isMousePressed(3);
@@ -46,6 +54,7 @@ public class InputManager {
         return Screen.mousePos.switchToGame(Screen.sc.getStaticZoom());
     }
     public boolean isUpgrading(int skill){
+        if(!Screen.isKeyClicked('q')) return false;
         char c;
         switch(skill){
             case(0)->{
@@ -100,7 +109,7 @@ public class InputManager {
         return Screen.isKeyPressed('c');
     }
     public boolean isLocking() {
-        return Screen.isKeyPressed('v');
+        return Screen.isMousePressed(1);
     }
     public boolean isChangingShowingCurrentBlock() {
         return Screen.isKeyClicked('l');
@@ -134,6 +143,15 @@ public class InputManager {
     }
     public boolean isReloading(){
         return Screen.isKeyClicked('x')&&Screen.isKeyPressed('/');
+    }
+    public void addOnKey(AfterCheckTask<KeyClickEvent> task){
+        onKeys.add(task);
+    }
+    @EventHandler
+    public void onKey(KeyClickEvent event){
+        for(AfterCheckTask<KeyClickEvent> task:onKeys){
+            task.run(event);
+        }
     }
     public void unFocus(){
         for(char c:Screen.keyPressed.keySet()){
